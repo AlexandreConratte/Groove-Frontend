@@ -1,9 +1,12 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function RecipeCard({ props }) {
-
+export default function FestivalCard(props) {
   const navigation = useNavigation()
+
+  const start = new Date(props.start).toLocaleDateString()
+  const end = new Date(props.end).toLocaleDateString()
+
   return (
     <TouchableOpacity onPress={() => navigation.navigate('Festival', { ...props })}>
       <View style={styles.container}>
@@ -12,10 +15,9 @@ export default function RecipeCard({ props }) {
           style={styles.image}
         />
         <View style={styles.textContainer} >
-          <Text style={styles.name}>Name</Text>
-          <Text style={styles.lieu}>Lieu</Text>
-          <Text style={styles.date}>Date</Text>
-          <Text style={styles.styles}>styles</Text>
+          <Text style={styles.name}>{props.name}</Text>
+          <Text style={styles.lieu}>{props.adress.place}</Text>
+          <Text style={styles.date}>Du {start} au {end}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -28,7 +30,7 @@ const styles = StyleSheet.create({
     height: 230,
     borderColor: 'black',
     borderWidth: 1,
-    margin: 10,
+    margin: 5,
     borderRadius: 10,
     
   },
