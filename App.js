@@ -1,5 +1,5 @@
 import "react-native-reanimated";
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Dimensions, Image, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -22,6 +22,8 @@ import Festival from './screens/FestivalScreen'
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import users from "./reducers/user";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 
 const store = configureStore({
   reducer: { users },
@@ -39,9 +41,36 @@ const SearchStackNavigator = () => {
   );
 };
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height; 
+
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator screenOptions={({ route }) => ({
+      tabBarIcon: ({ color, focused }) => {
+ 
+        if (route.name === 'Home') {
+          return <FontAwesome name='home' size={windowHeight/18} color={color} />
+        } else if (route.name === 'Menu') {
+          return <FontAwesome name='navicon' size={windowHeight/18} color={color} />
+        } else if (route.name === 'SearchStack') {
+          const iconSource = focused
+            ? require('./assets/loupe-jaune.png')
+            : require('./assets/loupe-blanche.png');
+          return (
+            <View style={{ position: 'absolute', top: -50, backgroundColor: '#15C2C2', width: windowWidth/3.5, height: windowWidth / 3.5, borderRadius: windowWidth / 6.4, borderColor:'#19525A', borderWidth: 2, alignItems: 'center', justifyContent: 'center'}}>
+              <Image source={iconSource} style={{ width: windowWidth/3, height: windowHeight/8 ,padding: 0, left: 5.5, bottom: 2}} />
+            </View>
+          );
+        }
+        ;
+      },
+      tabBarShowLabel: false,
+      tabBarStyle: {backgroundColor: '#19525A', width: windowWidth, height: (windowHeight/10)},
+      tabBarActiveTintColor: '#FFE45E',
+      tabBarInactiveTintColor: 'white',
+      headerShown: false,
+    })}>
       <Tab.Screen name="Menu" component={MenuScreen} />
       <Tab.Screen name="SearchStack" component={SearchStackNavigator} />
       <Tab.Screen name="Home" component={HomeScreen} />
