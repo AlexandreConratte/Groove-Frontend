@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
 import FestivalCard from '../components/FestivalCard';
 import { useEffect, useState } from 'react';
 //const windowWidth = Dimensions.get('window').width;
@@ -8,37 +8,38 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
-  let next=[]
-  let popular=[]
-  let near=[]
+  const [modalisVisible, setModalisVisible] = useState(true)
+  let next = []
+  let popular = []
+  let near = []
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      setnextFestivals(data.festivals)
-    })
+      .then(response => response.json())
+      .then(data => {
+        setnextFestivals(data.festivals)
+      })
   }, []);
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      const sortbyaverage = data.festivals.sort((a,b)=> (b.averageParticipant-a.averageParticipant))
-      const first =sortbyaverage.slice(0,10)
-      setpopularFestivals(first)
-    })
+      .then(response => response.json())
+      .then(data => {
+        const sortbyaverage = data.festivals.sort((a, b) => (b.averageParticipant - a.averageParticipant))
+        const first = sortbyaverage.slice(0, 10)
+        setpopularFestivals(first)
+      })
   }, []);
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      setnearFestivals(data.festivals)
-    })
+      .then(response => response.json())
+      .then(data => {
+        setnearFestivals(data.festivals)
+      })
   }, []);
-  
-  if (nextFestivals.length>0){
+
+  if (nextFestivals.length > 0) {
     next = nextFestivals.map((e, i) => {
       return (<FestivalCard key={i} {...e} />)
     })
@@ -60,6 +61,23 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title1}>Home</Text>
       </View>
+
+      <Modal visible={modalisVisible} transparent={true} style={styles.modalBackground}>
+        <View style={styles.modalBackground}>
+
+          <View style={styles.modalContainer}>
+            <Text style={styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
+            <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Connect1')} style={styles.GotoConnectButton}>
+              <Text style={styles.connect}>Connecte Toi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalisVisible(!modalisVisible)} style={styles.GoToApp}>
+              <Text style={styles.acced}>Accéder à l'application</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.section}>
           <Text style={styles.title2}>A venir...</Text>
@@ -70,13 +88,13 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.title2}>Les + populaires</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
-          {popular}
+            {popular}
           </ScrollView>
         </View>
         <View style={styles.section}>
           <Text style={styles.title2}>Autour de vous</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
-          {near}
+            {near}
           </ScrollView>
         </View>
       </ScrollView>
@@ -126,5 +144,68 @@ const styles = StyleSheet.create({
     fontWeight: 'semibold',
     fontSize: 24,
   },
+  GotoConnectButton: {
+    backgroundColor: '#19525a',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white"
+
+  },
+  GoToApp: {
+    backgroundColor: '#FFE45D',
+    height: 30,
+    width: 170,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+
+  modalContainer: {
+    width: 274,
+    height: 292,
+    justifyContent: 'center',
+    backgroundColor: "white",
+    borderColor: '#19525a',
+    borderWidth: 3,
+    alignItems: 'center',
+  },
+  welcomeText: {
+    fontSize: 20,
+    fontWeight: "600",
+    margin: 5,
+    textAlign: "center",
+    paddingLeft: 8,
+    paddingRight: 8,
+    marginBottom : 10,
+  },
+  descripText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,   
+    padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
+
+
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  connect: {
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 24,
+  },
+  acced: {
+    fontSize: 14,
+    fontWeight: "bold",
+  }
+
 
 });
