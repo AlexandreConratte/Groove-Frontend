@@ -17,9 +17,17 @@ import MyFestivals from './screens/MyFestivalsScreen';
 import MyMemories from './screens/MyMemoriesScreen';
 import Profile from './screens/ProfileScreen';
 import Settings from './screens/SettingsScreen';
-import Festival from './screens/FestivalScreen';
+import Festival from './screens/FestivalScreen'
+
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import users from "./reducers/user";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+
+const store = configureStore({
+  reducer: { users },
+ });
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -72,6 +80,7 @@ const TabNavigator = () => {
 
 export default function App() {
   return (
+    <Provider store={store}>
     <NavigationContainer>
      <Stack.Navigator screenOptions={{ headerShown: false }}>
        <Stack.Screen name="TabNavigator" component={TabNavigator} />
@@ -88,6 +97,7 @@ export default function App() {
        <Stack.Screen name="Settings" component={Settings} />
      </Stack.Navigator>
    </NavigationContainer>
+   </Provider>
   );
 }
 
