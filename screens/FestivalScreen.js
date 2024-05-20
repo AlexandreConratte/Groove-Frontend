@@ -8,7 +8,7 @@ import { Poppins_Regular } from "@expo-google-fonts/poppins";
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
-export default function FestivalScreen({ navigation, route: { params: { festival } } }) {
+export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
   const [indexSelected, setIndexSelected] = useState(0);
 
   const onSelect = indexSelected => {
@@ -21,51 +21,54 @@ export default function FestivalScreen({ navigation, route: { params: { festival
     { id: '3', image: require('../assets/Pendu.png') },
   ]
 
+  console.log(props)
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
           <FontAwesome5 name='arrow-left' size={40} color={'#19525A'}/>
         </TouchableOpacity>
-        <Text>Name Festival</Text>
+        <Text>{props.name}</Text>
       </View>
-    <View style={styles.main}>
-      <View style={styles.imageContainer}>
-        <View style={styles.carouselContainer}>
+      
+      <View style={styles.main}>
+        <View style={styles.imageContainer}>
+          <View style={styles.carouselContainer}>
 
+          </View>
+          <View>
+            <FontAwesome name='heart' size={30}/>
+            <Text>{props.nbLikes.length}</Text>
+          </View>
+          <FontAwesome name='share-square-o' size={30}/>
         </View>
-        <View>
-          <FontAwesome name='heart' size={30}/>
-          <Text>445</Text>
+        <View style={styles.detailsContainer}>
+          <View style={styles.dateLocationContainer}>
+            <View style={styles.dateContainer}>
+              <Text style={styles.blueText}>Date : xx/xx/xxxx</Text>
+            </View>
+            <View style={styles.locationContainer}>
+              <FontAwesome name='map-marker' size={25} color={'#FF4848'}/>
+              <Text style={styles.blueText}> : {props.adress.place}, {props.adress.city}</Text>
+            </View>
+          </View>
+          
+          <View style={styles.shortDescContainer}>
+            <Text>{props.description}</Text>
+          </View>
+          <View style={styles.artistsContainer}>
+            <Text>Line Up :</Text>
+            <View style={styles.artistsCardContainer}>
+              <ArtistCard/>
+              <ArtistCard/>
+            </View>
+          </View>
+          <View style={styles.longDescContainer}>
+            <Text>{props.moreAbout}</Text>
+          </View>
         </View>
-        <FontAwesome name='share-square-o' size={30}/>
       </View>
-      <View style={styles.detailsContainer}>
-        <View style={styles.dateLocationContainer}>
-          <View style={styles.dateContainer}>
-            <Text style={styles.blueText}>Date : xx/xx/xxxx</Text>
-          </View>
-          <View style={styles.locationContainer}>
-            <FontAwesome name='map-marker' size={25} color={'#FF4848'}/>
-            <Text style={styles.blueText}> : Place, City</Text>
-          </View>
-        </View>
-        
-        <View style={styles.shortDescContainer}>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit</Text>
-        </View>
-        <View style={styles.artistsContainer}>
-          <Text>Line Up :</Text>
-          <View style={styles.artistsCardContainer}>
-            <ArtistCard/>
-            <ArtistCard/>
-          </View>
-        </View>
-        <View style={styles.longDescContainer}>
-          <Text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna, Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna</Text>
-        </View>
-      </View>
-    </View>
     </View>
   )
 }
