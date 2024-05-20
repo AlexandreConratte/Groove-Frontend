@@ -1,24 +1,41 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-export default function RecipeCard({ festival }) {
-  const navigation = useNavigation();
+export default function RecipeCard({ props }) {
 
+  const navigation = useNavigation()
   return (
-    <TouchableOpacity style={styles.container} onPress={() => navigation.navigate('Festival', { festival })}>
-      <View>
-        <Text>{festival.name}</Text>
+    <TouchableOpacity onPress={() => navigation.navigate('Festival', { ...props })}>
+      <View style={styles.container}>
+        <Image
+          source={{ uri: "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716199438/icon-image-not-found-free-vector_jccw05.jpg" }}
+          style={styles.image}
+        />
+        <View style={styles.textContainer} >
+          <Text style={styles.name}>Name</Text>
+          <Text style={styles.lieu}>Lieu</Text>
+          <Text style={styles.date}>Date</Text>
+          <Text style={styles.styles}>styles</Text>
+        </View>
       </View>
     </TouchableOpacity>
-  );
+  )
 }
-
-const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
-    width: (windowWidth / 2) - 10,
-    maxHeight: 250,
+    width: 120,
+    height: 230,
+    borderColor: 'black',
+    borderWidth: 1,
+    margin: 10,
+    borderRadius: 10,
+    
   },
+  image: {
+    width: 118,
+    height: 130,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  }
 });
