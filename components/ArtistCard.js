@@ -1,6 +1,29 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  useFonts,
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
+} from '@expo-google-fonts/poppins';
 
-export default function ArtistCard({ props }) {
+export default function ArtistCard(props) {
+  let [fontsLoaded] = useFonts({
+    Poppins_100Thin,
+    Poppins_200ExtraLight,
+    Poppins_300Light,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
+    Poppins_900Black,
+  });
 
   return (
       <View style={styles.container}>
@@ -8,7 +31,7 @@ export default function ArtistCard({ props }) {
             <Image source={require('../assets/loupe-jaune.png')} style={styles.image}/>
         </View>
         <View style={styles.textContainer}>
-            <Text style={styles.name}>name</Text>
+            <Text style={styles.name}>{props.name}</Text>
         </View>
       </View>
   );
@@ -16,13 +39,12 @@ export default function ArtistCard({ props }) {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-const imageSize = windowWidth * 0.8;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#FFFFFF',
-    borderRadius: '5%',
-    width: (windowWidth / 4.44),
+    borderRadius: 5,
+    width: (windowWidth / 4),
     height: (windowHeight / 4.44),
     margin: 8,
     shadowColor: 'black',
@@ -34,8 +56,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#D2FFF4',
-    borderTopRightRadius: '5%',
-    borderTopLeftRadius: '5%',
+    borderTopRightRadius: 5,
+    borderTopLeftRadius: 5,
     paddingTop: '3%'
   },
   textContainer: {
@@ -44,12 +66,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   name: {
-
+    textAlign: 'center',
+    fontFamily: 'Poppins_400Regular',
   },
   image: {
-    width: '95%',
-    height: '80%',
-    borderRadius: 1000,
+    width: '90%',
+    height: '90%',
+    borderRadius: 50,
     backgroundColor: 'white'
   },
 

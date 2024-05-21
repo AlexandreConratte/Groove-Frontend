@@ -11,9 +11,10 @@ export default function HomeScreen({ navigation }) {
   let next=[]
   let popular=[]
   let near=[]
+  const BACKEND_URL = '10.1.3.11';
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
     .then(response => response.json())
     .then(data => {
       setnextFestivals(data.festivals)
@@ -21,7 +22,7 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
     .then(response => response.json())
     .then(data => {
       const sortbyaverage = data.festivals.sort((a,b)=> (b.averageParticipant-a.averageParticipant))
@@ -31,7 +32,7 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
     .then(response => response.json())
     .then(data => {
       setnearFestivals(data.festivals)
