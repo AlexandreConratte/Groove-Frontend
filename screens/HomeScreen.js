@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
+const BACKEND_URL = "https://backend-groove.vercel.app"
 //const windowWidth = Dimensions.get('window').width;
 //const windowHeight = Dimensions.get('window').height;
 
@@ -11,17 +12,21 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
+  const [modalisVisible, setModalisVisible] = useState(true);
+  const [currentPosition, setCurrentPosition] = useState("");
   let next = []
   let popular = []
   let near = []
+<<<<<<< HEAD
   const [currentPosition, setCurrentPosition] = useState("");
   const [modalisVisible, setModalisVisible] = useState(true)
+=======
+>>>>>>> 17740f87716b42696773e459bf9889f3de750220
 
   useEffect(() => {
     (async () => {
       const result = await Location.requestForegroundPermissionsAsync();
       const status = result?.status;
-
       if (status === 'granted') {
         Location.watchPositionAsync({ distanceInterval: 10 },
           (location) => {
@@ -33,7 +38,7 @@ export default function HomeScreen({ navigation }) {
     []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`${BACKEND_URL}/festivals/findAll`)
       .then(response => response.json())
       .then(data => {
         const now = Date.now()
@@ -42,45 +47,43 @@ export default function HomeScreen({ navigation }) {
           const diff = start - now
           return ({ ...e, diff })
         })
-        const result2 = result.filter((e) => e.diff > 0)
-        const sortbydate = result2.sort((a, b) => (a.diff - b.diff))
-        const first = sortbydate.slice(0, 10)
-        setnextFestivals(first)
+        const resultbis = result.filter((e) => e.diff > 0)
+        const sortbydate = resultbis.sort((a, b) => (a.diff - b.diff))
+        const first1 = sortbydate.slice(0, 10)
+        setnextFestivals(first1)
 
-      })
-  }, []);
+        const result2 = data.festivals.filter((e) => (new Date(e.start) - now) > 0)
+        const sortbyaverage = result2.sort((a, b) => (b.averageParticipant - a.averageParticipant))
+        const first2 = sortbyaverage.slice(0, 10)
+        setpopularFestivals(first2)
 
-  useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
-      .then(response => response.json())
-      .then(data => {
-        const now = Date.now()
-        const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
-
-        const sortbyaverage = result.sort((a, b) => (b.averageParticipant - a.averageParticipant))
-        const first = sortbyaverage.slice(0, 10)
-        setpopularFestivals(first)
-      })
-  }, []);
-
-  useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
-      .then(response => response.json())
-      .then(data => {
-        const now = Date.now()
-        const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
-
-        const result2 = result.map((e) => {
+        const result3 = data.festivals.filter((e) => (new Date(e.start) - now) > 0)
+        const resultbis2 = result3.map((e) => {
           const distance = Math.round(getDistance(
             { latitude: e.adress.latitude, longitude: e.adress.longitude },
-            { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
-          )/1000)
-          console.log(distance)
+            { latitude: currentPosition && currentPosition.latitude, longitude: currentPosition && currentPosition.longitude }
+          ) / 1000)
           return ({ ...e, distance })
         })
-        const sortbydistance = result2.sort((a, b) => (a.distance - b.distance))
-        const first = sortbydistance.slice(0, 10)
-        setnearFestivals(first)
+        const sortbydistance = resultbis2.sort((a, b) => (a.distance - b.distance))
+        const first3 = sortbydistance.slice(0, 10)
+        setnearFestivals(first3)
+      })
+  }, []);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/festivals/findAll`)
+      .then(response => response.json())
+      .then(data => {
+
+      })
+  }, []);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/festivals/findAll`)
+      .then(response => response.json())
+      .then(data => {
+
       })
   }, []);
 
@@ -102,9 +105,6 @@ export default function HomeScreen({ navigation }) {
   }
 
 
-
-
-
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.header}>
@@ -117,7 +117,7 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.modalContainer}>
             <Text style={styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
             <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
-            <TouchableOpacity onPress={() => GotoConnect() } style={styles.GotoConnectButton}>
+            <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
               <Text style={styles.connect}>Connecte Toi</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalisVisible(false)} style={styles.GoToApp}>
@@ -232,12 +232,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingLeft: 8,
     paddingRight: 8,
-    marginBottom : 10,
+    marginBottom: 10,
   },
   descripText: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,   
+    marginBottom: 20,
     padding: 10,
     marginLeft: 10,
     marginRight: 10,
