@@ -17,11 +17,7 @@ export default function HomeScreen({ navigation }) {
   let next = []
   let popular = []
   let near = []
-<<<<<<< HEAD
-  const [currentPosition, setCurrentPosition] = useState("");
-  const [modalisVisible, setModalisVisible] = useState(true)
-=======
->>>>>>> 17740f87716b42696773e459bf9889f3de750220
+ 
 
   useEffect(() => {
     (async () => {
