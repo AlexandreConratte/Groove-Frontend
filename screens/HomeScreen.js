@@ -50,11 +50,6 @@ export default function HomeScreen({ navigation }) {
     })
   }
 
-
-
-
-
-
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.header}>
