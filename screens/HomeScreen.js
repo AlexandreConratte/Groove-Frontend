@@ -36,6 +36,7 @@ export default function HomeScreen({ navigation }) {
     fetch(`${BACKEND_URL}/festivals/findAll`)
       .then(response => response.json())
       .then(data => {
+        //tri en fonction des dates 
         const now = Date.now()
         const result = data.festivals.map((e) => {
           const start = new Date(e.start)
@@ -47,11 +48,13 @@ export default function HomeScreen({ navigation }) {
         const first1 = sortbydate.slice(0, 10)
         setnextFestivals(first1)
 
+        //tri en fonction du nombre moyen de parcipants
         const result2 = data.festivals.filter((e) => (new Date(e.start) - now) > 0)
         const sortbyaverage = result2.sort((a, b) => (b.averageParticipant - a.averageParticipant))
         const first2 = sortbyaverage.slice(0, 10)
         setpopularFestivals(first2)
 
+        //tri en fonction de la localisation 
         const result3 = data.festivals.filter((e) => (new Date(e.start) - now) > 0)
         const resultbis2 = result3.map((e) => {
           const distance = Math.round(getDistance(
@@ -63,22 +66,6 @@ export default function HomeScreen({ navigation }) {
         const sortbydistance = resultbis2.sort((a, b) => (a.distance - b.distance))
         const first3 = sortbydistance.slice(0, 10)
         setnearFestivals(first3)
-      })
-  }, []);
-
-  useEffect(() => {
-    fetch(`${BACKEND_URL}/festivals/findAll`)
-      .then(response => response.json())
-      .then(data => {
-
-      })
-  }, []);
-
-  useEffect(() => {
-    fetch(`${BACKEND_URL}/festivals/findAll`)
-      .then(response => response.json())
-      .then(data => {
-
       })
   }, []);
 
