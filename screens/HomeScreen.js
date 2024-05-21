@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
+const BACKEND_URL="https://backend-groove.vercel.app"
 //const windowWidth = Dimensions.get('window').width;
 //const windowHeight = Dimensions.get('window').height;
 
@@ -11,6 +12,7 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
+  const [modalisVisible, setModalisVisible] = useState(true);
   let next = []
   let popular = []
   let near = []
@@ -32,7 +34,7 @@ export default function HomeScreen({ navigation }) {
     []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`${BACKEND_URL}/festivals/findAll`)
       .then(response => response.json())
       .then(data => {
         const now = Date.now()
@@ -50,7 +52,7 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`${BACKEND_URL}/festivals/findAll`)
       .then(response => response.json())
       .then(data => {
         const now = Date.now()
@@ -63,18 +65,18 @@ export default function HomeScreen({ navigation }) {
   }, []);
 
   useEffect(() => {
-    fetch('http://10.1.3.14:3000/festivals/findAll')
+    fetch(`${BACKEND_URL}/festivals/findAll`)
       .then(response => response.json())
       .then(data => {
         const now = Date.now()
         const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
 
         const result2 = result.map((e) => {
+
           const distance = Math.round(getDistance(
             { latitude: e.adress.latitude, longitude: e.adress.longitude },
-            { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
+            { latitude: currentPosition&&currentPosition.latitude, longitude: currentPosition&&currentPosition.longitude }
           )/1000)
-          console.log(distance)
           return ({ ...e, distance })
         })
         const sortbydistance = result2.sort((a, b) => (a.distance - b.distance))
@@ -99,9 +101,6 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('Connect1');
     setModalisVisible(false)
   }
-
-
-
 
 
   return (
