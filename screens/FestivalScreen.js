@@ -62,6 +62,13 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   const handleShare = () => {
 
   }
+  if (!fontsLoaded) {
+    return <Text></Text> ;
+  }
+
+  if (!fontsLoaded) {
+    return <View></View>
+  }
 
   return (
     <View style={styles.container}>
@@ -156,26 +163,24 @@ const styles = StyleSheet.create({
     width:'100%',
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'center',
     position: 'relative',
     borderBottomWidth: 3,
     borderBottomColor: '#15C2C2',
-    paddingTop: 10
   },
   festivalName: {
     fontSize: 20,
     fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
+    paddingBottom: 5
   },
   iconArrow: {
     position: 'absolute',
     left: 9,
     height: '60%',
-    width: '10%'
-  },
-  main: {
-    
+    width: '10%',
+    marginBottom: 5
   },
   carouselContainer:{
     position: 'relative',

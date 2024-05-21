@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  value: { coordinate : {},
+  value: { coordinate : { longitude: null, latitude: null },
     connection : { username: '', token: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
     picture: ''} },
 };
@@ -19,9 +19,13 @@ export const userSlice = createSlice({
     },
     signupUser : (state, action) => {
       state.value = { ...state.value, ...action.payload };
+    },
+    addCoordinate: (state, action) => {
+      state.value.coordinate.longitude = action.payload.longitude;
+      state.value.coordinate.latitude = action.payload.latitude;
     }
   },
 });
 
-export const { login, logout, signupUser} = userSlice.actions;
+export const { login, logout, signupUser, addCoordinate} = userSlice.actions;
 export default userSlice.reducer;
