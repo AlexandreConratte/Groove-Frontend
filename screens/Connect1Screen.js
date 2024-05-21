@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
@@ -33,7 +33,7 @@ export default function Connect1Screen({ navigation }) {
           setUsername('');
           setPassword('');
           setDisplaySignIn(false)
-          router.push('/')
+        /*  router.push('')  */
 
         }
       });
@@ -94,15 +94,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  header: {
-    marginTop: 20,
-    justifyContent: "space-evenly",
-    flexDirection: "row",
-    alignItems: "flex-start",
-    borderBottomColor: '#000000',
-    marginLeft: 10,
-    alignItems: "center",
-  },
+    header: {
+      height: 86,
+      justifyContent: "space-around",
+      borderBottomColor: '#19525A',
+      borderBottomWidth: 3,
+      width: Dimensions.get('window').width,
+      alignItems: "center",
+      flexDirection: "row",
+      marginTop: 10
+    },
+   
   title: {
     fontSize: 40,
     alignContent: "center",

@@ -51,6 +51,10 @@ export default function HomeScreen({ navigation }) {
     })
   }
 
+  const GotoConnect = () => {
+    navigation.navigate('Connect1');
+    setModalisVisible(false)
+  }
 
 
 
@@ -68,10 +72,10 @@ export default function HomeScreen({ navigation }) {
           <View style={styles.modalContainer}>
             <Text style={styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
             <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Connect1')} style={styles.GotoConnectButton}>
+            <TouchableOpacity onPress={() => GotoConnect() } style={styles.GotoConnectButton}>
               <Text style={styles.connect}>Connecte Toi</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalisVisible(!modalisVisible)} style={styles.GoToApp}>
+            <TouchableOpacity onPress={() => setModalisVisible(false)} style={styles.GoToApp}>
               <Text style={styles.acced}>Accéder à l'application</Text>
             </TouchableOpacity>
           </View>
