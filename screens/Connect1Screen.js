@@ -2,6 +2,8 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dime
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
+const BACKEND_URL = "https://backend-groove.vercel.app"
+import { login } from '../reducers/user';
 
 
 
@@ -9,6 +11,8 @@ export default function Connect1Screen({ navigation }) {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isConnected, setIsConnected] = useState(false)
+  
 
   const [displaySignIn, setDisplaySignIn] = useState(false)
 
@@ -17,11 +21,13 @@ export default function Connect1Screen({ navigation }) {
   const popSignIn = () => {
   
     setDisplaySignIn(!displaySignIn)
+    setUsername('');
+    setPassword('');
   }
 
-  const handleConnection = () => {
 
-    fetch('http://localhost:3000/users/signin', {
+  const handleConnection = () => {
+    fetch(`${BACKEND_URL}/users/signin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username : username, password : password}),
@@ -29,12 +35,12 @@ export default function Connect1Screen({ navigation }) {
       .then(data => {
         console.log(data)
         if (data.result) {
-          dispatch(login({ username: username, token: data.token }));
+          dispatch(login({ username: data.username, token: data.token }));
           setUsername('');
           setPassword('');
           setDisplaySignIn(false)
-        /*  router.push('')  */
-
+          navigation.navigate('Home')
+          setIsConnected(true)
         }
       });
   };
@@ -64,9 +70,9 @@ export default function Connect1Screen({ navigation }) {
           <TouchableOpacity onPress={popSignIn} >
             <Text style={styles.close}>X</Text>
           </TouchableOpacity>
-            <TextInput placeholder="username" onChangeText={(value) => setUsername(value)}
+            <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
               value={username} style={styles.input}/>
-            <TextInput placeholder="password" onChangeText={(value) => setPassword(value)}
+            <TextInput placeholder="Mot de passe" onChangeText={(value) => setPassword(value)}
               value={password} style={styles.input}/>
             <TouchableOpacity onPress={() => handleConnection()}>
               <Text style={styles.modalconnexion}>Connexion</Text>

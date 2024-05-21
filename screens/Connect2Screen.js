@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from 'react-redux';
-import { login } from '../reducers/user';
+import { signupUser } from '../reducers/user';
 
 
 export default function Connect2Screen({ navigation }) {
@@ -47,8 +47,8 @@ export default function Connect2Screen({ navigation }) {
       valid = false;
     }
     if (valid) {
-      dispatch(login({ username, email , password,  phone  }))
-      navigation.navigate('Connect3');
+      dispatch(signupUser({ username, email , password,  phone  }))
+      navigation.navigate('Connect3' , );
     }
   };
 
