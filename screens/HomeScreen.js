@@ -1,6 +1,9 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions } from 'react-native';
 import FestivalCard from '../components/FestivalCard';
 import { useEffect, useState } from 'react';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import * as Location from 'expo-location';
+import { getDistance } from 'geolib';
 //const windowWidth = Dimensions.get('window').width;
 //const windowHeight = Dimensions.get('window').height;
 
@@ -8,37 +11,79 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
-  let next=[]
-  let popular=[]
-  let near=[]
+  let next = []
+  let popular = []
+  let near = []
+  const [currentPosition, setCurrentPosition] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      const result = await Location.requestForegroundPermissionsAsync();
+      const status = result?.status;
+
+      if (status === 'granted') {
+        Location.watchPositionAsync({ distanceInterval: 10 },
+          (location) => {
+            setCurrentPosition(location.coords);
+          });
+      }
+    })();
+  },
+    []);
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      setnextFestivals(data.festivals)
-    })
+      .then(response => response.json())
+      .then(data => {
+        const now = Date.now()
+        const result = data.festivals.map((e) => {
+          const start = new Date(e.start)
+          const diff = start - now
+          return ({ ...e, diff })
+        })
+        const result2 = result.filter((e) => e.diff > 0)
+        const sortbydate = result2.sort((a, b) => (a.diff - b.diff))
+        const first = sortbydate.slice(0, 10)
+        setnextFestivals(first)
+
+      })
   }, []);
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      const sortbyaverage = data.festivals.sort((a,b)=> (b.averageParticipant-a.averageParticipant))
-      const first =sortbyaverage.slice(0,10)
-      setpopularFestivals(first)
-    })
+      .then(response => response.json())
+      .then(data => {
+        const now = Date.now()
+        const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
+
+        const sortbyaverage = result.sort((a, b) => (b.averageParticipant - a.averageParticipant))
+        const first = sortbyaverage.slice(0, 10)
+        setpopularFestivals(first)
+      })
   }, []);
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
-    .then(response => response.json())
-    .then(data => {
-      setnearFestivals(data.festivals)
-    })
+      .then(response => response.json())
+      .then(data => {
+        const now = Date.now()
+        const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
+
+        const result2 = result.map((e) => {
+          const distance = Math.round(getDistance(
+            { latitude: e.adress.latitude, longitude: e.adress.longitude },
+            { latitude: currentPosition.latitude, longitude: currentPosition.longitude }
+          )/1000)
+          console.log(distance)
+          return ({ ...e, distance })
+        })
+        const sortbydistance = result2.sort((a, b) => (a.distance - b.distance))
+        const first = sortbydistance.slice(0, 10)
+        setnearFestivals(first)
+      })
   }, []);
-  
-  if (nextFestivals.length>0){
+
+  if (nextFestivals.length > 0) {
     next = nextFestivals.map((e, i) => {
       return (<FestivalCard key={i} {...e} />)
     })
@@ -55,6 +100,9 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title1}>Home</Text>
       </View>
+      <TouchableOpacity style={styles.user} onPress={() => navigation.navigate('Profile')}>
+        <FontAwesome5 name="user-alt" size={30} color={"#19525A"} />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.section}>
           <Text style={styles.title2}>A venir...</Text>
@@ -65,13 +113,13 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.section}>
           <Text style={styles.title2}>Les + populaires</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
-          {popular}
+            {popular}
           </ScrollView>
         </View>
         <View style={styles.section}>
           <Text style={styles.title2}>Autour de vous</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
-          {near}
+            {near}
           </ScrollView>
         </View>
       </ScrollView>
@@ -88,16 +136,16 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     width: Dimensions.get('window').width,
     alignItems: 'center',
-
   },
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },
-
-  scrollPrincipal: {
-
+  user: {
+    position: 'absolute',
+    right: 10,
+    top: 45,
   },
   scrollSecondaire: {
     flexDirection: 'row',
@@ -106,14 +154,14 @@ const styles = StyleSheet.create({
   },
   section: {
     width: Dimensions.get('window').width,
-    height: 300,
+    height: 380,
     borderBottomColor: '#19525A',
     borderBottomWidth: 3
   },
   title1: {
     fontSize: 30,
     color: '#19525A',
-    fontWeight: 'semibold'
+    fontWeight: 'bold'
   },
   title2: {
     color: '#19525A',
