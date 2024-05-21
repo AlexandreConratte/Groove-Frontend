@@ -46,7 +46,9 @@ const windowHeight = Dimensions.get('window').height;
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={({ route }) => ({
+    <Tab.Navigator 
+      initialRouteName="Home"
+      screenOptions={({ route }) => ({
       tabBarIcon: ({ color, focused }) => {
  
         if (route.name === 'Home') {
