@@ -17,6 +17,7 @@ export default function Connect3Screen({ navigation }) {
   const [city, setCity] = useState('');
   const [focusedInput, setFocusedInput] = useState(null)
 
+
   const DateInput = ({ label}) => {
     const [date, setDate] = useState(new Date());
     const [show, setShow] = useState(false);
@@ -30,10 +31,9 @@ export default function Connect3Screen({ navigation }) {
       let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
       setFormattedDate(fDate);
     };
-
     const showDatepicker = () => {
       setShow(true);
-    };  
+    }; 
     return ( 
     <View> 
     <Text style={styles.label}>{label}</Text>

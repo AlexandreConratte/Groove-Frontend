@@ -17,6 +17,7 @@ export default function HomeScreen({ navigation }) {
   let next = []
   let popular = []
   let near = []
+ 
 
   useEffect(() => {
     (async () => {
