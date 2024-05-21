@@ -11,37 +11,6 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
-<<<<<<< HEAD
-  let next=[]
-  let popular=[]
-  let near=[]
-  const BACKEND_URL = '10.1.3.11';
-
-  useEffect(() => {
-    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
-    .then(response => response.json())
-    .then(data => {
-      setnextFestivals(data.festivals)
-    })
-  }, []);
-
-  useEffect(() => {
-    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
-    .then(response => response.json())
-    .then(data => {
-      const sortbyaverage = data.festivals.sort((a,b)=> (b.averageParticipant-a.averageParticipant))
-      const first =sortbyaverage.slice(0,10)
-      setpopularFestivals(first)
-    })
-  }, []);
-
-  useEffect(() => {
-    fetch(`http://${BACKEND_URL}:3000/festivals/findAll`)
-    .then(response => response.json())
-    .then(data => {
-      setnearFestivals(data.festivals)
-    })
-=======
   let next = []
   let popular = []
   let near = []
@@ -112,7 +81,6 @@ export default function HomeScreen({ navigation }) {
         const first = sortbydistance.slice(0, 10)
         setnearFestivals(first)
       })
->>>>>>> 21e5f3bae0417333a0d6771a9490bf1f23e5c39e
   }, []);
 
   if (nextFestivals.length > 0) {
