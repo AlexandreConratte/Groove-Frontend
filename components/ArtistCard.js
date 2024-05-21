@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
 import {
   useFonts,
   Poppins_100Thin,
@@ -47,9 +47,16 @@ const styles = StyleSheet.create({
     width: (windowWidth / 4),
     height: (windowHeight / 4.44),
     margin: 8,
-    shadowColor: 'black',
-    shadowOffset: {width: 0, height: 3},
-    shadowOpacity: 0.5
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   imageContainer: {
     height: '66%',
