@@ -11,12 +11,6 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
-<<<<<<< HEAD
-  const [modalisVisible, setModalisVisible] = useState(true)
-  let next = []
-  let popular = []
-  let near = []
-=======
   let next = []
   let popular = []
   let near = []
@@ -36,15 +30,11 @@ export default function HomeScreen({ navigation }) {
     })();
   },
     []);
->>>>>>> front
 
   useEffect(() => {
     fetch('http://10.1.3.14:3000/festivals/findAll')
       .then(response => response.json())
       .then(data => {
-<<<<<<< HEAD
-        setnextFestivals(data.festivals)
-=======
         const now = Date.now()
         const result = data.festivals.map((e) => {
           const start = new Date(e.start)
@@ -56,7 +46,6 @@ export default function HomeScreen({ navigation }) {
         const first = sortbydate.slice(0, 10)
         setnextFestivals(first)
 
->>>>>>> front
       })
   }, []);
 
@@ -64,14 +53,10 @@ export default function HomeScreen({ navigation }) {
     fetch('http://10.1.3.14:3000/festivals/findAll')
       .then(response => response.json())
       .then(data => {
-<<<<<<< HEAD
-        const sortbyaverage = data.festivals.sort((a, b) => (b.averageParticipant - a.averageParticipant))
-=======
         const now = Date.now()
         const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
 
         const sortbyaverage = result.sort((a, b) => (b.averageParticipant - a.averageParticipant))
->>>>>>> front
         const first = sortbyaverage.slice(0, 10)
         setpopularFestivals(first)
       })
@@ -81,9 +66,6 @@ export default function HomeScreen({ navigation }) {
     fetch('http://10.1.3.14:3000/festivals/findAll')
       .then(response => response.json())
       .then(data => {
-<<<<<<< HEAD
-        setnearFestivals(data.festivals)
-=======
         const now = Date.now()
         const result = data.festivals.filter((e) => (new Date(e.start)-now) > 0)
 
@@ -98,7 +80,6 @@ export default function HomeScreen({ navigation }) {
         const sortbydistance = result2.sort((a, b) => (a.distance - b.distance))
         const first = sortbydistance.slice(0, 10)
         setnearFestivals(first)
->>>>>>> front
       })
   }, []);
 
@@ -119,29 +100,9 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title1}>Home</Text>
       </View>
-<<<<<<< HEAD
-
-      <Modal visible={modalisVisible} transparent={true} style={styles.modalBackground}>
-        <View style={styles.modalBackground}>
-
-          <View style={styles.modalContainer}>
-            <Text style={styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
-            <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Connect1')} style={styles.GotoConnectButton}>
-              <Text style={styles.connect}>Connecte Toi</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalisVisible(!modalisVisible)} style={styles.GoToApp}>
-              <Text style={styles.acced}>Accéder à l'application</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-=======
       <TouchableOpacity style={styles.user} onPress={() => navigation.navigate('Profile')}>
         <FontAwesome5 name="user-alt" size={30} color={"#19525A"} />
       </TouchableOpacity>
->>>>>>> front
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.section}>
           <Text style={styles.title2}>A venir...</Text>
