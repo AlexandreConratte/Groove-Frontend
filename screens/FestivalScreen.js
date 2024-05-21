@@ -62,6 +62,9 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   const handleShare = () => {
 
   }
+  if (!fontsLoaded) {
+    return <Text></Text> ;
+  }
 
   if (!fontsLoaded) {
     return <View></View>

@@ -1,18 +1,43 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-
+import {
+  useFonts,
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
+} from '@expo-google-fonts/poppins';
 
 
 export default function FestivalCard(props) {
   const navigation = useNavigation()
   const start = new Date(props.start).toLocaleDateString()
   const end = new Date(props.end).toLocaleDateString()
+  let [fontsLoaded] = useFonts({
+    Poppins_100Thin,
+    Poppins_200ExtraLight,
+    Poppins_300Light,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
+    Poppins_900Black,
+  });
+  if (!fontsLoaded) {
+    return <Text></Text> ;
+  }
+
   let image = "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716199438/icon-image-not-found-free-vector_jccw05.jpg"
   let timeLeft = ""
   let distance = ""
-
 
   if (props.pictures.length > 0) {
     image = props.pictures[0]
@@ -59,11 +84,19 @@ const styles = StyleSheet.create({
   container: {
     width: 170,
     height: 330,
-    borderColor: '#19525A',
-    borderWidth: 1,
-    margin: 5,
+    margin: 10,
     borderRadius: 10,
-
+    backgroundColor: 'white',
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   image: {
     width: 170,
@@ -75,22 +108,23 @@ const styles = StyleSheet.create({
     padding: 5,
   },
   title: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#19525A',
-    fontWeight: 'bold',
-    textAlign:'center'
+    textAlign: 'center',
+    fontFamily:'Poppins_600SemiBold'
   },
   text: {
     fontSize: 14,
     color: '#19525A',
-    width: 140
+    width: 140,
+    fontFamily:'Poppins_400Regular',
   },
   textBox: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   date: {
-    paddingLeft: 14
+    paddingLeft: 14,
   },
   fav: {
     position: 'absolute',
@@ -112,19 +146,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     left: 10,
     top: 10,
-    paddingHorizontal:5,
-    borderRadius:5,
-    color:"#19525A",
-    fontWeight:'bold'
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    color: "#19525A",
+    fontFamily:'Poppins_400Regular'  
   },
+
   distance: {
     position: 'absolute',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     left: 10,
     top: 10,
-    paddingHorizontal:5,
-    borderRadius:5,
-    color:"#19525A",
-    fontWeight:'bold'
+    paddingHorizontal: 5,
+    borderRadius: 5,
+    color: "#19525A",
+    fontFamily:'Poppins_400Regular'  
   }
 });

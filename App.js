@@ -21,12 +21,12 @@ import Festival from './screens/FestivalScreen'
 
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import users from "./reducers/user";
+import user from "./reducers/user";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 const store = configureStore({
-  reducer: { users },
+  reducer: { user },
  });
 
 const Stack = createNativeStackNavigator();
