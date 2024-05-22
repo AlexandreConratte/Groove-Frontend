@@ -28,7 +28,7 @@ export default function ProfileScreen({ navigation }) {
 <View style={styles.modalBackground}>
 
   <View style={styles.modalContainer}>
-    <Text style={styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
+    <Text style={styles.welcomeText}>Tu n'es toujours pas connecté(e) !</Text>
     <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
     <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
       <Text style={styles.connect}>Connecte Toi</Text>
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     paddingRight: 8,
     marginBottom: 10,
+    textShadowColor: '#19525a',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10
   },
   descripText: {
     fontSize: 16,

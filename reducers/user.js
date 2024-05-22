@@ -18,7 +18,7 @@ export const userSlice = createSlice({
       state.value = { username: '', token: '', password: '' };
     },
     signupUser : (state, action) => {
-      state.value = { ...state.value, ...action.payload };
+      state.value.connection = { ...state.value.connection, ...action.payload };
     },
     addCoordinate: (state, action) => {
       state.value.coordinate.longitude = action.payload.longitude;

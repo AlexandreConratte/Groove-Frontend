@@ -72,8 +72,8 @@ export default function Connect3Screen({ navigation }) {
   };
 
   const nextStep = () => {
-    dispatch(signupUser({ firstname, lastname, birthdate, city }))
-    console.log(birthdate)
+    dispatch(signupUser({ firstname, lastname, birthdate : date, city }))
+    // console.log(birthdate)
     navigation.navigate('Connect4');
   }
 
