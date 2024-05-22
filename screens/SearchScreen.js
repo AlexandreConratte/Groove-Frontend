@@ -36,7 +36,7 @@ export default function SearchResultsScreen({ navigation }) {
   const [dateStart, setdateStart] = useState("");
   const [dateEnd, setdateEnd] = useState("");
   const [date, setDate] = useState(new Date());
-  const [distance, setDistance] = useState(0);
+  const [distance, setDistance] = useState(50);
   const [focusedInput, setFocusedInput] = useState(null)
   const [searchQuery, setSearchQuery] = useState('');
   const [stylesdata, setstylesdata] = useState([]);
@@ -99,7 +99,12 @@ export default function SearchResultsScreen({ navigation }) {
       <View>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" value={start} editable={false} />
+          <TextInput
+            style={styles.inputDate}
+            placeholder="Sélectionnez une date"
+            placeholderTextColor='#19525a'
+            value={start}
+            editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
@@ -124,7 +129,12 @@ export default function SearchResultsScreen({ navigation }) {
       <View>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" value={end} editable={false} />
+          <TextInput
+            style={styles.inputDate}
+            placeholder="Sélectionnez une date"
+            placeholderTextColor='#19525a'
+            value={end}
+            editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
@@ -196,7 +206,7 @@ export default function SearchResultsScreen({ navigation }) {
             setfoundedCity('')
           }
           else {
-            setfoundedCity("Ville introuvable !")
+            setfoundedCity("Ville introuvable !");
           }
         })
     }
@@ -210,7 +220,7 @@ export default function SearchResultsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        navigation.navigate('SearchResultsScreen', { ...data })
+        (foundedCity === '') && navigation.navigate('SearchResultsScreen', { ...data })
       })
 
   }
@@ -232,100 +242,108 @@ export default function SearchResultsScreen({ navigation }) {
             <DateInputEnd label="Date de fin" />
           </View>
         </View>
-        <View>
+        <View style={styles.box}>
+          <Text style={styles.text}>Selectionner votre ville</Text>
           <TextInput placeholder="Ville" onChangeText={(value) => setVille(value)}
-            value={ville} style={[styles.input, { borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
+            value={ville}
+            style={[styles.input, { marginBottom: 0, borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
             ]}
             onFocus={() => setFocusedInput('ville')}
             onBlur={() => setFocusedInput(null)}
           />
           {cityNotFound}
-          <Text style={styles.label}>Distance max : {distance} km</Text>
-          <View style={styles.sliderContainer}>
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={1000}
-              step={50}
-              value={distance}
-              onValueChange={(value) => setDistance(value)}
-              minimumTrackTintColor="#15C2C2"
-              maximumTrackTintColor="#D2FFF4"
-              thumbTintColor="#15C2C2"
-            />
+          <Text style={styles.text}>Distance max : {distance} km</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={50}
+            maximumValue={1000}
+            step={50}
+            value={distance}
+            onValueChange={(value) => setDistance(value)}
+            minimumTrackTintColor="#15C2C2"
+            maximumTrackTintColor="#D2FFF4"
+            thumbTintColor="#15C2C2"
+          />
+        </View>
+        <View style={styles.box}>
+          {/*rechercher un style*/}
+          <Text style={styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
+          <TextInput
+            style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
+            ]}
+            placeholder="Rechercher un style"
+            placeholderTextColor='#19525a'
+            value={searchQuery}
+            onChangeText={(text) => handleSearch(text)}
+            onFocus={() => setFocusedInput('style')}
+            onBlur={() => setFocusedInput(null)}
+          />
+          <ScrollView style={styles.scrollView}>
+            {filteredData.map((item, i) => (
+              <TouchableOpacity
+                key={i}
+                style={styles.item}
+                onPress={() => handleSelectItem(item)}
+              >
+                <Text style={styles.text}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <View style={styles.selectedContainer}>
+            {selectedItems.map((item, i) => (
+              <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
+                <Text style={styles.text}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
-        </View>
-        {/*rechercher un style*/}
-        <TextInput
-          style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
-          ]}
-          placeholder="Rechercher un style"
-          value={searchQuery}
-          onChangeText={(text) => handleSearch(text)}
-          onFocus={() => setFocusedInput('style')}
-          onBlur={() => setFocusedInput(null)}
-        />
-        <ScrollView style={styles.scrollView}>
-          {filteredData.map((item, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[
-                styles.item,
-              ]}
-              onPress={() => handleSelectItem(item)}
-            >
-              <Text style={styles.itemText}>{item.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <View style={styles.selectedContainer}>
-          {selectedItems.map((item, i) => (
-            <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
-              <Text>{item.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
 
-        {/*rechercher un artiste*/}
-        <TextInput
-          style={[styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('artiste')}
-          onBlur={() => setFocusedInput(null)}
-          placeholder="Rechercher un artiste"
-          value={searchQuery2}
-          onChangeText={(text) => handleSearch2(text)}
-        />
-        <ScrollView style={styles.scrollView}>
-          {filteredData2.map((item2, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[
-                styles.item,
-              ]}
-              onPress={() => handleSelectItem2(item2)}
-            >
-              <Text style={styles.itemText}>{item2.name}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-        <View style={styles.selectedContainer}>
-          {selectedItems2.map((item2, i) => (
-            <TouchableOpacity key={i} style={styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
-              <Text>{item2.name}</Text>
-            </TouchableOpacity>
-          ))}
+          {/*rechercher un artiste*/}
+          <Text style={styles.text}>Selectionner 1 ou plusieurs artistes</Text>
+          <TextInput
+            style={[styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('artiste')}
+            onBlur={() => setFocusedInput(null)}
+            placeholder="Rechercher un artiste"
+            placeholderTextColor='#19525a'
+            value={searchQuery2}
+            onChangeText={(text) => handleSearch2(text)}
+          />
+          <ScrollView style={styles.scrollView}>
+            {filteredData2.map((item2, i) => (
+              <TouchableOpacity
+                key={i}
+                style={[
+                  styles.item,
+                ]}
+                onPress={() => handleSelectItem2(item2)}
+              >
+                <Text style={styles.text}>{item2.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <View style={styles.selectedContainer}>
+            {selectedItems2.map((item2, i) => (
+              <TouchableOpacity key={i} style={styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
+                <Text style={styles.text}>{item2.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
         </View>
-        <View style={styles.buttonTailleContainer}>
-          <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'petit' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('petit')}>
-            <Text style={[styles.buttonTailleText, { color: taille === 'petit' ? '#FFE45D' : '#19525a' }]}>{petit}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'moyen' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('moyen')}>
-            <Text style={[styles.buttonTailleText, { color: taille === 'moyen' ? '#FFE45D' : '#19525a' }]}>{moyen}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'grand' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('grand')}>
-            <Text style={[styles.buttonTailleText, { color: taille === 'grand' ? '#FFE45D' : '#19525a' }]}>{grand}</Text>
-          </TouchableOpacity>
+        <View style={styles.box}>
+          <Text style={styles.text}>Taille du festival (en nombre moyen de participants /jour) : </Text>
+          <View style={styles.buttonTailleContainer}>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'petit' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('petit')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'petit' ? '#FFE45D' : '#19525a' }]}>{petit}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'moyen' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('moyen')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'moyen' ? '#FFE45D' : '#19525a' }]}>{moyen}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'grand' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('grand')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'grand' ? '#FFE45D' : '#19525a' }]}>{grand}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -357,16 +375,13 @@ const styles = StyleSheet.create({
 
   scrollView: {
     maxHeight: 200,
-    marginTop: -11
+    marginTop: -11,
   },
 
   dateContainer: {
     flexDirection: 'row',
-    width: 280,
+    width: '90%',
     justifyContent: 'space-between',
-  },
-  slider: {
-    width: 280
   },
 
   title1: {
@@ -388,8 +403,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginBottom: 100,
-    width: 300,
+    width: '90%',
     height: 70,
+  },
+  box: {
+    width: '90%',
+    marginVertical:10
   },
   buttonContainer: {
     width: '100%',
@@ -401,20 +420,25 @@ const styles = StyleSheet.create({
     fontSize: 20
   },
   buttonTailleContainer: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%'
   },
   buttonTaille: {
-    margin: 10,
+    marginTop: 10,
+    marginBottom: 50,
     borderColor: '#19525A',
     borderWidth: 1,
     borderRadius: 10,
     padding: 5
   },
   buttonTailleText: {
-
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+    fontSize: 15
   },
   input: {
-    width: 280,
+    width: '100%',
     padding: 10,
     marginVertical: 10,
     borderWidth: 1,
@@ -422,23 +446,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 50,
     fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a'
   },
   inputDate: {
-    width: 130,
+    width: '100%',
     padding: 10,
-    marginVertical: 10,
     borderWidth: 1,
     borderColor: '#7CB7BF',
     borderRadius: 8,
     height: 50,
     fontSize: 15,
-    color: '#19525A'
+    color: '#19525A',
+    fontFamily: 'Poppins_400Regular',
+
   },
   selectedContainer: {
     flexDirection: 'row',
     marginVertical: 10,
     flexWrap: 'wrap',
-    width: 280
   },
   selectedItemText: {
     backgroundColor: '#FFE45D',
@@ -446,8 +472,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 5,
     margin: 5,
-    elevation: 2
-
+    elevation: 2,
+    fontFamily: 'Poppins_400Regular',
   },
   selectedItemText2: {
     backgroundColor: '#D2FFF4',
@@ -455,18 +481,28 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 5,
     margin: 5,
-    elevation: 2
+    elevation: 2,
+
   },
   item: {
-    padding: 10,
+    padding: 5,
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: '#7CB7BF',
-    width: 280
   },
   cityNotFound: {
     color: '#FF4848',
-    marginTop: -10,
-    marginBottom: 10
+    fontFamily: 'Poppins_400Regular',
+  },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a'
+  },
+  label: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a'
+  },
+  slider: {
+    marginBottom: 20
   }
 })
