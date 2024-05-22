@@ -1,6 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, FlatList } from 'react-native';
 import Checkbox from 'expo-checkbox';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ArtistCard from '../components/ArtistCard';
@@ -18,12 +19,16 @@ import {
 } from '@expo-google-fonts/poppins';
 import Carousel from 'react-native-reanimated-carousel';
 
+const BACKEND_URL = "https://backend-groove.vercel.app"
+
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
 export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
   const [isChecked, setChecked] = useState(false);
   const [indexSelected, setIndexSelected] = useState(0);
+  const [nbLike, setNbLike] = useState(0);
+  const [isLiked, setisLiked] = useState(false);
 
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -36,6 +41,9 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
+
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
 
   const images = props.pictures.map((url, index) => ({
     id: (index + 1).toString(),
@@ -58,9 +66,35 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
 
   const endDate = `${endDay}-${endMonth}-${endYear}`;
 
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/festivals/nbLikes`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ festivalId: props._id}),
+    }).then(response => response.json())
+    .then(data => {
+      if (data.result) {
+        setNbLike(data.nbLike)
+      }
+    })
+  },[isLiked])
+
   const artists = props.artists.map((e,i)=>{
     return <ArtistCard key={i} {...e}/>
   })
+
+  const handleHeart = () => {
+    fetch(`${BACKEND_URL}/users/likeDislikeFestival`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.connection.token, festivalId: props._id}),
+    }).then(response => response.json())
+    .then(data => {
+      if(data.result){
+        setisLiked(!isLiked)
+      }
+    })
+  }
 
   const handleShare = () => {
 
@@ -101,9 +135,13 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
               />
               <View style={styles.iconContainer}>
                 <View style={styles.iconHeart}>
-                  <FontAwesome name='heart' size={30} color={'#FFFFFF'} style={styles.iconFontawesome}/>
+                  <TouchableOpacity onPress={handleHeart}>
+                    {isLiked ? <FontAwesome name='heart' size={30} color={'#FF4848'} style={styles.iconFontawesome}/> : 
+                    <FontAwesome name='heart' size={30} color={'#FFFFFF'} style={styles.iconFontawesome}/>}
+                    
+                  </TouchableOpacity>
                   <View style={styles.nbLikesContainer}>
-                    <Text style={styles.nbLikes}>{props.nbLikes.length}</Text>
+                    <Text style={styles.nbLikes}>{nbLike}</Text>
                   </View>
                 </View>
                 <FontAwesome name='share-square-o' size={30} color={'#FFFFFF'} style={styles.iconFontawesome} onPress={handleShare}/>
@@ -171,7 +209,6 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF'
   },
   text: {
     fontFamily: 'Poppins_400Regular',
@@ -180,7 +217,6 @@ const styles = StyleSheet.create({
   header: {
     height: '10%',
     width:'100%',
-    backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'center',

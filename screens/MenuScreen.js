@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
     paddingTop: 35
   },
   button: {
-    width: 140,
-    height: 140,
+    width: (windowWidth/2.5),
+    height: (windowWidth/2.5),
     borderColor: '#8BA8AC',
     borderWidth: 5,
     margin: 10,
@@ -106,8 +106,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   lightButton: {
-    width: 140,
-    height: 140,
+    width: (windowWidth/2.5),
+    height: (windowWidth/2.5),
     borderColor: '#8AE0E0',
     borderWidth: 5,
     margin: 10,
