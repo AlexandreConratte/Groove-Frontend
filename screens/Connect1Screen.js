@@ -4,10 +4,34 @@ import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
 const BACKEND_URL = "https://backend-groove.vercel.app"
 import { login } from '../reducers/user';
+import {
+  useFonts,
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
+} from '@expo-google-fonts/poppins';
 
 
 
 export default function Connect1Screen({ navigation }) {
+
+  let [fontsLoaded] = useFonts({
+    Poppins_100Thin,
+    Poppins_200ExtraLight,
+    Poppins_300Light,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
+    Poppins_900Black,
+  });
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -45,14 +69,18 @@ export default function Connect1Screen({ navigation }) {
       });
   };
 
+  if (!fontsLoaded) {
+    return <View></View>
+  }
+
   return (
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <FontAwesome name='arrow-left' size={30} color="#19525a" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
+          <FontAwesome name='arrow-left' size={33} color="#19525a" />
         </TouchableOpacity>
-        <Text style={styles.title}>Connect</Text>
+        <Text style={styles.title1}>Connect</Text>
       </View>
 
       <View style={styles.buttonsContain}>
@@ -110,14 +138,18 @@ const styles = StyleSheet.create({
       flexDirection: "row",
       marginTop: 10
     },
-   
-  title: {
-    fontSize: 40,
-    alignContent: "center",
-    color: '#19525a',
-    fontWeight: "500",
-    marginRight: 80
-  },
+    title1: {
+      fontSize: 30,
+      color: '#19525A',
+      fontFamily: 'Poppins_600SemiBold'
+    },
+    iconArrow: {
+      position: 'absolute',
+      left: 9,
+      height: '60%',
+      width: '10%',
+      marginBottom: 5
+    },
   buttonsContain: {
     justifyContent: "space-evenly",
     flex: 1,
