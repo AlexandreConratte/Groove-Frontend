@@ -16,7 +16,7 @@ import {
 } from '@expo-google-fonts/poppins';
 
 
-export default function FestivalCard(props) {
+export default function FestivalCardHorizontal(props) {
   const navigation = useNavigation()
   const start = new Date(props.start).toLocaleDateString()
   const end = new Date(props.end).toLocaleDateString()
@@ -58,8 +58,6 @@ export default function FestivalCard(props) {
           source={{ uri: image }}
           style={styles.image}
         />
-        {timeLeft}
-        {distance}
         <TouchableOpacity style={styles.fav}>
           <FontAwesome name="heart-o" size={20} color={"#19525A"} />
         </TouchableOpacity>
@@ -82,8 +80,8 @@ export default function FestivalCard(props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 170,
-    height: 330,
+    width: 340,
+    height: 170,
     margin: 10,
     borderRadius: 10,
     backgroundColor: 'white',
@@ -97,15 +95,18 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
+    flexDirection:'row',
   },
+
   image: {
     width: 170,
     height: 170,
     borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
   },
   textContainer: {
     padding: 5,
+    width:'50%'
   },
   title: {
     fontSize: 16,
@@ -116,19 +117,20 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: '#19525A',
-    width: 140,
+    width: '90%',
     fontFamily:'Poppins_400Regular',
+
   },
   textBox: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   date: {
-    paddingLeft: 14,
+    marginLeft: 14,
   },
   fav: {
     position: 'absolute',
-    right: 10,
+    left: 10,
     top: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 100,
@@ -141,25 +143,4 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center'
   },
-  timeLeft: {
-    position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    left: 10,
-    top: 10,
-    paddingHorizontal: 5,
-    borderRadius: 5,
-    color: "#19525A",
-    fontFamily:'Poppins_400Regular'  
-  },
-
-  distance: {
-    position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    left: 10,
-    top: 10,
-    paddingHorizontal: 5,
-    borderRadius: 5,
-    color: "#19525A",
-    fontFamily:'Poppins_400Regular'  
-  }
 });

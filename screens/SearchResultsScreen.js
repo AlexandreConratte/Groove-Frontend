@@ -11,10 +11,12 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-
 const BACKEND_URL = "https://backend-groove.vercel.app"
 
-export default function SearchResultsScreen({ navigation }) {
+
+
+import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
+export default function SearchResultsScreen({ route, navigation }) {
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -26,15 +28,30 @@ export default function SearchResultsScreen({ navigation }) {
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
+  let festivals = []
+
   if (!fontsLoaded) {
     return <Text></Text>;
+  }
+  const objet = route.params;
+
+  if (objet.festivals) {
+    festivals = objet.festivals.map((e, i) => {
+      return (<FestivalCardHorizontal key={i} {...e} />)
+    })
+  }
+  else {
+    festivals = <Text>{objet.message}</Text>
   }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title1}>Recherche</Text>
-      </View>      
+      </View>
+      <ScrollView contentContainerStyle={styles.festivalsContainer}>
+        {festivals}
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }
@@ -57,4 +74,7 @@ const styles = StyleSheet.create({
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
+  festivalsContainer:{
+    alignItems:'center',
+  }
 })
