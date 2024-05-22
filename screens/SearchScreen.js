@@ -30,16 +30,38 @@ export default function SearchResultsScreen({ navigation }) {
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
-  const [Ville, setVille] = useState("");
+  const [ville, setVille] = useState("");
   const [start, setstart] = useState("");
   const [end, setend] = useState("");
+  const [dateStart, setdateStart] = useState("");
+  const [dateEnd, setdateEnd] = useState("");
   const [date, setDate] = useState(new Date());
-  const [distance, setDistance] = useState(0);
+  const [distance, setDistance] = useState(50);
   const [focusedInput, setFocusedInput] = useState(null)
   const [searchQuery, setSearchQuery] = useState('');
   const [stylesdata, setstylesdata] = useState([]);
   const [filteredData, setFilteredData] = useState(stylesdata);
   const [selectedItems, setSelectedItems] = useState([]);
+
+  const [searchQuery2, setSearchQuery2] = useState('');
+  const [artistsdata, setartistsdata] = useState([]);
+  const [filteredData2, setFilteredData2] = useState(artistsdata);
+  const [selectedItems2, setSelectedItems2] = useState([]);
+
+  const [taille, setTaille] = useState("");
+  const petit = "Petit < 10000"
+  const moyen = "Moyen"
+  const grand = "Grand > 30000"
+  const [foundedCity, setfoundedCity] = useState('');
+  const [place, setPlace] = useState({});
+
+  const selectTaille = (item) => {
+    if (item === taille)
+      setTaille("")
+    else {
+      setTaille(item)
+    }
+  }
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/styles/findAll`)
@@ -47,22 +69,15 @@ export default function SearchResultsScreen({ navigation }) {
       .then((data) => setstylesdata(data.styles))
   }, []);
 
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/artists/findAll`)
+      .then((response) => response.json())
+      .then((data) => setartistsdata(data.artists))
+  }, []);
+
   if (!fontsLoaded) {
     return <Text></Text>;
   }
-
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    if (query.length>0) {
-      const newData = stylesdata.filter((item) => {
-        const itemName = item.name.toLowerCase();
-        return itemName.includes(query.toLowerCase());
-      });
-      setFilteredData(newData);
-    } else {
-      setFilteredData(stylesdata);
-    }
-  };
 
   const DateInputStart = ({ label }) => {
     const [show, setShow] = useState(false);
@@ -72,8 +87,10 @@ export default function SearchResultsScreen({ navigation }) {
       setDate(currentDate);
 
       let tempDate = new Date(currentDate);
+      setdateStart(tempDate)
       let fortmatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
       setstart(fortmatDate);
+
     };
     const showDatepicker = () => {
       setShow(true);
@@ -82,7 +99,12 @@ export default function SearchResultsScreen({ navigation }) {
       <View>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" value={start} editable={false} />
+          <TextInput
+            style={styles.inputDate}
+            placeholder="Sélectionnez une date"
+            placeholderTextColor='#19525a'
+            value={start}
+            editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
@@ -96,6 +118,7 @@ export default function SearchResultsScreen({ navigation }) {
       setDate(currentDate);
 
       let tempDate = new Date(currentDate);
+      setdateEnd(tempDate)
       let fortmatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
       setend(fortmatDate);
     };
@@ -106,11 +129,29 @@ export default function SearchResultsScreen({ navigation }) {
       <View>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" value={end} editable={false} />
+          <TextInput
+            style={styles.inputDate}
+            placeholder="Sélectionnez une date"
+            placeholderTextColor='#19525a'
+            value={end}
+            editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
     );
+  };
+  //recheche de styles
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query.length > 0) {
+      const newData = stylesdata.filter((item) => {
+        const itemName = item.name.toLowerCase();
+        return itemName.includes(query.toLowerCase());
+      });
+      setFilteredData(newData);
+    } else {
+      setFilteredData(stylesdata);
+    }
   };
 
   const handleSelectItem = (item) => {
@@ -123,16 +164,76 @@ export default function SearchResultsScreen({ navigation }) {
     }
     setSelectedItems(newSelectedItems);
   };
+  //recheche d'artiste
+  const handleSearch2 = (query2) => {
+    setSearchQuery2(query2);
+    if (query2.length > 0) {
+      const newData = artistsdata.filter((item2) => {
+        const itemName = item2.name.toLowerCase();
+        return itemName.includes(query2.toLowerCase());
+      });
+      setFilteredData2(newData);
+    } else {
+      setFilteredData2(artistsdata);
+    }
+  };
+
+  const handleSelectItem2 = (item2) => {
+    let newSelectedItems2 = [...selectedItems2];
+
+    if (newSelectedItems2.includes(item2)) {
+      newSelectedItems2 = newSelectedItems2.filter((selectedItem2) => selectedItem2 !== item2);
+    } else if (newSelectedItems2.length < 5) {
+      newSelectedItems2.push(item2);
+    }
+    setSelectedItems2(newSelectedItems2);
+  };
+
+
+  const search = () => {
+    if (ville.length > 0) {
+      fetch(`https://api-adresse.data.gouv.fr/search/?q=${ville}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.features.length > 0) {
+            const firstCity = data.features[0];
+            const newPlace = {
+              name: firstCity.properties.city,
+              latitude: firstCity.geometry.coordinates[1],
+              longitude: firstCity.geometry.coordinates[0],
+            }
+            setPlace(newPlace)
+            setfoundedCity('')
+          }
+          else {
+            setfoundedCity("Ville introuvable !");
+          }
+        })
+    }
+    const sendArtists = selectedItems2.map((e) => e.name)
+    const sendStyles = selectedItems.map((e) => e.name)
+
+    fetch(`${BACKEND_URL}/festivals/search`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ start: dateStart, end: dateEnd, cityLongitude: place.longitude, cityLatitude: place.latitude, maxKm: distance, style: sendStyles, artists: sendArtists, averageParticipant: taille }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        (foundedCity === '') && navigation.navigate('SearchResultsScreen', { ...data })
+      })
+
+  }
+
+
+  const cityNotFound = <Text style={styles.cityNotFound}>{foundedCity}</Text>
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
-          <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
-        </TouchableOpacity>
         <Text style={styles.title1}>Recherche</Text>
       </View>
-      <View style={styles.allElement} >
+      <ScrollView contentContainerStyle={styles.allElement} >
         <View style={styles.dateContainer}>
           <View style={styles.textandinputcontain}>
             <DateInputStart label="Date de debut" />
@@ -141,65 +242,116 @@ export default function SearchResultsScreen({ navigation }) {
             <DateInputEnd label="Date de fin" />
           </View>
         </View>
-        <View >
+        <View style={styles.box}>
+          <Text style={styles.text}>Selectionner votre ville</Text>
           <TextInput placeholder="Ville" onChangeText={(value) => setVille(value)}
-            value={Ville} style={[styles.input, { borderColor: focusedInput === 'Ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'Ville' ? 2 : 1 }
+            value={ville}
+            style={[styles.input, { marginBottom: 0, borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
             ]}
-            onFocus={() => setFocusedInput('Ville')}
+            onFocus={() => setFocusedInput('ville')}
             onBlur={() => setFocusedInput(null)}
           />
-          <Text style={styles.label}>Distance max : {distance} km</Text>
-          <View style={styles.sliderContainer}>
-            <Slider
-              style={styles.slider}
-              minimumValue={0}
-              maximumValue={1000}
-              step={50}
-              value={distance}
-              onValueChange={(value) => setDistance(value)}
-              minimumTrackTintColor="#15C2C2"
-              maximumTrackTintColor="#D2FFF4"
-              thumbTintColor="#15C2C2"
-            />
-          </View>
+          {cityNotFound}
+          <Text style={styles.text}>Distance max : {distance} km</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={50}
+            maximumValue={1000}
+            step={50}
+            value={distance}
+            onValueChange={(value) => setDistance(value)}
+            minimumTrackTintColor="#15C2C2"
+            maximumTrackTintColor="#D2FFF4"
+            thumbTintColor="#15C2C2"
+          />
         </View>
-
+        <View style={styles.box}>
+          {/*rechercher un style*/}
+          <Text style={styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
+            ]}
             placeholder="Rechercher un style"
+            placeholderTextColor='#19525a'
             value={searchQuery}
             onChangeText={(text) => handleSearch(text)}
+            onFocus={() => setFocusedInput('style')}
+            onBlur={() => setFocusedInput(null)}
           />
-
           <ScrollView style={styles.scrollView}>
-            {filteredData.map((item,i) => (
+            {filteredData.map((item, i) => (
+              <TouchableOpacity
+                key={i}
+                style={styles.item}
+                onPress={() => handleSelectItem(item)}
+              >
+                <Text style={styles.text}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <View style={styles.selectedContainer}>
+            {selectedItems.map((item, i) => (
+              <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
+                <Text style={styles.text}>{item.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {/*rechercher un artiste*/}
+          <Text style={styles.text}>Selectionner 1 ou plusieurs artistes</Text>
+          <TextInput
+            style={[styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('artiste')}
+            onBlur={() => setFocusedInput(null)}
+            placeholder="Rechercher un artiste"
+            placeholderTextColor='#19525a'
+            value={searchQuery2}
+            onChangeText={(text) => handleSearch2(text)}
+          />
+          <ScrollView style={styles.scrollView}>
+            {filteredData2.map((item2, i) => (
               <TouchableOpacity
                 key={i}
                 style={[
                   styles.item,
                 ]}
-                onPress={() => handleSelectItem(item)}
+                onPress={() => handleSelectItem2(item2)}
               >
-                <Text style={styles.itemText}>{item.name}</Text>
+                <Text style={styles.text}>{item2.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
           <View style={styles.selectedContainer}>
-            {selectedItems.map((item,i) => (
-              <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
-                <Text>{item.name}</Text>
+            {selectedItems2.map((item2, i) => (
+              <TouchableOpacity key={i} style={styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
+                <Text style={styles.text}>{item2.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
-        
 
-      </View>
-      <View style={styles.buttonContainer}>
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SearchResultsScreen')}>
-        <Text style={styles.buttonText}>Rechercher</Text>
-      </TouchableOpacity>
+        </View>
+        <View style={styles.box}>
+          <Text style={styles.text}>Taille du festival (en nombre moyen de participants /jour) : </Text>
+          <View style={styles.buttonTailleContainer}>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'petit' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('petit')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'petit' ? '#FFE45D' : '#19525a' }]}>{petit}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'moyen' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('moyen')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'moyen' ? '#FFE45D' : '#19525a' }]}>{moyen}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'grand' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('grand')}>
+              <Text style={[styles.buttonTailleText, { color: taille === 'grand' ? '#FFE45D' : '#19525a' }]}>{grand}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-      </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => search()}>
+            <Text style={styles.buttonText}>Rechercher</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   )
 }
@@ -216,25 +368,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-start'
   },
-  allElement:{
-    padding:10,
-    alignItems:'center',
+  allElement: {
+    padding: 10,
+    alignItems: 'center',
   },
 
   scrollView: {
     maxHeight: 200,
-    marginTop:-11
+    marginTop: -11,
   },
-  
-  dateContainer:{
-    flexDirection:'row',
-    width:280,
-    justifyContent:'space-between',
+
+  dateContainer: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent: 'space-between',
   },
-  slider:{
-    width:280
-  },
-  
+
   title1: {
     fontSize: 30,
     color: '#19525A',
@@ -253,21 +402,43 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginBottom: 10,
-    width: 300,
-    height:70
+    marginBottom: 100,
+    width: '90%',
+    height: 70,
   },
-  buttonContainer:{
-    width:'100%',
-    alignItems:'center'
+  box: {
+    width: '90%',
+    marginVertical:10
+  },
+  buttonContainer: {
+    width: '100%',
+    alignItems: 'center',
   },
   buttonText: {
     color: 'white',
     fontFamily: 'Poppins_600SemiBold',
-    fontSize:20
+    fontSize: 20
+  },
+  buttonTailleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%'
+  },
+  buttonTaille: {
+    marginTop: 10,
+    marginBottom: 50,
+    borderColor: '#19525A',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5
+  },
+  buttonTailleText: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+    fontSize: 15
   },
   input: {
-    width: 280,
+    width: '100%',
     padding: 10,
     marginVertical: 10,
     borderWidth: 1,
@@ -275,36 +446,63 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 50,
     fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a'
   },
   inputDate: {
-    width: 130,
+    width: '100%',
     padding: 10,
-    marginVertical: 10,
     borderWidth: 1,
     borderColor: '#7CB7BF',
     borderRadius: 8,
     height: 50,
     fontSize: 15,
-    color: '#19525A'
+    color: '#19525A',
+    fontFamily: 'Poppins_400Regular',
+
   },
   selectedContainer: {
     flexDirection: 'row',
-    marginVertical:10,
-    flexWrap:'wrap',
-    width:280
+    marginVertical: 10,
+    flexWrap: 'wrap',
   },
   selectedItemText: {
     backgroundColor: '#FFE45D',
     color: '#19525A',
     borderRadius: 5,
     padding: 5,
-    margin: 5
+    margin: 5,
+    elevation: 2,
+    fontFamily: 'Poppins_400Regular',
+  },
+  selectedItemText2: {
+    backgroundColor: '#D2FFF4',
+    color: '#19525A',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    elevation: 2,
+
   },
   item: {
-    padding: 10,
+    padding: 5,
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: '#7CB7BF',
-    width:280
   },
+  cityNotFound: {
+    color: '#FF4848',
+    fontFamily: 'Poppins_400Regular',
+  },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a'
+  },
+  label: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a'
+  },
+  slider: {
+    marginBottom: 20
+  }
 })
