@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Poppins_400Regular',
     color: '#19525A'
-  },
+  }, 
   header: {
     height: '10%',
     width:'100%',

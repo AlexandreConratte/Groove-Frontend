@@ -1,11 +1,36 @@
 import { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+
 import { useDispatch } from 'react-redux';
 import { signupUser } from '../reducers/user';
+import {
+  useFonts,
+  Poppins_100Thin,
+  Poppins_200ExtraLight,
+  Poppins_300Light,
+  Poppins_400Regular,
+  Poppins_500Medium,
+  Poppins_600SemiBold,
+  Poppins_700Bold,
+  Poppins_800ExtraBold,
+  Poppins_900Black,
+} from '@expo-google-fonts/poppins';
 
 
 export default function Connect2Screen({ navigation }) {
+  let [fontsLoaded] = useFonts({
+    Poppins_100Thin,
+    Poppins_200ExtraLight,
+    Poppins_300Light,
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
+    Poppins_900Black,
+  });
 
 
   const dispatch = useDispatch();
@@ -52,16 +77,18 @@ export default function Connect2Screen({ navigation }) {
     }
   };
 
-
+  if (!fontsLoaded) {
+    return <View></View>
+  }
 
   return (
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <FontAwesome name='arrow-left' size={30} color="#19525a" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
+          <FontAwesome5 name='arrow-left' size={33} color={"#19525a"} />
         </TouchableOpacity>
-        <Text style={styles.title}>Connect</Text>
+        <Text style={styles.title1}>Connect</Text>
       </View>
 
       <View style={styles.containerConnect}>
@@ -131,23 +158,27 @@ export default function Connect2Screen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF'
+  },
+  text: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525A'
   },
   header: {
-    height: 86,
-    justifyContent: "space-around",
-    borderBottomColor: '#19525A',
+    height: '10%',
+    width:'100%',
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    position: 'relative',
     borderBottomWidth: 3,
-    width: Dimensions.get('window').width,
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: 10
+    borderBottomColor: '#15C2C2',
   },
-  title: {
-    fontSize: 40,
-    alignContent: "center",
-    color: '#19525a',
-    fontWeight: "500",
-    marginRight: 80
+  title1: {
+    fontSize: 30,
+    color: '#19525A',
+    fontFamily: 'Poppins_600SemiBold'
   },
   button: {
     backgroundColor: 'yellow'
@@ -158,6 +189,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
 
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
   },
   input: {
     width: 280,
