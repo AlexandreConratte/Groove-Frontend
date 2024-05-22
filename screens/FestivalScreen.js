@@ -1,4 +1,5 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, FlatList } from 'react-native';
+import Checkbox from 'expo-checkbox';
 import { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -21,7 +22,9 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
 export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
+  const [isChecked, setChecked] = useState(false);
   const [indexSelected, setIndexSelected] = useState(0);
+
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -64,10 +67,6 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   }
   if (!fontsLoaded) {
     return <Text></Text> ;
-  }
-
-  if (!fontsLoaded) {
-    return <View></View>
   }
 
   return (
@@ -127,13 +126,32 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
               <FontAwesome name='map-marker' size={25} color={'#FF4848'}/>
               <Text style={[styles.blueText]}> : {props.adress.place}, {props.adress.city}</Text>
             </View>
-            
-          <View style={styles.dateContainer}>
-            <Text  style={[styles.dateText]}>Du {startDate} Au {endDate}</Text>
-          </View>
+
           <View style={styles.shortDescContainer}>
             <Text style={[styles.descriptionText, styles.text]}>{props.description}</Text>
           </View>
+
+          <View style={styles.listContainer}>
+            <View style={styles.listItem}>
+              <Text style={styles.bulletPoint}>• </Text>
+              <Text  style={[styles.FlatListText]}>Du <Text style={[styles.BoldText]}>{startDate}</Text> au <Text style={[styles.BoldText]}>{endDate}</Text></Text>
+            </View>
+            <View style={styles.listItem}>
+              <Text style={styles.bulletPoint}>• </Text>
+              <Text style={[styles.FlatListText]}>Nombre Moyen de participants : <Text style={[styles.BoldText]}>{props.averageParticipant}</Text></Text>
+            </View>
+            <View style={styles.listItem}>
+              <Text style={styles.bulletPoint}>• </Text>
+              <Text style={[styles.FlatListText]}>J'ai déjà participé à ce festival :  </Text>
+              <Checkbox
+                style={styles.checkbox}
+                value={isChecked}
+                onValueChange={setChecked}
+                color={isChecked ? '#15C2C2' : '#19525A'}
+              />
+            </View>
+          </View>
+
           <View style={styles.artistsContainer}>
             <Text style={[styles.lineUpText]}>Line Up :</Text>
             <ScrollView style={styles.artistsCardContainer} horizontal={true} pagingEnabled={false}>
@@ -143,6 +161,7 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
           <View style={styles.longDescContainer}>
             <Text style={[styles.descriptionText, styles.text]}>{props.moreAbout}</Text>
           </View>
+          
         </View>
       </ScrollView>
     </View>
@@ -268,20 +287,37 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   longDescContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginHorizontal: 10,
     marginBottom: 16,
   },
   descriptionText: {
     fontSize: 15
+  },
+  listContainer: {
+    borderTopColor: '#19525A',
+    borderTopWidth: 3,
+  },
+  listItem: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  bulletPoint: {
+    
+  },
+  checkbox: {
+    color: '#19525A'
   },
   lineUpText: {
     fontSize: 18,
     fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
   },
-  dateText: {
-    fontSize: 18,
+  FlatListText: {
+    color: '#19525A',
+    fontFamily: 'Poppins_400Regular',
+  },
+  BoldText: {
     fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
   },
