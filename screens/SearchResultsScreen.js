@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
   },
   festivalsContainer: {
     alignItems: 'center',
-    height:'100%'
   },
   critereButton: {
     width: '50%',
