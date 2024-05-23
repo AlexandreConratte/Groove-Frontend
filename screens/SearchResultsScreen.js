@@ -118,6 +118,7 @@ export default function SearchResultsScreen({ route, navigation }) {
       <Modal
         transparent={true}
         visible={modalVisible}
+        onBackdropPress={() => setModal(false)}
       >
         <View style={styles.centeredView}>
           {festival}
