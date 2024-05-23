@@ -100,7 +100,6 @@ export default function Connect2Screen({ navigation }) {
         setError6(true)
         console.log('Email déjà existant')
         valid = false
-        
       }
       if (!resultuser.result && !resultmail.result) {
         dispatch(signupUser({ username, email, password, phone }))
