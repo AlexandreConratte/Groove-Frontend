@@ -15,7 +15,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import { signupUser } from '../reducers/user';
+import { signupUser, resetDatas, login } from '../reducers/user';
 
 
 
@@ -31,6 +31,7 @@ export default function Connect4Screen({ navigation }) {
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [artistsData, setArtistsData] = useState([]);
   const [filteredData, setFilteredData] = useState(artistsData);
+  const [stylesId, setStylesId] = useState([]);
 
 
 
@@ -48,7 +49,7 @@ export default function Connect4Screen({ navigation }) {
 
 
    const BACKEND_URL = "https://backend-groove.vercel.app"
-  // const BACKEND_URL = "http://10.1.0.205:3000"
+   // const BACKEND_URL = "http://10.1.0.205:3000"
   
   // début selection des styles
   useEffect(() => {
@@ -56,7 +57,7 @@ export default function Connect4Screen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         setStylesData(data.styles)
-        //   console.log(data.styles)
+       // console.log(data.styles)
       })
       .catch((error) => console.error('Error:', error));
   }, []);
@@ -64,19 +65,22 @@ export default function Connect4Screen({ navigation }) {
   const Select_a_Style = (style) => {
     setSelectedStyles((selectedStyles) => {
       if (selectedStyles.includes(style)) {
+        
         return selectedStyles.filter((e) => e !== style);
+       
       } else if (selectedStyles.length < 5) {
         return [...selectedStyles, style];
       }
+      
       return selectedStyles;
     });
   };
 
   const allstyles = stylesData.map((data, i) => {
-    const isSelected = selectedStyles.includes(data.name);
+    const isSelected = selectedStyles.includes(data._id);
     return (
       <TouchableOpacity key={i} title={data.name} style={ isSelected ? styles.selectedButtonStyle : styles.buttonstyle }
-        onPress={() => Select_a_Style(data.name)}>
+        onPress={() => Select_a_Style(data._id)}>
         <Text style={[styles.stylelist, isSelected && styles.selectedStyletext]}>{data.name}</Text>
       </TouchableOpacity>
     )
@@ -118,25 +122,21 @@ export default function Connect4Screen({ navigation }) {
  // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
   const finalSignUpClick = () => {
 
+    const artistIds = selectedArtists.map(artist => artist._id);
+
     const userData = {
       username: user.connection.username,
       password: user.connection.password,
       email: user.connection.email,
       firstname: user.connection.firstname,
       lastname: user.connection.lastname,
-      birthdate: user.connection.birthdate,
+      birthdate: new Date(user.connection.birthdate),
       city: user.connection.city,
       styles: selectedStyles,
-      artists: selectedArtists,
+      artists: artistIds
     };
-   console.log(userData)
-   /* fetch(`${BACKEND_URL}/users/signin`, {
-      method: "POST",
-      headers : { 'Content-Type' : 'application/json'},
-      body : JSON.stringify({username: "yolo", password : "yolo"})
-    })
-    .then( response => response.json())
-    .then(data  => console.log(data)) */
+    console.log(artistIds)
+    // console.log(selectedStyles)
 
     fetch(`${BACKEND_URL}/users/signup`, {
         method: 'POST',
@@ -144,9 +144,24 @@ export default function Connect4Screen({ navigation }) {
         body: JSON.stringify(userData),
       })
       .then(response => response.json())
-      .then(data => { console.log(data)}) 
-      
+      .then(data => { 
+        if (data.token) {
+          dispatch(login({ token: data.token })); 
+          dispatch(resetDatas()); 
+          console.log('Sign up successful', data);
+          navigation.navigate('Home')
+        } else {
+          console.error('Sign up failed', data);
+        }})
         
+         
+   /* fetch(`${BACKEND_URL}/users/signin`, {
+      method: "POST",
+      headers : { 'Content-Type' : 'application/json'},
+      body : JSON.stringify({username: "yolo", password : "yolo"})
+    })
+    .then( response => response.json())
+    .then(data  => console.log(data)) */
     };
 
   if (!fontsLoaded) {

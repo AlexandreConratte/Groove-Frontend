@@ -20,6 +20,10 @@ import {
 
 
 export default function Connect2Screen({ navigation }) {
+
+  // const BACKEND_URL = "https://backend-groove.vercel.app"
+  const BACKEND_URL = "http://10.1.0.205:3000"
+
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -44,16 +48,15 @@ export default function Connect2Screen({ navigation }) {
   const [error2, setError2] = useState(false)
   const [error3, setError3] = useState(false)
   const [error4, setError4] = useState(false)
+  const [error5, setError5] = useState(false)
+  const [error6, setError6] = useState(false)
   const [focusedInput, setFocusedInput] = useState(null)
 
   const mailregex = /^((?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$/
-  
-  const validFields = () => {
+
+  const validFields = async () => {
 
     let valid = true;
-    setError(false);
-    setError2(false);
-    setError3(false);
 
     if (!username) {
       setError2(true);
@@ -71,11 +74,44 @@ export default function Connect2Screen({ navigation }) {
       setError(true);
       valid = false;
     }
+
     if (valid) {
-      dispatch(signupUser({ username, email , password,  phone  }))
-      navigation.navigate('Connect3' , );
+      const checkuser = await fetch(`${BACKEND_URL}/users/checkUser`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username }),
+      })
+      const resultuser = await checkuser.json()
+
+      console.log(resultuser)
+      if (resultuser.result) {
+        setError5(true)
+        console.log('Nom utilisateur déjà existant')
+        valid = false
+      }
+
+      const checkmail = await fetch(`${BACKEND_URL}/users/checkMail`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const resultmail = await checkmail.json()
+      if (resultmail.result) {
+        setError6(true)
+        console.log('Email déjà existant')
+        valid = false
+        
+      }
+      if (!resultuser.result && !resultmail.result) {
+        dispatch(signupUser({ username, email, password, phone }))
+        navigation.navigate('Connect3',);
+      }
     }
-  };
+
+
+  }
+  //};
+  // }
 
   if (!fontsLoaded) {
     return <View></View>
@@ -95,54 +131,56 @@ export default function Connect2Screen({ navigation }) {
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>Pseudo </Text>
           <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
-            value={username}  style={[styles.input,  { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, {borderWidth: focusedInput === 'username' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('username')}
-          onBlur={() => setFocusedInput(null)} 
-        />
+            value={username} style={[styles.input, { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'username' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('username')}
+            onBlur={() => setFocusedInput(null)}
+          />
           {error2 && <Text style={styles.error}> Champ Obligatoire</Text>}
+          {error5 && <Text style={styles.error}> Nom utilisateur déjà existant</Text>}
         </View>
 
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>E-mail </Text>
-          <TextInput placeholder="exemple@email.com" onChangeText={(value) => setEmail(value)}
-            value={email}  style={[styles.input,  { borderColor: focusedInput === 'email' ? '#15C2C2' : '#7CB7BF' }, {borderWidth: focusedInput === 'email' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('email')}
-          onBlur={() => setFocusedInput(null)} 
-        />
+          <TextInput placeholder="exemple@email.com" onChangeText={(value) => setEmail(value)  } autoCapitalize="none"
+            value={email} style={[styles.input, { borderColor: focusedInput === 'email' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'email' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('email')}
+            onBlur={() => setFocusedInput(null)}
+          />
           {error && <Text style={styles.error}> E-mail invalide</Text>}
+          {error6 && <Text style={styles.error}> Email déjà existant</Text>}
         </View>
 
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>Téléphone</Text>
           <TextInput placeholder="Téléphone" onChangeText={(value) => setPhone(value)}
-            value={phone}  style={[styles.input,  { borderColor: focusedInput === 'phone' ? '#15C2C2' : '#7CB7BF' }, {borderWidth: focusedInput === 'phone' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('phone')}
-          onBlur={() => setFocusedInput(null)} 
-        />
-            </View>
+            value={phone} style={[styles.input, { borderColor: focusedInput === 'phone' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'phone' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('phone')}
+            onBlur={() => setFocusedInput(null)}
+          />
+        </View>
 
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>Mot de passe</Text>
           <TextInput placeholder="Mot de passe" secureTextEntry={true} onChangeText={(value) => setPassword(value)}
-            value={password}  style={[styles.input,  { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, {borderWidth: focusedInput === 'password' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('password')}
-          onBlur={() => setFocusedInput(null)} 
-        />
+            value={password} style={[styles.input, { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('password')}
+            onBlur={() => setFocusedInput(null)}
+          />
           {error3 && <Text style={styles.error}> Champ Obligatoire</Text>}
         </View>
 
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>Confirmer le mot de passe</Text>
           <TextInput placeholder="Confirmer le mot de passe" secureTextEntry={true} onChangeText={(value) => setConfirmPassWord(value)}
-            value={confirmPassword}  style={[styles.input,  { borderColor: focusedInput === 'confirmPassword' ? '#15C2C2' : '#7CB7BF' }, {borderWidth: focusedInput === 'confirmPassword' ? 2 : 1 }
-          ]}
-          onFocus={() => setFocusedInput('confirmPassword')}
-          onBlur={() => setFocusedInput(null)} 
-        />
+            value={confirmPassword} style={[styles.input, { borderColor: focusedInput === 'confirmPassword' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'confirmPassword' ? 2 : 1 }
+            ]}
+            onFocus={() => setFocusedInput('confirmPassword')}
+            onBlur={() => setFocusedInput(null)}
+          />
           {error4 && <Text style={styles.error}> Mot de passe incorrect</Text>}
         </View>
 
@@ -166,7 +204,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: '10%',
-    width:'100%',
+    width: '100%',
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'flex-end',
