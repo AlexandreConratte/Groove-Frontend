@@ -13,7 +13,6 @@ import {
 } from '@expo-google-fonts/poppins';
 const BACKEND_URL = "https://backend-groove.vercel.app"
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
-
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
 import { useState } from 'react';
 export default function SearchResultsScreen({ route, navigation }) {

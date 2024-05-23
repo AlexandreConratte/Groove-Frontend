@@ -13,7 +13,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
 
@@ -25,25 +25,22 @@ const windowHeight = Dimensions.get('window').height;
 export default function MyFestivalsScreen({ navigation, route }) {
   const [festivalsLiked, setFestivalsLiked] = useState([]);
   const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetch(`${BACKEND_URL}/users/findLiked`,{
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.connection.token}),
-    })
-    .then(response => response.json())
+      body: JSON.stringify({ token: user.token }),
+    }).then(response => response.json())
     .then(data => {
-      if(data.result) {
-        setFestivalsLiked(data.festivalsLiked)
-      } else {
-
-      }
+      setFestivalsLiked(data.festivalsLiked)
     })
-  },[]);
+  },[user])
+
 
   const festivals = festivalsLiked.map((e,i) => {
-    return (<FestivalCardHorizontal key={i} {...e} />)
+    return (<FestivalCardHorizontal key={i} {...e} isLiked={true}/>)
   })
 
   return (
