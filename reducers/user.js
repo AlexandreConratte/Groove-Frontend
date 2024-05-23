@@ -1,9 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  value: { coordinate : { longitude: null, latitude: null },
-    connection : { username: '', token: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
-    picture: ''} },
+  value: { token ,  
+    coordinate : { longitude: null, latitude: null },
+    connection : { username: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
+    picture: ''}, },
 };
 
 export const userSlice = createSlice({
@@ -12,10 +13,10 @@ export const userSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.value.token = action.payload.token;
-      state.value.username = action.payload.username;
+     
     },
     logout: (state) => {
-      state.value = { username: '', token: '', password: '' };
+      state.value = {};
     },
     signupUser : (state, action) => {
       state.value.connection = { ...state.value.connection, ...action.payload };
