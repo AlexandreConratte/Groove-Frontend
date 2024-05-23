@@ -82,15 +82,17 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   })
 
   const handleHeart = () => {
-    fetch(`${BACKEND_URL}/users/likeDislikeFestival`,{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.token, festivalId: props._id}),
-    }).then(response => response.json())
-    .then(data => {
-      const festivalIds = data.likedFestivals.map(festival => festival);
-      dispatch(updateLikedFestival(festivalIds));
-    })
+    if(user.token) {
+      fetch(`${BACKEND_URL}/users/likeDislikeFestival`,{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: user.token, festivalId: props._id}),
+      }).then(response => response.json())
+      .then(data => {
+        const festivalIds = data.likedFestivals.map(festival => festival);
+        dispatch(updateLikedFestival(festivalIds));
+      })
+    }
   }
 
   const handleShare = () => {
@@ -98,15 +100,19 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   }
 
   const handleCheckbox = () => {
-    fetch(`${BACKEND_URL}/users/MemFest`,{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.token, festivalId: props._id}),
-    }).then(response => response.json())
-    .then(data => {
-      const festivalsIds = data.memoriesFestivals.map(festival => festival);
-      dispatch(updateMemoriesFestival(festivalsIds));
-    })
+    if(user.token) {
+      fetch(`${BACKEND_URL}/users/MemFest`,{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: user.token, festivalId: props._id}),
+      }).then(response => response.json())
+      .then(data => {
+        const festivalsIds = data.memoriesFestivals.map(festival => festival);
+        dispatch(updateMemoriesFestival(festivalsIds));
+      })
+    } else {
+      
+    }
   }
 
   if (!fontsLoaded) {

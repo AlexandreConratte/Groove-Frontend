@@ -11,10 +11,12 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import { useEffect, useState } from 'react';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
+import { useDispatch, useSelector } from 'react-redux';
+
 
 const BACKEND_URL = "https://backend-groove.vercel.app"
 
@@ -54,6 +56,7 @@ export default function SearchResultsScreen({ navigation }) {
   const grand = "Grand > 30000"
   const [foundedCity, setfoundedCity] = useState('');
   const [place, setPlace] = useState({});
+  const userCoordinate = useSelector((state) => state.user.value.coordinate)
 
   const selectTaille = (item) => {
     if (item === taille)
@@ -88,20 +91,19 @@ export default function SearchResultsScreen({ navigation }) {
 
       let tempDate = new Date(currentDate);
       setdateStart(tempDate)
-      let fortmatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-      setstart(fortmatDate);
+      setstart(currentDate.toLocaleDateString());
 
     };
     const showDatepicker = () => {
       setShow(true);
     };
     return (
-      <View>
+      <View style={styles.datebox}>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
           <TextInput
             style={styles.inputDate}
-            placeholder="Sélectionnez une date"
+            placeholder="Date de debut"
             placeholderTextColor='#19525a'
             value={start}
             editable={false} />
@@ -119,19 +121,18 @@ export default function SearchResultsScreen({ navigation }) {
 
       let tempDate = new Date(currentDate);
       setdateEnd(tempDate)
-      let fortmatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-      setend(fortmatDate);
+      setend(currentDate.toLocaleDateString());
     };
     const showDatepicker = () => {
       setShow(true);
     };
     return (
-      <View>
+      <View style={styles.datebox}>
         <Text style={styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
           <TextInput
             style={styles.inputDate}
-            placeholder="Sélectionnez une date"
+            placeholder="Date de fin"
             placeholderTextColor='#19525a'
             value={end}
             editable={false} />
@@ -188,7 +189,13 @@ export default function SearchResultsScreen({ navigation }) {
     }
     setSelectedItems2(newSelectedItems2);
   };
-
+  const myPosition=()=>{
+    fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${userCoordinate.longitude}&lat=${userCoordinate.latitude}`)
+    .then((response) => response.json())
+        .then((data) => {
+          setVille(data.features[0].properties.city)
+        })
+  }
 
   const search = () => {
     if (ville.length > 0) {
@@ -222,7 +229,6 @@ export default function SearchResultsScreen({ navigation }) {
       .then((data) => {
         (foundedCity === '') && navigation.navigate('SearchResultsScreen', { ...data })
       })
-
   }
 
 
@@ -235,22 +241,23 @@ export default function SearchResultsScreen({ navigation }) {
       </View>
       <ScrollView contentContainerStyle={styles.allElement} >
         <View style={styles.dateContainer}>
-          <View style={styles.textandinputcontain}>
-            <DateInputStart label="Date de debut" />
-          </View>
-          <View style={styles.textandinputcontain}>
-            <DateInputEnd label="Date de fin" />
-          </View>
+          <DateInputStart label="Date de debut" />
+          <DateInputEnd label="Date de fin" />
         </View>
         <View style={styles.box}>
           <Text style={styles.text}>Selectionner votre ville</Text>
-          <TextInput placeholder="Ville" onChangeText={(value) => setVille(value)}
-            value={ville}
-            style={[styles.input, { marginBottom: 0, borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
-            ]}
-            onFocus={() => setFocusedInput('ville')}
-            onBlur={() => setFocusedInput(null)}
-          />
+          <View style={styles.searchcity}>
+            <TextInput placeholder="Ville" onChangeText={(value) => setVille(value)}
+              value={ville}
+              style={[styles.inputville, { borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
+              ]}
+              onFocus={() => setFocusedInput('ville')}
+              onBlur={() => setFocusedInput(null)}
+            />
+            <TouchableOpacity onPress={() => myPosition()}>
+              <FontAwesome6 name='location-crosshairs' size={50} color={'#15C2C2'} />
+            </TouchableOpacity>
+          </View>
           {cityNotFound}
           <Text style={styles.text}>Distance max : {distance} km</Text>
           <Slider
@@ -375,13 +382,12 @@ const styles = StyleSheet.create({
 
   scrollView: {
     maxHeight: 200,
-    marginTop: -11,
   },
 
   dateContainer: {
     flexDirection: 'row',
     width: '90%',
-    justifyContent: 'space-between',
+    justifyContent:'space-between'
   },
 
   title1: {
@@ -408,7 +414,11 @@ const styles = StyleSheet.create({
   },
   box: {
     width: '90%',
-    marginVertical:10
+    marginVertical: 10
+  },
+  datebox:{
+    width: '45%',
+    marginVertical: 10
   },
   buttonContainer: {
     width: '100%',
@@ -422,7 +432,7 @@ const styles = StyleSheet.create({
   buttonTailleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
   },
   buttonTaille: {
     marginTop: 10,
@@ -430,7 +440,8 @@ const styles = StyleSheet.create({
     borderColor: '#19525A',
     borderWidth: 1,
     borderRadius: 10,
-    padding: 5
+    padding: 5,
+    paddingHorizontal: 12
   },
   buttonTailleText: {
     fontFamily: 'Poppins_400Regular',
@@ -440,7 +451,6 @@ const styles = StyleSheet.create({
   input: {
     width: '100%',
     padding: 10,
-    marginVertical: 10,
     borderWidth: 1,
     borderColor: '#7CB7BF',
     borderRadius: 8,
@@ -448,6 +458,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: 'Poppins_400Regular',
     color: '#19525a'
+  },
+  inputville: {
+    width: '80%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+    marginBottom: 0,
+  },
+  searchcity: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   inputDate: {
     width: '100%',
@@ -457,8 +484,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 50,
     fontSize: 15,
-    color: '#19525A',
     fontFamily: 'Poppins_400Regular',
+    color: '#19525a'
 
   },
   selectedContainer: {

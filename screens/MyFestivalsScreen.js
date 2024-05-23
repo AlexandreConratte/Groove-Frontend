@@ -27,18 +27,19 @@ export default function MyFestivalsScreen({ navigation, route }) {
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetch(`${BACKEND_URL}/users/findLiked`,{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.token }),
-    }).then(response => response.json())
-    .then(data => {
-      setFestivalsLiked(data.festivalsLiked)
-    })
-  },[user])
-
-
+  if (user.token) {
+    useEffect(() => {
+      fetch(`${BACKEND_URL}/users/findLiked`,{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: user.token }),
+      }).then(response => response.json())
+      .then(data => {
+        setFestivalsLiked(data.festivalsLiked)
+      })
+    },[user])
+  }
+  
   const festivals = festivalsLiked.map((e,i) => {
     return (<FestivalCardHorizontal key={i} {...e}/>)
   })

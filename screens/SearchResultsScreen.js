@@ -41,8 +41,8 @@ export default function SearchResultsScreen({ route, navigation }) {
   const objet = route.params;
   let affichage = <></>
   let markers = []
-
-
+  let coordinate = {latitude : 48.866667,longitude : 2.333333}
+  userCoordinate.latitude&& (coordinate = userCoordinate)
 
   if (!fontsLoaded) {
     return <Text></Text>;
@@ -78,12 +78,13 @@ export default function SearchResultsScreen({ route, navigation }) {
     const closeModal = () => {
       setModal(false);
     }
+    
 
     if (objet.festivals) {
       const result = objet.festivals.map((e) => {
         const distance = Math.round(getDistance(
           { latitude: e.adress.latitude, longitude: e.adress.longitude },
-          { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }
+          { latitude: coordinate.latitude, longitude: coordinate.longitude }
         ) / 1000)
         return ({ ...e, distance })
       })
@@ -100,13 +101,13 @@ export default function SearchResultsScreen({ route, navigation }) {
     affichage = <><MapView
       style={styles.map}
       initialRegion={{
-        latitude: userCoordinate.latitude,
-        longitude: userCoordinate.longitude,
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
         latitudeDelta: 1,
         longitudeDelta: 1,
       }}
     >
-      {userCoordinate && <Marker
+      {userCoordinate.latitude && <Marker
         coordinate={userCoordinate}
         title="My position"
       >
@@ -118,6 +119,7 @@ export default function SearchResultsScreen({ route, navigation }) {
       <Modal
         transparent={true}
         visible={modalVisible}
+        onBackdropPress={() => setModal(false)}
       >
         <View style={styles.centeredView}>
           {festival}

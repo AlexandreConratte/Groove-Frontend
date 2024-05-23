@@ -1,7 +1,8 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   useFonts,
   Poppins_100Thin,
@@ -17,6 +18,7 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const BACKEND_URL = "https://backend-groove.vercel.app";
 
 export default function ProfileScreen({ navigation }) {
   let [fontsLoaded] = useFonts({
@@ -30,8 +32,25 @@ export default function ProfileScreen({ navigation }) {
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
-
   const [modalisVisible, setModalisVisible] = useState(true);
+  const [userInfo, setUserInfo] = useState();
+  const user = useSelector((state) => state.user.value);
+
+  useEffect(()=> {
+    if (user.token){
+      setModalisVisible(false)
+    }
+    fetch(`${BACKEND_URL}/users/iprofil`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.token }),
+    }).then(response => response.json())
+    .then(data => {
+      if(data.result){
+        setUserInfo(data)
+      }
+    })
+  },[])
 
   const GotoConnect = () => {
     navigation.navigate('Connect1');
@@ -73,19 +92,45 @@ export default function ProfileScreen({ navigation }) {
       </View>
       </Modal>
 
-      <View style={styles.bannerContainer}>
+      {user.token && userInfo ? (
+        <>
+          <View style={styles.bannerContainer}>
+            
+          </View>
+    
+          <View style={styles.photoContainer}>
+            
+          </View>
+  
+          <View style={styles.infoContainer}>
+            <View style={styles.detailsContainer}>
+              <Text style={styles.textDetails}>{userInfo.username}</Text>
+              <Text style={styles.textDetails}>{userInfo.firstname} {userInfo.lastname}</Text>
+              <Text style={styles.textDetails}>{userInfo.city}</Text>
+              <Text style={styles.textDetails}>{userInfo.birthdate}</Text>
+              <Text style={styles.textDetails}>{userInfo.email}</Text>
+            </View>
+            
+          </View>
           
-      </View>
-
-      <View style={styles.photoContainer}>
+          <View>
+              <Text>Mes styles :</Text>
+              <View>
+                
+              </View>
+            </View>
+            <View>
+              <Text>Mes artistes :</Text>
+              <View>
+                
+              </View>
+            </View>
           
-      </View>
-
-      <View style={styles.infoContainer}>
-        <View style={styles.detailsContainer}>
-
-        </View>
-      </View>
+        </>
+      ) : (
+        <View/>
+      )}
+      
     </View>
   )
 }
@@ -219,6 +264,8 @@ const styles = StyleSheet.create({
     margin: -25,
     backgroundColor: '#FFFFFF',
     marginTop: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
     ...Platform.select({
       ios: {
         shadowColor: 'black',
@@ -230,5 +277,8 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  
+  textDetails: {
+    fontFamily: 'Poppins_500Medium',
+    color: '#19525A',
+  }
 });
