@@ -15,7 +15,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import { signupUser, resetDatas, login } from '../reducers/user';
+import { login, resetdataFields } from '../reducers/user';
 
 
 
@@ -31,9 +31,7 @@ export default function Connect4Screen({ navigation }) {
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [artistsData, setArtistsData] = useState([]);
   const [filteredData, setFilteredData] = useState(artistsData);
-  const [stylesId, setStylesId] = useState([]);
-
-
+  
 
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -116,6 +114,7 @@ export default function Connect4Screen({ navigation }) {
       newSelectedArtists.push(item);
     }
     setSelectedArtists(newSelectedArtists);
+    setSearchQuery('');
   };
 
   
@@ -147,7 +146,7 @@ export default function Connect4Screen({ navigation }) {
       .then(data => { 
         if (data.token) {
           dispatch(login({ token: data.token })); 
-          dispatch(resetDatas()); 
+          dispatch(resetdataFields()); 
           console.log('Sign up successful', data);
           navigation.navigate('Home')
         } else {

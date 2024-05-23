@@ -27,7 +27,7 @@ export const userSlice = createSlice({
       state.value.coordinate.latitude = action.payload.latitude;
       
     },
-    resetDatas: (state) => {
+    resetdataFields: (state) => {
       state.value.connection = {
         username: '',
         firstname: '',
@@ -47,5 +47,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival } = userSlice.actions;
+export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival, resetdataFields } = userSlice.actions;
 export default userSlice.reducer;
