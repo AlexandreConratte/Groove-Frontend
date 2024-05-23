@@ -48,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
     .then(data => {
       if(data.result){
         console.log(data)
-        setUserInfo(data.user)
+        setUserInfo(data)
       }
     })
   },[])
@@ -66,6 +66,8 @@ export default function ProfileScreen({ navigation }) {
   if (!fontsLoaded) {
     return <Text></Text> ;
   }
+
+  console.log(userInfo)
 
   return (
     <View style={styles.container}>
@@ -104,6 +106,10 @@ export default function ProfileScreen({ navigation }) {
       <View style={styles.infoContainer}>
         <View style={styles.detailsContainer}>
           <Text>{userInfo.username}</Text>
+          <Text>{userInfo.firstname} {userInfo.lastname}</Text>
+          <Text>{userInfo.city}</Text>
+          <Text>{userInfo.birthdate}</Text>
+          <Text>{userInfo.email}</Text>
         </View>
       </View>
     </View>
