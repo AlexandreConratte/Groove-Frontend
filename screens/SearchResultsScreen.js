@@ -1,4 +1,4 @@
-import { Image, Switch, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
+import { Image, Switch, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal, Alert } from 'react-native';
 import {
   useFonts,
   Poppins_100Thin,
@@ -13,9 +13,14 @@ import {
 } from '@expo-google-fonts/poppins';
 const BACKEND_URL = "https://backend-groove.vercel.app"
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
-
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
-import { useState } from 'react';
+import FestivalOnMap from '../components/FestivalOnMap';
+
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import MapView, { Marker, Callout } from 'react-native-maps';
+import { getDistance } from 'geolib';
+
 export default function SearchResultsScreen({ route, navigation }) {
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -28,30 +33,98 @@ export default function SearchResultsScreen({ route, navigation }) {
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
-  const [isEnabled, setIsEnabled] = useState();
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [modalVisible, setModal] = useState(false);
+  const [festivalSelected, setfestivalSelected] = useState({});
+  const userCoordinate = useSelector((state) => state.user.value.coordinate)
   let festivals = []
+  const objet = route.params;
+  let affichage = <></>
+  let markers = []
+
+
 
   if (!fontsLoaded) {
     return <Text></Text>;
   }
-  const objet = route.params;
-
-  if (objet.festivals) {
-    festivals = objet.festivals.map((e, i) => {
-      return (<FestivalCardHorizontal key={i} {...e} />)
-    })
-  }
-  else {
-    festivals = 
-    <View style={styles.notfound}>
-      <Image
-        source={{ uri: 'https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716388828/image_processing20210912-13530-z5pl2i_j7kfvf.gif' }}
-        style={{ width: 400, height: 400 }}
-      />
-      <Text style={styles.text}>Désolé, aucun festival ne correspond à vos critères</Text>
-    </View>
-  }
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+
+  if (!isEnabled) {
+    if (objet.festivals) {
+      festivals = objet.festivals.map((e, i) => {
+        return (<FestivalCardHorizontal key={i} {...e} />)
+      })
+    }
+    else {
+      festivals =
+        <View style={styles.notfound}>
+          <Image
+            source={{ uri: 'https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716388828/image_processing20210912-13530-z5pl2i_j7kfvf.gif' }}
+            style={{ width: 400, height: 400 }}
+          />
+          <Text style={styles.text}>Désolé, aucun festival ne correspond à vos critères</Text>
+        </View>
+    }
+    affichage = <ScrollView contentContainerStyle={styles.festivalsContainer}>{festivals}</ScrollView>
+  }
+
+  else {
+    let festival
+    const calloutPress = (data) => {
+      setfestivalSelected(data)
+      setModal(true);
+    }
+    const closeModal = () => {
+      setModal(false);
+    }
+
+    if (objet.festivals) {
+      const result = objet.festivals.map((e) => {
+        const distance = Math.round(getDistance(
+          { latitude: e.adress.latitude, longitude: e.adress.longitude },
+          { latitude: userCoordinate.latitude, longitude: userCoordinate.longitude }
+        ) / 1000)
+        return ({ ...e, distance })
+      })
+
+      markers = result.map((data, i) => {
+        return (
+          <Marker style={styles.marker} key={i} coordinate={{ latitude: data.adress.latitude, longitude: data.adress.longitude }} onPress={() => calloutPress(data)}>
+            <FontAwesome5 name='map-marker-alt' size={50} color={'#FF4848'} />
+          </Marker>
+        )
+      });
+    }
+    modalVisible && (festival = <FestivalOnMap {...festivalSelected} closeModal={closeModal} />)
+    affichage = <><MapView
+      style={styles.map}
+      initialRegion={{
+        latitude: userCoordinate.latitude,
+        longitude: userCoordinate.longitude,
+        latitudeDelta: 1,
+        longitudeDelta: 1,
+      }}
+    >
+      {userCoordinate && <Marker
+        coordinate={userCoordinate}
+        title="My position"
+      >
+        <FontAwesome5 name='street-view' size={50} color={'#19525A'} />
+      </Marker>
+      }
+      {markers}
+    </MapView>
+      <Modal
+        transparent={true}
+        visible={modalVisible}
+      >
+        <View style={styles.centeredView}>
+          {festival}
+        </View>
+      </Modal>
+    </>
+  }
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
@@ -76,9 +149,7 @@ export default function SearchResultsScreen({ route, navigation }) {
           <Text style={styles.critereText}>Carte</Text>
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.festivalsContainer}>
-        {festivals}
-      </ScrollView>
+      {affichage}
     </KeyboardAvoidingView>
   )
 }
@@ -91,6 +162,38 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     width: Dimensions.get('window').width,
     alignItems: 'center',
+  },
+  map: {
+    flex: 1,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 350
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    alignItems: 'flex-end',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  close: {
+    width: '100%',
+    justifyContent: 'flex-end',
+
+    marginRight: 10
   },
   container: {
     flex: 1,
@@ -132,16 +235,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row'
   },
-  notfound:{
-    alignItems:'center',
-    backgroundColor:'#FAF9FE',
-    height:'100%'
+  notfound: {
+    alignItems: 'center',
+    backgroundColor: '#FAF9FE',
+    height: '100%'
   },
-  text:{
+  text: {
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold',
-    fontSize:24,
-    textAlign:'center'
-  }
+    fontSize: 24,
+    textAlign: 'center'
+  },
+  myposition: {
+    height: 20,
+    width: 20
+  },
+
+
 
 })

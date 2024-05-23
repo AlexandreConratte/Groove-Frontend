@@ -1,7 +1,10 @@
 import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View,Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { useState } from 'react';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateLikedFestival } from '../reducers/user';
 import {
   useFonts,
   Poppins_100Thin,
@@ -17,9 +20,11 @@ import {
 
 
 export default function FestivalCardHorizontal(props) {
-  const navigation = useNavigation()
-  const start = new Date(props.start).toLocaleDateString()
-  const end = new Date(props.end).toLocaleDateString()
+  const user = useSelector((state) => state.user.value);
+  const navigation = useNavigation();
+  const start = new Date(props.start).toLocaleDateString();
+  const end = new Date(props.end).toLocaleDateString();
+  const dispatch = useDispatch();
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -33,6 +38,20 @@ export default function FestivalCardHorizontal(props) {
   });
   if (!fontsLoaded) {
     return <Text></Text> ;
+  }
+
+  const BACKEND_URL = "https://backend-groove.vercel.app";
+
+  const handleHeart = () => {
+    fetch(`${BACKEND_URL}/users/likeDislikeFestival`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.token, festivalId: props._id}),
+    }).then(response => response.json())
+    .then(data => {
+      const festivalIds = data.likedFestivals.map(festival => festival);
+      dispatch(updateLikedFestival(festivalIds));
+    })
   }
 
   let image = "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716199438/icon-image-not-found-free-vector_jccw05.jpg"
@@ -58,8 +77,12 @@ export default function FestivalCardHorizontal(props) {
           source={{ uri: image }}
           style={styles.image}
         />
-        <TouchableOpacity style={styles.fav}>
-          <FontAwesome name="heart-o" size={20} color={"#19525A"} />
+        <TouchableOpacity style={styles.fav} onPress={handleHeart}>
+          {(user.likedFestivals.some(festival => festival === props._id)) ? (
+            <FontAwesome name="heart" size={20} color={"#FF4848"} />
+            ) : (
+            <FontAwesome name="heart-o" size={20} color={"#19525A"} />
+            )}
         </TouchableOpacity>
         <View style={styles.textContainer}>
           <View style={styles.titleBox}>
@@ -67,7 +90,7 @@ export default function FestivalCardHorizontal(props) {
           </View>
           <View style={styles.textBox}>
             <MaterialIcons name="location-pin" color={'#FF4848'} size={14} />
-            <Text style={styles.text}>{props.adress.place}</Text>
+            <Text style={styles.text}>{props.adress.place}, {props.adress.city}</Text>
           </View>
           <View style={styles.date}>
             <Text style={styles.text}>Du {start}{"\n"}Au {end}</Text>

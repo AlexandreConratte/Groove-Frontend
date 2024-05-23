@@ -1,7 +1,8 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, FlatList } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { updateLikedFestival, updateMemoriesFestival } from '../reducers/user';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ArtistCard from '../components/ArtistCard';
@@ -19,16 +20,15 @@ import {
 } from '@expo-google-fonts/poppins';
 import Carousel from 'react-native-reanimated-carousel';
 
-const BACKEND_URL = "https://backend-groove.vercel.app"
+const BACKEND_URL = "https://backend-groove.vercel.app";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
 export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
-  const [isChecked, setChecked] = useState(false);
   const [indexSelected, setIndexSelected] = useState(0);
   const [nbLike, setNbLike] = useState(0);
-  const [isLiked, setisLiked] = useState(false);
+  const dispatch = useDispatch();
 
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -41,8 +41,6 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
-
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
 
   const images = props.pictures.map((url, index) => ({
@@ -77,7 +75,7 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
         setNbLike(data.nbLike)
       }
     })
-  },[isLiked])
+  },[user])
 
   const artists = props.artists.map((e,i)=>{
     return <ArtistCard key={i} {...e}/>
@@ -87,18 +85,30 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
     fetch(`${BACKEND_URL}/users/likeDislikeFestival`,{
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.connection.token, festivalId: props._id}),
+      body: JSON.stringify({ token: user.token, festivalId: props._id}),
     }).then(response => response.json())
     .then(data => {
-      if(data.result){
-        setisLiked(!isLiked)
-      }
+      const festivalIds = data.likedFestivals.map(festival => festival);
+      dispatch(updateLikedFestival(festivalIds));
     })
   }
 
   const handleShare = () => {
 
   }
+
+  const handleCheckbox = () => {
+    fetch(`${BACKEND_URL}/users/MemFest`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.token, festivalId: props._id}),
+    }).then(response => response.json())
+    .then(data => {
+      const festivalsIds = data.memoriesFestivals.map(festival => festival);
+      dispatch(updateMemoriesFestival(festivalsIds));
+    })
+  }
+
   if (!fontsLoaded) {
     return <Text></Text> ;
   }
@@ -136,7 +146,7 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
               <View style={styles.iconContainer}>
                 <View style={styles.iconHeart}>
                   <TouchableOpacity onPress={handleHeart}>
-                    {isLiked ? <FontAwesome name='heart' size={30} color={'#FF4848'} style={styles.iconFontawesome}/> : 
+                    {(user.likedFestivals.some(festival => festival === props._id)) ? <FontAwesome name='heart' size={30} color={'#FF4848'} style={styles.iconFontawesome}/> : 
                     <FontAwesome name='heart' size={30} color={'#FFFFFF'} style={styles.iconFontawesome}/>}
                     
                   </TouchableOpacity>
@@ -183,9 +193,9 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
               <Text style={[styles.FlatListText]}>J'ai déjà participé à ce festival :  </Text>
               <Checkbox
                 style={styles.checkbox}
-                value={isChecked}
-                onValueChange={setChecked}
-                color={isChecked ? '#15C2C2' : '#19525A'}
+                value={(user.memoriesFestivals.some(festival => festival === props._id))}
+                onValueChange={handleCheckbox}
+                color={(user.memoriesFestivals.some(festival => festival === props._id)) ? '#15C2C2' : '#19525A'}
               />
             </View>
           </View>
