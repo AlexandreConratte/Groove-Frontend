@@ -36,10 +36,6 @@ export default function FestivalOnMap(props) {
     return <Text></Text>;
   }
 
-  let timeLeft = ""
-  let distance = ""
-
-
   if (props.diff) {
     const time = new Date(props.diff)
     timeLeft = <Text style={styles.timeLeft}>J-{time.getDate()}</Text>
@@ -47,38 +43,38 @@ export default function FestivalOnMap(props) {
 
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.distance}>
-          <Text style={styles.title}>{props.distance} km</Text>
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.text}>{props.distance} km</Text>
+          <TouchableOpacity style={styles.close} onPress={() => props.closeModal()}>
+            <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.close} onPress={() => props.closeModal()}>
-          <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.textContainer}>
-        <View style={styles.titleBox}>
-          <Text style={styles.title}>{props.name}</Text>
-        </View>
-        <View style={styles.date}>
-          <Text style={styles.text}>Du {start}{"\n"}Au {end}</Text>
-        </View>
-        <View style={styles.textBox}>
-            <MaterialIcons name="location-pin" color={'#FF4848'} size={14} />
-            <Text style={[styles.text,{paddingRight:10}]}>{props.adress.place}, {props.adress.city}</Text>
+        <View style={styles.textContainer}>
+          <View style={styles.titleBox}>
+            <Text style={styles.title}>{props.name}</Text>
           </View>
-        <TouchableOpacity style={styles.button} onPress={() => { props.closeModal(); navigation.navigate('Festival', { ...props }) }}>
-          <Text style={styles.textbutton}>Ouvrir la page du festival</Text>
-        </TouchableOpacity>
+          <View style={styles.date}>
+            <Text style={styles.text}>Du {start}{"\n"}Au {end}</Text>
+          </View>
+          <View style={styles.textBox}>
+            <MaterialIcons name="location-pin" color={'#FF4848'} size={14} />
+            <Text style={[styles.text, { paddingRight: 10 }]}>{props.adress.place}, {props.adress.city}</Text>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={() => { props.closeModal(); navigation.navigate('Festival', { ...props }) }}>
+            <Text style={styles.textbutton}>Ouvrir la page du festival</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+      <View style={styles.triangle}></View>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: 170,
+    width: 200,
     borderRadius: 10,
     backgroundColor: 'white',
     ...Platform.select({
@@ -92,9 +88,20 @@ const styles = StyleSheet.create({
       },
     }),
   },
-
+  triangle: {
+    width: 0,
+    height: 0,
+    backgroundColor: "transparent",
+    borderStyle: "solid",
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderBottomWidth: 20,
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderBottomColor: "white",
+    transform: [{ rotate: "180deg" }],
+  },
   textContainer: {
-    padding: 5,
   },
   title: {
     fontSize: 18,
@@ -106,7 +113,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#19525A',
     fontFamily: 'Poppins_400Regular',
-    
+    textAlignVertical:'center',
   },
   textBox: {
     flexDirection: 'row',
@@ -124,7 +131,7 @@ const styles = StyleSheet.create({
   distance: {
     flexDirection: 'row',
     alignItems: 'center',
-    height:'100%',
+    height: '100%',
 
   },
   header: {
@@ -132,12 +139,13 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'space-between',
     paddingHorizontal: 10,
-    alignItems:'center',
+    alignItems: 'center',
   },
   button: {
     backgroundColor: "#19525A",
     borderRadius: 10,
-    paddingVertical: 10
+    paddingVertical: 10,
+    margin:5,
   },
   textbutton: {
     color: 'white',
