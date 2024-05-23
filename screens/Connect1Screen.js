@@ -3,7 +3,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
 const BACKEND_URL = "https://backend-groove.vercel.app"
-import { login, updateLikedFestival } from '../reducers/user';
+import { login, updateLikedFestival, updateMemoriesFestival } from '../reducers/user';
 import {
   useFonts,
   Poppins_100Thin,
@@ -74,6 +74,17 @@ export default function Connect1Screen({ navigation }) {
             .then(data => {
               const festivalIds = data.festivalsLiked.map(festival => festival._id);
               dispatch(updateLikedFestival(festivalIds));
+            })
+            //to add in reducer memories i already have 
+            fetch(`${BACKEND_URL}/users/findMemories`,{
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: data.token}),
+            }).then(response => response.json())
+            .then(data => {
+              console.log(data)
+              const festivalsIds = data.memoriesFestivals.map(festival => festival._id);
+              dispatch(updateMemoriesFestival(festivalsIds))
             })
 
         }

@@ -2,7 +2,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions
 import Checkbox from 'expo-checkbox';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
-import { updateLikedFestival } from '../reducers/user';
+import { updateLikedFestival, updateMemoriesFestival } from '../reducers/user';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import ArtistCard from '../components/ArtistCard';
@@ -26,7 +26,6 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
 export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
-  const [isChecked, setChecked] = useState(false);
   const [indexSelected, setIndexSelected] = useState(0);
   const [nbLike, setNbLike] = useState(0);
   const dispatch = useDispatch();
@@ -97,6 +96,19 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
   const handleShare = () => {
 
   }
+
+  const handleCheckbox = () => {
+    fetch(`${BACKEND_URL}/users/MemFest`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.token, festivalId: props._id}),
+    }).then(response => response.json())
+    .then(data => {
+      const festivalsIds = data.memoriesFestivals.map(festival => festival);
+      dispatch(updateMemoriesFestival(festivalsIds));
+    })
+  }
+
   if (!fontsLoaded) {
     return <Text></Text> ;
   }
@@ -181,9 +193,9 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
               <Text style={[styles.FlatListText]}>J'ai déjà participé à ce festival :  </Text>
               <Checkbox
                 style={styles.checkbox}
-                value={isChecked}
-                onValueChange={setChecked}
-                color={isChecked ? '#15C2C2' : '#19525A'}
+                value={(user.memoriesFestivals.some(festival => festival === props._id))}
+                onValueChange={handleCheckbox}
+                color={(user.memoriesFestivals.some(festival => festival === props._id)) ? '#15C2C2' : '#19525A'}
               />
             </View>
           </View>

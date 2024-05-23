@@ -5,7 +5,8 @@ const initialState = {
     coordinate : { longitude: null, latitude: null },
     connection : { username: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
     picture: ''},
-    likedFestivals : [] },
+    likedFestivals : [],
+    memoriesFestivals : [], },
 };
 
 export const userSlice = createSlice({
@@ -29,8 +30,11 @@ export const userSlice = createSlice({
     updateLikedFestival: (state, action) => {
       state.value.likedFestivals = (action.payload)
     },
+    updateMemoriesFestival: (state, action) => {
+      state.value.memoriesFestivals = (action.payload)
+    }
   },
 });
 
-export const { login, logout, signupUser, addCoordinate, updateLikedFestival } = userSlice.actions;
+export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival } = userSlice.actions;
 export default userSlice.reducer;

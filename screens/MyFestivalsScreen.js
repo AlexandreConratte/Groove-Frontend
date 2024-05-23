@@ -17,7 +17,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
 
-const BACKEND_URL = "https://backend-groove.vercel.app"
+const BACKEND_URL = "https://backend-groove.vercel.app";
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
@@ -40,7 +40,7 @@ export default function MyFestivalsScreen({ navigation, route }) {
 
 
   const festivals = festivalsLiked.map((e,i) => {
-    return (<FestivalCardHorizontal key={i} {...e} isLiked={true}/>)
+    return (<FestivalCardHorizontal key={i} {...e}/>)
   })
 
   return (
@@ -60,7 +60,7 @@ export default function MyFestivalsScreen({ navigation, route }) {
             </ScrollView>
           ) : (
             <View style={styles.nofestivalContainer}>
-              <Text style={styles.text}>Pas de festivals ajoutés aux favoris le moment</Text>
+              <Text style={styles.text}>Pas de festivals ajoutés aux favoris pour le moment</Text>
             </View>
           )}
 
