@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 24,
-    fontFamily: 'Poppins_800ExtraBold',
+    fontFamily: 'Poppins_600SemiBold',
     margin: 5,
     textAlign: "center",
     paddingLeft: 8,
