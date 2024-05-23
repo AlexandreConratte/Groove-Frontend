@@ -69,7 +69,7 @@ export default function FestivalCard(props) {
           </View>
           <View style={styles.textBox}>
             <MaterialIcons name="location-pin" color={'#FF4848'} size={14} />
-            <Text style={styles.text}>{props.adress.place}</Text>
+            <Text style={styles.text}>{props.adress.place}, {props.adress.city}</Text>
           </View>
           <View style={styles.date}>
             <Text style={styles.text}>Du {start}{"\n"}Au {end}</Text>
