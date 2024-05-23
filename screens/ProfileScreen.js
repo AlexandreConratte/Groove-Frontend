@@ -47,7 +47,6 @@ export default function ProfileScreen({ navigation }) {
     }).then(response => response.json())
     .then(data => {
       if(data.result){
-        console.log(data)
         setUserInfo(data)
       }
     })
@@ -66,8 +65,6 @@ export default function ProfileScreen({ navigation }) {
   if (!fontsLoaded) {
     return <Text></Text> ;
   }
-
-  console.log(userInfo)
 
   return (
     <View style={styles.container}>
@@ -95,23 +92,45 @@ export default function ProfileScreen({ navigation }) {
       </View>
       </Modal>
 
-      <View style={styles.bannerContainer}>
+      {user.token && userInfo ? (
+        <>
+          <View style={styles.bannerContainer}>
+            
+          </View>
+    
+          <View style={styles.photoContainer}>
+            
+          </View>
+  
+          <View style={styles.infoContainer}>
+            <View style={styles.detailsContainer}>
+              <Text style={styles.textDetails}>{userInfo.username}</Text>
+              <Text style={styles.textDetails}>{userInfo.firstname} {userInfo.lastname}</Text>
+              <Text style={styles.textDetails}>{userInfo.city}</Text>
+              <Text style={styles.textDetails}>{userInfo.birthdate}</Text>
+              <Text style={styles.textDetails}>{userInfo.email}</Text>
+            </View>
+            
+          </View>
           
-      </View>
-
-      <View style={styles.photoContainer}>
+          <View>
+              <Text>Mes styles :</Text>
+              <View>
+                
+              </View>
+            </View>
+            <View>
+              <Text>Mes artistes :</Text>
+              <View>
+                
+              </View>
+            </View>
           
-      </View>
-
-      <View style={styles.infoContainer}>
-        <View style={styles.detailsContainer}>
-          <Text>{userInfo.username}</Text>
-          <Text>{userInfo.firstname} {userInfo.lastname}</Text>
-          <Text>{userInfo.city}</Text>
-          <Text>{userInfo.birthdate}</Text>
-          <Text>{userInfo.email}</Text>
-        </View>
-      </View>
+        </>
+      ) : (
+        <View/>
+      )}
+      
     </View>
   )
 }
@@ -245,6 +264,8 @@ const styles = StyleSheet.create({
     margin: -25,
     backgroundColor: '#FFFFFF',
     marginTop: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
     ...Platform.select({
       ios: {
         shadowColor: 'black',
@@ -256,5 +277,8 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  
+  textDetails: {
+    fontFamily: 'Poppins_500Medium',
+    color: '#19525A',
+  }
 });
