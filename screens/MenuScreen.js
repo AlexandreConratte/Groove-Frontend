@@ -103,7 +103,9 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     margin: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    elevation:5,
+    backgroundColor:'white'
   },
   lightButton: {
     width: (windowWidth/2.5),
@@ -112,7 +114,9 @@ const styles = StyleSheet.create({
     borderWidth: 5,
     margin: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    elevation:5,
+    backgroundColor:'white'
   },
   text: {
     fontFamily: 'Poppins_600SemiBold',

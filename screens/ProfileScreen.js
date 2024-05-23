@@ -53,7 +53,7 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.iconArrow}>
           <FontAwesome5 name='arrow-left' size={33} color={'#19525A'}/>
         </TouchableOpacity>
-        <Text style={styles.title1}>Mes ami(e)s</Text>
+        <Text style={styles.title1}>Profile</Text>
       </View>
     
 
