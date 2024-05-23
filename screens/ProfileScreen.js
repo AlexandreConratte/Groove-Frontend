@@ -1,7 +1,8 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   useFonts,
   Poppins_100Thin,
@@ -17,6 +18,7 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+const BACKEND_URL = "https://backend-groove.vercel.app";
 
 export default function ProfileScreen({ navigation }) {
   let [fontsLoaded] = useFonts({
@@ -30,8 +32,26 @@ export default function ProfileScreen({ navigation }) {
     Poppins_800ExtraBold,
     Poppins_900Black,
   });
-
   const [modalisVisible, setModalisVisible] = useState(true);
+  const [userInfo, setUserInfo] = useState();
+  const user = useSelector((state) => state.user.value);
+
+  useEffect(()=> {
+    if (user.token){
+      setModalisVisible(false)
+    }
+    fetch(`${BACKEND_URL}/users/iprofil`,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: user.token }),
+    }).then(response => response.json())
+    .then(data => {
+      if(data.result){
+        console.log(data)
+        setUserInfo(data.user)
+      }
+    })
+  },[])
 
   const GotoConnect = () => {
     navigation.navigate('Connect1');
@@ -83,7 +103,7 @@ export default function ProfileScreen({ navigation }) {
 
       <View style={styles.infoContainer}>
         <View style={styles.detailsContainer}>
-
+          <Text>{userInfo.username}</Text>
         </View>
       </View>
     </View>

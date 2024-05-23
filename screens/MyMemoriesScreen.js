@@ -26,16 +26,19 @@ export default function MyMemoriesScreenScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    fetch(`${BACKEND_URL}/users/findMemories`,{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ token: user.token }),
-    }).then(response => response.json())
-    .then(data => {
-      setMemoriesFestivals(data.memoriesFestivals)
-    })
-  },[user])
+  if (user.token) {
+    useEffect(() => {
+      fetch(`${BACKEND_URL}/users/findMemories`,{
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: user.token }),
+      }).then(response => response.json())
+      .then(data => {
+        setMemoriesFestivals(data.memoriesFestivals)
+      })
+    },[user])
+  }
+  
 
   const festivals = memoriesFestivals.map((e,i) => {
     return (<FestivalCardHorizontal key={i} {...e} isLiked={true}/>)
