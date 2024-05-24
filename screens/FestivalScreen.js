@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, FlatList } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, ScrollView, Dimensions, Modal } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from "react-redux";
@@ -28,6 +28,7 @@ const windowHeight = Dimensions.get('window').height;
 export default function FestivalScreen({ navigation, route: { params: { ...props } } }) {
   const [indexSelected, setIndexSelected] = useState(0);
   const [nbLike, setNbLike] = useState(0);
+  const [modalisVisible, setModalisVisible] = useState(false);
   const dispatch = useDispatch();
 
   let [fontsLoaded] = useFonts({
@@ -92,6 +93,8 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
         const festivalIds = data.likedFestivals.map(festival => festival);
         dispatch(updateLikedFestival(festivalIds));
       })
+    } else {
+      setModalisVisible(true)
     }
   }
 
@@ -111,9 +114,18 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
         dispatch(updateMemoriesFestival(festivalsIds));
       })
     } else {
-      
+      setModalisVisible(true)
     }
   }
+
+  const GotoConnect = () => {
+    navigation.navigate('Connect1');
+    setModalisVisible(false)
+  }
+
+  const GoBack = () => {
+    setModalisVisible(false)
+  }  
 
   if (!fontsLoaded) {
     return <Text></Text> ;
@@ -174,6 +186,22 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
                 ))}
               </View>
           </View>
+
+      <Modal visible={modalisVisible} transparent={true} style={styles.modalBackground}>
+        <View style={styles.modalBackground}>
+
+          <View style={styles.modalContainer}>
+            <Text style={styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
+            <Text style={styles.descripText}>Pour accéder à cette fonctionnalité</Text>
+            <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
+              <Text style={styles.connect}>Connecte Toi</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => GoBack()} style={styles.GoToApp}>
+              <Text style={styles.acced}>Fermer</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
           
         <View style={styles.detailsContainer}>
             <View style={styles.locationContainer}>
@@ -358,7 +386,9 @@ const styles = StyleSheet.create({
     
   },
   checkbox: {
-    color: '#19525A'
+    color: '#19525A',
+    height: 20,
+    width: 20
   },
   lineUpText: {
     fontSize: 18,
@@ -372,5 +402,74 @@ const styles = StyleSheet.create({
   BoldText: {
     fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
+  },
+  GotoConnectButton: {
+    backgroundColor: '#19525a',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white"
+
+  },
+  GoToApp: {
+    backgroundColor: '#FFE45D',
+    height: 30,
+    width: 140,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+
+  modalContainer: {
+    width: 274,
+    height: 292,
+    justifyContent: 'center',
+    backgroundColor: "white",
+    borderColor: '#19525a',
+    borderWidth: 3,
+    alignItems: 'center',
+  },
+  welcomeText: {
+    fontSize: 20,
+    fontWeight: "600",
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525A',
+    margin: 5,
+    textAlign: "center",
+    paddingLeft: 8,
+    paddingRight: 8,
+    marginBottom: 10,
+    textShadowColor: '#19525a',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10
+  },
+  descripText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525A',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  connect: {
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    fontSize: 24,
+    fontFamily: 'Poppins_400Regular',
+  },
+  acced: {
+    fontSize: 12,
+    fontWeight: "bold",
+    fontFamily: 'Poppins_400Regular',
   },
 });

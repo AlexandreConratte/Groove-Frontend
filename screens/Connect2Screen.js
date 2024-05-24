@@ -96,10 +96,10 @@ export default function Connect2Screen({ navigation }) {
       })
       const resultuser = await checkuser.json()
 
-      // console.log(resultuser)
+      //console.log(resultuser)
       if (resultuser.result) {
         setErrorExistUser(true)
-        console.log('Nom utilisateur déjà existant')
+        //console.log('Nom utilisateur déjà existant')
         valid = false
       }else {
         setErrorExistUser(false)
@@ -113,7 +113,7 @@ export default function Connect2Screen({ navigation }) {
       const resultmail = await checkmail.json()
       if (resultmail.result) {
         setErrorExistMail(true)
-        console.log('Email déjà existant')
+        //console.log('Email déjà existant')
         valid = false
       } else {
         setErrorExistMail(false)

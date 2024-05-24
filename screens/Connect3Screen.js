@@ -53,7 +53,7 @@ export default function Connect3Screen({ navigation }) {
       const currentDate = selectedDate;
       setDate(currentDate);
 
-      console.log(currentDate)
+      //console.log(currentDate)
 
       let tempDate = new Date(currentDate);
       let formatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();

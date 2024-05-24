@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform} from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform, Image, ScrollView, TextInput, KeyboardAvoidingView, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import {
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 const BACKEND_URL = "https://backend-groove.vercel.app";
+const noProfilPicture = "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716545800/istockphoto-1337144146-612x612_f2ywyb.jpg";
 
 export default function ProfileScreen({ navigation }) {
   let [fontsLoaded] = useFonts({
@@ -33,7 +34,29 @@ export default function ProfileScreen({ navigation }) {
     Poppins_900Black,
   });
   const [modalisVisible, setModalisVisible] = useState(true);
-  const [userInfo, setUserInfo] = useState();
+  const [userInfo, setUserInfo] = useState(null);
+  const [updateMode, setUpdateMode] = useState(false);
+  const [firstname, setFirstname] = useState('');
+  const [lastname, setLastname] = useState('');
+  const [city, setCity] = useState('');
+  const [birthdate, setBirthDate] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [stylesInput, setStylesInput] = useState([]);
+  const [artists, setArtists] = useState([]);
+  const [initialData, setInitialData] = useState({});
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [stylesdata, setstylesdata] = useState([]);
+  const [filteredData, setFilteredData] = useState(stylesdata);
+  const [selectedItems, setSelectedItems] = useState([]);
+
+  const [searchQuery2, setSearchQuery2] = useState('');
+  const [artistsdata, setartistsdata] = useState([]);
+  const [filteredData2, setFilteredData2] = useState(artistsdata);
+  const [selectedItems2, setSelectedItems2] = useState([]);
+
+  const [focusedInput, setFocusedInput] = useState(null);
   const user = useSelector((state) => state.user.value);
 
   useEffect(()=> {
@@ -47,20 +70,126 @@ export default function ProfileScreen({ navigation }) {
     }).then(response => response.json())
     .then(data => {
       if(data.result){
-        setUserInfo(data)
+        setUserInfo(data.user)
+        setFirstname(data.user.firstname)
+        setLastname(data.user.lastname)
+        setCity(data.user.city)
+        setBirthDate(data.user.birthdate)
+        setEmail(data.user.email)
+        setPhone(data.user.phone)
+        setSelectedItems(data.user.styles)
+        setSelectedItems2(data.user.artists)
+        setInitialData({
+          firstname: data.user.firstname,
+          lastname: data.user.lastname,
+          email: data.user.email,
+          phone: data.user.phone,
+          city: data.user.city,
+          birthdate: data.user.birthdate,
+          styles: data.user.styles,
+          artists: data.user.artists,
+        })
       }
     })
-  },[])
+  },[updateMode]);
+
+  useEffect(() => {
+    fetch(`${BACKEND_URL}/styles/findAll`)
+      .then((response) => response.json())
+      .then((data) => setstylesdata(data.styles));
+      fetch(`${BACKEND_URL}/artists/findAll`)
+      .then((response) => response.json())
+      .then((data) => setartistsdata(data.artists));  
+  }, []);
 
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
+  };
+
+  const GoBack = () => {
+    navigation.GoBack()
+    setModalisVisible(false)
+  };  
+
+  const handlePencilPress = () => {
+    setUpdateMode(true)
+  };
+
+  const handleSendPencilPress = () => {
+    setUpdateMode(false)
   }
 
-  const GotoHome = () => {
-    navigation.navigate('Home')
-    setModalisVisible(false)
-  }  
+  //recheche de styles
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query.length > 0) {
+      const newData = stylesdata.filter((item) => {
+        const itemName = item.name.toLowerCase();
+        return itemName.includes(query.toLowerCase());
+      });
+      setFilteredData(newData);
+    } else {
+      setFilteredData(stylesdata);
+    }
+  };
+
+  const handleSelectItem = (item) => {
+    let newSelectedItems = [...selectedItems];
+
+    if (newSelectedItems.includes(item)) {
+      newSelectedItems = newSelectedItems.filter((selectedItem) => selectedItem !== item);
+    } else if (newSelectedItems.length < 5) {
+      newSelectedItems.push(item);
+    }
+    setSelectedItems(newSelectedItems);
+  };
+
+  //recheche d'artiste
+  const handleSearch2 = (query2) => {
+    setSearchQuery2(query2);
+    if (query2.length > 0) {
+      const newData = artistsdata.filter((item2) => {
+        const itemName = item2.name.toLowerCase();
+        return itemName.includes(query2.toLowerCase());
+      });
+      setFilteredData2(newData);
+    } else {
+      setFilteredData2(artistsdata);
+    }
+  };
+
+  const handleSelectItem2 = (item2) => {
+    let newSelectedItems2 = [...selectedItems2];
+
+    if (newSelectedItems2.includes(item2)) {
+      newSelectedItems2 = newSelectedItems2.filter((selectedItem2) => selectedItem2 !== item2);
+    } else if (newSelectedItems2.length < 5) {
+      newSelectedItems2.push(item2);
+    }
+    setSelectedItems2(newSelectedItems2);
+  };
+
+  const handleSendPress = () => {
+    const toSendData = { token: user.token }
+
+    if (firstname !== initialData.firstname) toSendData.firstname = firstname;
+    if (lastname !== initialData.lastname) toSendData.lastname = lastname;
+    if (email !== initialData.email) toSendData.email = email;
+    if (phone !== initialData.phone) toSendData.phone = phone;
+    if (city !== initialData.city) toSendData.city = city;
+    if (selectedItems !== initialData.styles) toSendData.styles = selectedItems;
+    if (selectedItems2 !== initialData.artists) toSendData.artists = selectedItems2;
+
+    fetch(`${BACKEND_URL}/users/update`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(toSendData),
+    }).then(response => response.json())
+    .then(data => {
+      setUpdateMode(false)
+    })
+  }
 
   if (!fontsLoaded) {
     return <Text></Text> ;
@@ -85,50 +214,243 @@ export default function ProfileScreen({ navigation }) {
           <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
             <Text style={styles.connect}>Connecte Toi</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => GotoHome()} style={styles.GoToApp}>
+          <TouchableOpacity onPress={() => GoBack()} style={styles.GoToApp}>
             <Text style={styles.acced}>Accéder à l'application</Text>
           </TouchableOpacity>
         </View>
       </View>
       </Modal>
 
-      {user.token && userInfo ? (
-        <>
+      {user.token && userInfo && !updateMode ? (
+        <ScrollView>
           <View style={styles.bannerContainer}>
-            
+            <Image source={{uri : 'https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/festival_profile_jjon8q.jpg'}}
+            style={styles.bannerImage}/>
           </View>
     
           <View style={styles.photoContainer}>
-            
+            {userInfo && userInfo.picture ? (
+              <Image source={{uri : userInfo.picture}} style={styles.profilePicture}/>
+            ):(
+              <Image source={{uri : noProfilPicture}} style={styles.noProfilePicture}/>
+            )}
           </View>
+            
+          <TouchableOpacity style={styles.pencilContainer} onPress={handlePencilPress}>
+            <FontAwesome5 name='pencil-alt' size={35} color={'#19525A'}/>
+          </TouchableOpacity>
   
           <View style={styles.infoContainer}>
             <View style={styles.detailsContainer}>
-              <Text style={styles.textDetails}>{userInfo.username}</Text>
-              <Text style={styles.textDetails}>{userInfo.firstname} {userInfo.lastname}</Text>
-              <Text style={styles.textDetails}>{userInfo.city}</Text>
-              <Text style={styles.textDetails}>{userInfo.birthdate}</Text>
-              <Text style={styles.textDetails}>{userInfo.email}</Text>
+                <Text style={styles.textDetails}>{userInfo.username}</Text>
+                {userInfo.firstname && userInfo.lastname && (
+                  <Text style={styles.textDetails}>{userInfo.firstname} {userInfo.lastname}</Text>
+                )}
+                {userInfo.city && (
+                  <Text style={styles.textDetails}>{userInfo.city}</Text>
+                )}
+                {userInfo.birthdate && (
+                  <Text style={styles.textDetails}>{new Date(userInfo.birthdate).toLocaleDateString()}</Text>
+                )}
+                {userInfo.email && (
+                  <Text style={styles.textDetails}>{userInfo.email}</Text>
+                )}
+                {userInfo.phone && (
+                  <Text style={styles.textDetails}>{userInfo.phone}</Text>
+                )}
             </View>
             
           </View>
           
-          <View>
-              <Text>Mes styles :</Text>
-              <View>
-                
+          <View style={styles.cardContainer}>
+              <Text style={styles.cardTextContainer}>Mes styles :</Text>
+              <View style={styles.cardsContainer}>
+                {userInfo.styles && userInfo.styles.length > 0 ? (
+                  userInfo.styles.map((style, i) => (
+                    <View key={i} style={styles.yellowButtonStyle}>
+                      <Text style={styles.textButtonStyle}>{style.name}</Text>
+                    </View>
+                  ))
+                ) : (
+                  <Text style={styles.textDetails}>Aucun style renseigné</Text>
+                )}
               </View>
+          </View>
+          <View style={styles.cardContainer}>
+            <Text style={styles.cardTextContainer}>Mes artistes :</Text>
+            <View style={styles.cardsContainer}>
+              {userInfo.artists && userInfo.artists.length > 0 ? (
+                userInfo.artists.map((artist, i) => (
+                  <View key={i} style={styles.blueButtonStyle}>
+                    <Text style={styles.textButtonStyle}>{artist.name}</Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.textDetails}>Aucun artiste renseigné</Text>
+              )}
             </View>
-            <View>
-              <Text>Mes artistes :</Text>
-              <View>
-                
-              </View>
-            </View>
+          </View>
           
-        </>
+        </ScrollView>
       ) : (
-        <View/>
+        updateMode ? (
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+            <ScrollView>
+              <View style={styles.bannerContainer}>
+                <Image source={{uri : 'https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/festival_profile_jjon8q.jpg'}}
+                style={styles.bannerImage}/>
+              </View>
+        
+              <View style={styles.photoContainer}>
+                {userInfo && userInfo.picture ? (
+                  <Image source={{uri : userInfo.picture}} style={styles.profilePicture}/>
+                ):(
+                  <Image source={{uri : noProfilPicture}} style={styles.noProfilePicture}/>
+                )}
+              </View>
+
+              <TouchableOpacity style={styles.updatePencilContainer} onPress={handleSendPencilPress}>
+                <FontAwesome5 name='pencil-alt' size={35} color={'#19525A'}/>
+              </TouchableOpacity>
+
+              <View style={styles.inputBox}>
+                <View style={styles.box}>
+                  <Text style={styles.text}>Prénom</Text>
+                  <TextInput placeholder="Prénom" onChangeText={(value) => setFirstname(value)}
+                    value={firstname}
+                    style={[styles.input, { borderColor: focusedInput === 'firsname' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'firsname' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('firsname')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.text}>Nom</Text>
+                  <TextInput placeholder="Nom" onChangeText={(value) => setLastname(value)}
+                    value={lastname}
+                    style={[styles.input, { borderColor: focusedInput === 'lastname' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'lastname' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('lastname')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.text}>Ville</Text>
+                  <TextInput placeholder="Ville" onChangeText={(value) => setCity(value)}
+                    value={city}
+                    style={[styles.input, { borderColor: focusedInput === 'city' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'city' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('city')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.text}>Date de naissance</Text>
+                  <TextInput placeholder="Date de naissance" onChangeText={(value) => setBirthDate(value)}
+                    value={birthdate}
+                    style={[styles.input, { borderColor: focusedInput === 'birthdate' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'birthdate' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('birthdate')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.text}>E-mail</Text>
+                  <TextInput placeholder="E-mail" onChangeText={(value) => setEmail(value)}
+                    value={email}
+                    style={[styles.input, { borderColor: focusedInput === 'email' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'email' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('email')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  <Text style={styles.text}>Téléphone</Text>
+                  <TextInput placeholder="Téléphone" onChangeText={(value) => setPhone(value)}
+                    value={phone}
+                    style={[styles.input, { borderColor: focusedInput === 'phone' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'phone' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('phone')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                </View>
+                <View style={styles.box}>
+                  {/*rechercher un style*/}
+                  <Text style={styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
+                  <TextInput
+                    style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
+                    ]}
+                    placeholder="Rechercher un style"
+                    placeholderTextColor='#19525a'
+                    value={searchQuery}
+                    onChangeText={(text) => handleSearch(text)}
+                    onFocus={() => setFocusedInput('style')}
+                    onBlur={() => setFocusedInput(null)}
+                  />
+                  <ScrollView style={styles.scrollView}>
+                    {filteredData.map((item, i) => (
+                      <TouchableOpacity
+                        key={i}
+                        style={styles.item}
+                        onPress={() => handleSelectItem(item)}
+                      >
+                        <Text style={styles.text}>{item.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <View style={styles.selectedContainer}>
+                    {selectedItems.map((item, i) => (
+                      <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
+                        <Text style={styles.text}>{item.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                  {/*rechercher un artiste*/}
+                  <Text style={styles.text}>Selectionner 1 ou plusieurs artistes</Text>
+                  <TextInput
+                    style={[styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }
+                    ]}
+                    onFocus={() => setFocusedInput('artiste')}
+                    onBlur={() => setFocusedInput(null)}
+                    placeholder="Rechercher un artiste"
+                    placeholderTextColor='#19525a'
+                    value={searchQuery2}
+                    onChangeText={(text) => handleSearch2(text)}
+                  />
+                  <ScrollView style={styles.scrollView}>
+                    {filteredData2.map((item2, i) => (
+                      <TouchableOpacity
+                        key={i}
+                        style={[
+                          styles.item,
+                        ]}
+                        onPress={() => handleSelectItem2(item2)}
+                      >
+                        <Text style={styles.text}>{item2.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <View style={styles.selectedContainer}>
+                    {selectedItems2.map((item2, i) => (
+                      <TouchableOpacity key={i} style={styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
+                        <Text style={styles.text}>{item2.name}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+
+                </View>
+              </View>
+              <View style={styles.sendContainer}>
+                <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
+                  <Text style={styles.sendText}>Envoyer</Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        ) : (
+          <View/>
+        )
       )}
       
     </View>
@@ -234,6 +556,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#19525A',
     borderBottomWidth: 3,
   },
+  bannerImage: {
+    width: windowWidth,
+    height: '100%'
+  },
   photoContainer: {
     width: 150,
     height: 150,
@@ -254,14 +580,70 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  profilePicture: {
+    width: '100%',
+    height: '100%', 
+    borderRadius: 100,
+  },
+  noProfilePicture: {
+    width: '100%',
+    height: '100%', 
+    borderRadius: 100,
+    opacity: 0.5,
+  },
+  pencilContainer:{
+    backgroundColor: '#D2FFF4',
+    height: 60,
+    width: 60,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    top: -140,
+    left: (windowWidth - 70),
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  updatePencilContainer: {
+    backgroundColor: '#FFE45D',
+    height: 60,
+    width: 60,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    top: -140,
+    left: (windowWidth - 70),
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   infoContainer: {
     alignItems: 'center'
   },
   detailsContainer: {
-    width: 227,
-    height: 145,
-    margin: -25,
+    width: (windowWidth/1.4),
+    height: (windowHeight/4),
+    position: 'relative',
+    top: -110,
     backgroundColor: '#FFFFFF',
     marginTop: 0,
     alignItems: 'center',
@@ -280,5 +662,161 @@ const styles = StyleSheet.create({
   textDetails: {
     fontFamily: 'Poppins_500Medium',
     color: '#19525A',
+    fontSize: 16,
+  },
+  cardContainer: {
+    position: 'relative',
+    top: -80,
+    marginHorizontal: 20,
+    marginBottom: 10
+  },
+  cardTextContainer: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#19525A',
+    fontSize: 20
+  },
+  yellowButtonStyle: {
+    backgroundColor: '#FFE45D',
+    borderRadius: 8,
+    margin: 5,
+    padding: 3,
+    paddingHorizontal :10,
+    alignItems: "center",
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  blueButtonStyle: {
+    backgroundColor: '#D2FFF4',
+    borderRadius: 8,
+    margin: 5,
+    padding: 3,
+    paddingHorizontal :10,
+    alignItems: "center",
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  cardsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  textButtonStyle: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525A',
+    fontSize: 16,
+  },
+  inputBox: {
+    marginTop: -60,
+    marginHorizontal: 20,
+    alignItems: 'center'
+  },
+  box: {
+    width: '90%',
+    marginVertical: 10
+  },
+  inputUsername: {
+    width: '80%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+    marginBottom: 0,
+  },
+  input: {
+    width: '80%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+    marginBottom: 0,
+  },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a'
+  },
+  sendText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a',
+    fontSize: 20
+  },
+  scrollView: {
+    maxHeight: 200,
+  },
+  item: {
+    padding: 5,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7CB7BF',
+  },
+  selectedItemText: {
+    backgroundColor: '#FFE45D',
+    color: '#19525A',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    fontFamily: 'Poppins_400Regular',
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  selectedItemText2: {
+    backgroundColor: '#D2FFF4',
+    color: '#19525A',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  sendButton: {
+    width: (windowWidth/2.5),
+    height: 50,
+    backgroundColor: '#FFE45D',
+    marginBottom: 40,
+    marginTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 8
+  },
+  sendContainer: {
+    alignItems: 'center'
   }
 });

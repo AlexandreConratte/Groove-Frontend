@@ -1,6 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
 import FestivalCard from '../components/FestivalCard';
 import { useEffect, useState } from 'react';
+import { UseSelector } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
@@ -30,7 +31,7 @@ export default function HomeScreen({ navigation }) {
   const [nextFestivals, setnextFestivals] = useState([]);
   const [popularFestivals, setpopularFestivals] = useState([]);
   const [nearFestivals, setnearFestivals] = useState([]);
-  const [modalisVisible, setModalisVisible] = useState(true);
+  const [modalisVisible, setModalisVisible] = useState(false);
   let loc =
     <View style={styles.permissionContainer}>
       <TouchableOpacity style={styles.permission} onPress={() => Linking.openSettings()}>
@@ -54,6 +55,7 @@ export default function HomeScreen({ navigation }) {
     Poppins_900Black,
   });
 
+  const user = useSelector((state) => state.user.value);
 
   useEffect(() => {
     askPermission()
@@ -90,7 +92,12 @@ export default function HomeScreen({ navigation }) {
         const sortbyaverage = result2.sort((a, b) => (b.averageParticipant - a.averageParticipant))
         const first2 = sortbyaverage.slice(0, 10)
         setpopularFestivals(first2)
-      })
+      });
+
+      if (!user.token) {
+        setModalisVisible(true)
+      }; 
+
   }, []);
 
   //tri en fonction de la localisation 
@@ -131,7 +138,6 @@ export default function HomeScreen({ navigation }) {
     </ScrollView>
   }
 
-
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
@@ -162,10 +168,6 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
-      <TouchableOpacity style={styles.user} onPress={() => navigation.navigate('Profile')}>
-        <FontAwesome5 name="user-alt" size={30} color={"#19525A"} />
-      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.section}>
           <Text style={styles.title2}>A venir...</Text>
@@ -202,11 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  user: {
-    position: 'absolute',
-    right: 10,
-    top: 45,
-  },
+
   scrollSecondaire: {
     flexDirection: 'row',
     alignItems: 'center',

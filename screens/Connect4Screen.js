@@ -157,7 +157,7 @@ export default function Connect4Screen({ navigation }) {
       artists: artistIds,
       picture : photoUrl
     };
-   // console.log(artistIds)
+    //console.log(artistIds)
     // console.log(selectedStyles)
     // console.log(user.connection.city)
 
@@ -173,7 +173,7 @@ export default function Connect4Screen({ navigation }) {
           dispatch(login({ token: data.token })); 
           
           dispatch(resetdataFields()); 
-          console.log('Sign up successful', data);
+          //console.log('Sign up successful', data);
           navigation.navigate('Home')
         } else {
           console.error('Sign up failed', data);
