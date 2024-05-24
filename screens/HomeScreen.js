@@ -168,10 +168,6 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
       </Modal>
-
-      <TouchableOpacity style={styles.user} onPress={() => navigation.navigate('Profile')}>
-        <FontAwesome5 name="user-alt" size={30} color={"#19525A"} />
-      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.section}>
           <Text style={styles.title2}>A venir...</Text>
@@ -208,11 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  user: {
-    position: 'absolute',
-    right: 10,
-    top: 45,
-  },
+
   scrollSecondaire: {
     flexDirection: 'row',
     alignItems: 'center',

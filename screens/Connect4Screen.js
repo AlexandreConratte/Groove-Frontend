@@ -134,7 +134,7 @@ export default function Connect4Screen({ navigation }) {
       styles: selectedStyles,
       artists: artistIds
     };
-    console.log(artistIds)
+    //console.log(artistIds)
     // console.log(selectedStyles)
 
     fetch(`${BACKEND_URL}/users/signup`, {
@@ -147,7 +147,7 @@ export default function Connect4Screen({ navigation }) {
         if (data.token) {
           dispatch(login({ token: data.token })); 
           dispatch(resetdataFields()); 
-          console.log('Sign up successful', data);
+          //console.log('Sign up successful', data);
           navigation.navigate('Home')
         } else {
           console.error('Sign up failed', data);
