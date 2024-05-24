@@ -57,7 +57,7 @@ export default function Connect1Screen({ navigation }) {
       body: JSON.stringify({ username : username, password : password}),
     }).then(response => response.json())
       .then(data => {
-        console.log(data)
+        //console.log(data)
         if (data.result) {
           dispatch(login({ username: data.username, token: data.token }));
           setUsername('');
@@ -82,7 +82,7 @@ export default function Connect1Screen({ navigation }) {
               body: JSON.stringify({ token: data.token}),
             }).then(response => response.json())
             .then(data => {
-              console.log(data)
+              //console.log(data)
               const festivalsIds = data.memoriesFestivals.map(festival => festival._id);
               dispatch(updateMemoriesFestival(festivalsIds))
             })
