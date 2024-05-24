@@ -117,11 +117,33 @@ export default function Connect4Screen({ navigation }) {
     setSearchQuery('');
   };
 
+  // fonction pour upload les photos dans le cloudinary au moment du sign up , en reprenant l'uri du reducer
+  const uploadPhoto =  async (uri) => {
+    const formData = new FormData();
+    formData.append('photoFromFront', {
+      uri: uri,
+      name: 'photo.jpg',
+      type: 'image/jpeg',
+    })
+
+    const uploadPict = await fetch(`${BACKEND_URL}/users/photo`, {
+      method: 'POST',
+      body: formData,
+    })
+     const resultPhoto = await uploadPict.json()
+     if(resultPhoto.result && resultPhoto.url) {
+       console.log(resultPhoto)
+       return resultPhoto.url
+      };
+    
+  }
   
  // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
   const finalSignUpClick = () => {
 
     const artistIds = selectedArtists.map(artist => artist._id);
+
+    const photoUrl = uploadPhoto(user.connection.picture)
 
     const userData = {
       username: user.connection.username,
@@ -132,10 +154,12 @@ export default function Connect4Screen({ navigation }) {
       birthdate: new Date(user.connection.birthdate),
       city: user.connection.city,
       styles: selectedStyles,
-      artists: artistIds
+      artists: artistIds,
+      picture : photoUrl
     };
-    console.log(artistIds)
+   // console.log(artistIds)
     // console.log(selectedStyles)
+    // console.log(user.connection.city)
 
     fetch(`${BACKEND_URL}/users/signup`, {
         method: 'POST',
@@ -145,7 +169,9 @@ export default function Connect4Screen({ navigation }) {
       .then(response => response.json())
       .then(data => { 
         if (data.token) {
+          uploadPhoto(user.connection.picture)
           dispatch(login({ token: data.token })); 
+          
           dispatch(resetdataFields()); 
           console.log('Sign up successful', data);
           navigation.navigate('Home')

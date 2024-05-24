@@ -96,7 +96,7 @@ export default function Connect2Screen({ navigation }) {
       })
       const resultuser = await checkuser.json()
 
-      console.log(resultuser)
+      // console.log(resultuser)
       if (resultuser.result) {
         setErrorExistUser(true)
         console.log('Nom utilisateur déjà existant')

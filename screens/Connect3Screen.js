@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, Modal, Button } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch } from 'react-redux';
@@ -18,6 +18,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
+import ProfilePhoto from '../components/ProfilePhoto';
 
 
 export default function Connect3Screen({ navigation }) {
@@ -43,6 +44,7 @@ export default function Connect3Screen({ navigation }) {
   const [city, setCity] = useState('');
   const [focusedInput, setFocusedInput] = useState(null)
   const [date, setDate] = useState(new Date());
+  const [modalPhoto, setModalPhoto] = useState(false)
 
   const DateInput = ({ label }) => {
     const [show, setShow] = useState(false);
@@ -71,9 +73,13 @@ export default function Connect3Screen({ navigation }) {
     );
   };
 
+  const addPhoto = () => {
+    setModalPhoto(true)
+  }
+
   const nextStep = () => {
-    dispatch(signupUser({ firstname, lastname, birthdate : date.getTime(), city }))
-   // console.log(birthdate)
+    dispatch(signupUser({ firstname, lastname, birthdate: date.getTime(), city }))
+    // console.log(birthdate)
     navigation.navigate('Connect4');
   }
 
@@ -86,18 +92,19 @@ export default function Connect3Screen({ navigation }) {
 
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
-        <FontAwesome5 name='arrow-left' size={33} color={"#19525a"} />
+          <FontAwesome5 name='arrow-left' size={33} color={"#19525a"} />
         </TouchableOpacity>
         <Text style={styles.title1}>Connect</Text>
       </View>
 
       <View style={styles.containerConnect}>
-        <View>
-          <View style={styles.iconContainer}>
-            <Icon name="user" size={80} color="#15C2C2" />
-          </View>
-          <Text>Ajouter une photo *</Text>
+        <View style={styles.profilphoto}>
+          <TouchableOpacity onPress={() => addPhoto()}>
+            <ProfilePhoto />
+          </TouchableOpacity>
         </View>
+
+
 
         <View style={styles.allInputs}>
           <View style={styles.textandinputcontain}>
@@ -159,7 +166,7 @@ const styles = StyleSheet.create({
   },
   header: {
     height: '10%',
-    width:'100%',
+    width: '100%',
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -168,15 +175,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     borderBottomColor: '#15C2C2',
   },
+  profilphoto : {
+    marginBottom : 20,
+  },
   title1: {
     fontSize: 30,
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
   iconContainer: {
-    marginTop: 20,
-    width: 100,
-    height: 100,
+    width: 200,
+    height: 200,
     borderRadius: 50,
     borderWidth: 2,
     borderColor: '#15C2C2',
@@ -222,7 +231,7 @@ const styles = StyleSheet.create({
     height: 50,
     fontSize: 15,
   },
-  inputDate : { 
+  inputDate: {
     width: 170,
     padding: 10,
     marginVertical: 10,
@@ -231,7 +240,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     height: 50,
     fontSize: 15,
-    color : '#19525A'
+    color: '#19525A'
   },
   text: {
     color: '#19525A'
@@ -240,23 +249,23 @@ const styles = StyleSheet.create({
   firstandlastname: {
     flexDirection: "row",
     width: "100%",
-     justifyContent: "space-between"
+    justifyContent: "space-between"
   },
   firstnameInput: {
     flexDirection: "column",
     alignItems: "flex-start",
-    
+
   },
   lastnameInput: {
     flexDirection: "column",
     alignItems: "flex-start"
   },
   allInputs: {
-    alignItems: "flex-start", 
+    alignItems: "flex-start",
     margin: 10
 
-  }, 
-  textandinputcontain : { 
-    margin : 10
+  },
+  textandinputcontain: {
+    margin: 10
   }
 })

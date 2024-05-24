@@ -36,16 +36,16 @@ export const userSlice = createSlice({
         city: '',
         styles: [],
         artists: [],
-        picture: ''
+        picture: '', 
       };},
     updateLikedFestival: (state, action) => {
       state.value.likedFestivals = (action.payload)
     },
     updateMemoriesFestival: (state, action) => {
       state.value.memoriesFestivals = (action.payload)
-    }
+    },
   },
 });
-
-export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival, resetdataFields } = userSlice.actions;
+  
+export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival, resetdataFields,} = userSlice.actions;
 export default userSlice.reducer;
