@@ -96,6 +96,8 @@ export default function Connect1Screen({ navigation }) {
   }
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+
     <View style={styles.container}>
 
       <View style={styles.header}>
@@ -143,6 +145,8 @@ export default function Connect1Screen({ navigation }) {
       </View>
 
     </View>
+    </KeyboardAvoidingView>
+
   )
 }
 
