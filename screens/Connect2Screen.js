@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions , KeyboardAvoidingView, ScrollView} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions , KeyboardAvoidingView, ScrollView, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 

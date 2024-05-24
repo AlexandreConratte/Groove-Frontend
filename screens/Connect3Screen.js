@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, Modal, Button, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, Modal, Button, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch } from 'react-redux';
