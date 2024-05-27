@@ -48,36 +48,34 @@ export default function MyMemoriesScreenScreen({ navigation }) {
   })
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
+    <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
         <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.iconArrow}>
-          <FontAwesome5 name='arrow-left' size={33} color={'#19525A'}/>
+          <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
         </TouchableOpacity>
-        <Text style={styles.title1}>Souvenirs</Text>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Souvenirs</Text>
       </View>
 
       {user.token ? (
         memoriesFestivals.length ? (
-            <ScrollView>
-              <View style={styles.festivalsContainer}>
-                {festivals}
-              </View>
-            </ScrollView>
-          ) : (
-            <View style={styles.nofestivalContainer}>
-              <Text style={styles.text}>Pas de festivals souvenirs pour le moment</Text>
+          <ScrollView>
+            <View style={user.settings.nightMode ? nightModeStyle.festivalsContainer : styles.festivalsContainer}>
+              {festivals}
             </View>
+          </ScrollView>
+        ) : (
+          <View style={user.settings.nightMode ? nightModeStyle.nofestivalContainer : styles.nofestivalContainer}>
+            <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Pas de festivals souvenirs pour le moment</Text>
+          </View>
         )
-      ):(
-        <View style={styles.nofestivalContainer}>
-          <Text style={styles.text}>Pour profiter de cette fonctionnalité, il te faut un compte</Text>
-          <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
-            <Text style={styles.connect}>Se connecter</Text>
+      ) : (
+        <View style={user.settings.nightMode ? nightModeStyle.nofestivalContainer : styles.nofestivalContainer}>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Pour profiter de cette fonctionnalité, il te faut un compte</Text>
+          <TouchableOpacity onPress={() => GotoConnect()} style={user.settings.nightMode ? nightModeStyle.GotoConnectButton : styles.GotoConnectButton}>
+            <Text style={user.settings.nightMode ? nightModeStyle.connect : styles.connect}>Se connecter</Text>
           </TouchableOpacity>
         </View>
       )}
-      
-
     </View>
   )
 }
@@ -139,3 +137,62 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_700Bold',
   },
 });
+
+const nightModeStyle= StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#19525A'
+  },
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
+  festivalsContainer: {
+    alignItems: 'center',
+  },
+  nofestivalContainer: {
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  text: {
+    fontSize: 24,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold',
+    textAlign: 'center',
+    marginHorizontal: 25
+  },
+  GotoConnectButton: {
+    backgroundColor: '#FFE45E',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white",
+    margin: 20
+  },
+  connect: {
+    color: "#19525A",
+    fontSize: 24,
+    fontFamily: 'Poppins_700Bold',
+  },
+})

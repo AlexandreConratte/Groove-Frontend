@@ -1,5 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform, Image, ScrollView, TextInput, KeyboardAvoidingView, Button } from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform, Image, ScrollView, TextInput, KeyboardAvoidingView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
