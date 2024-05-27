@@ -42,8 +42,6 @@ export default function ProfileScreen({ navigation }) {
   const [birthdate, setBirthDate] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [stylesInput, setStylesInput] = useState([]);
-  const [artists, setArtists] = useState([]);
   const [initialData, setInitialData] = useState({});
 
   const [searchQuery, setSearchQuery] = useState('');

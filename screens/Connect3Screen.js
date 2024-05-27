@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, Modal, Button } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, TextInput, Modal, Button, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useDispatch } from 'react-redux';
@@ -88,6 +88,7 @@ export default function Connect3Screen({ navigation }) {
   }
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
     <View style={styles.container}>
 
       <View style={styles.header}>
@@ -97,7 +98,7 @@ export default function Connect3Screen({ navigation }) {
         <Text style={styles.title1}>Connect</Text>
       </View>
 
-      <View style={styles.containerConnect}>
+      <ScrollView contentContainerStyle={styles.containerConnect}>
         <View style={styles.profilphoto}>
           <TouchableOpacity onPress={() => addPhoto()}>
             <ProfilePhoto />
@@ -149,9 +150,10 @@ export default function Connect3Screen({ navigation }) {
           <Text style={styles.nextText}>Suivant</Text>
         </TouchableOpacity>
         <Text>*informations facultatives</Text>
-      </View>
+      
+    </ScrollView>
     </View>
-
+    </KeyboardAvoidingView>
   )
 }
 

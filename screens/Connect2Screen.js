@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Dimensions , KeyboardAvoidingView, ScrollView, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
@@ -134,6 +134,8 @@ export default function Connect2Screen({ navigation }) {
   }
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+
     <View style={styles.container}>
 
       <View style={styles.header}>
@@ -143,7 +145,7 @@ export default function Connect2Screen({ navigation }) {
         <Text style={styles.title1}>Connect</Text>
       </View>
 
-      <View style={styles.containerConnect}>
+      <ScrollView contentContainerStyle={styles.containerConnect}>
         <View style={styles.textandinputcontain}>
           <Text style={styles.text}>Pseudo </Text>
           <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
@@ -204,8 +206,9 @@ export default function Connect2Screen({ navigation }) {
         <TouchableOpacity onPress={() => validFields()} style={styles.nextButton}>
           <Text style={styles.nextText}>Suivant</Text>
         </TouchableOpacity>
-      </View>
+        </ScrollView>
     </View>
+    </KeyboardAvoidingView>
   )
 }
 

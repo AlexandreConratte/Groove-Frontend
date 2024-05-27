@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
@@ -96,6 +96,8 @@ export default function Connect1Screen({ navigation }) {
   }
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+
     <View style={styles.container}>
 
       <View style={styles.header}>
@@ -143,6 +145,8 @@ export default function Connect1Screen({ navigation }) {
       </View>
 
     </View>
+    </KeyboardAvoidingView>
+
   )
 }
 
