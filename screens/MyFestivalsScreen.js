@@ -38,7 +38,11 @@ export default function MyFestivalsScreen({ navigation, route }) {
         setFestivalsLiked(data.festivalsLiked)
       })
     },[user])
-  }
+  };
+
+  const GotoConnect = () => {
+    navigation.navigate('Connect1');
+  };
   
   const festivals = festivalsLiked.map((e,i) => {
     return (<FestivalCardHorizontal key={i} {...e}/>)
@@ -52,8 +56,9 @@ export default function MyFestivalsScreen({ navigation, route }) {
         </TouchableOpacity>
         <Text style={styles.title1}>Mes Festivals</Text>
       </View>
-      
-          {festivalsLiked.length ? (
+
+      {user.token ? (
+        festivalsLiked.length ? (
             <ScrollView>
               <View style={styles.festivalsContainer}>
                 {festivals}
@@ -63,7 +68,15 @@ export default function MyFestivalsScreen({ navigation, route }) {
             <View style={styles.nofestivalContainer}>
               <Text style={styles.text}>Pas de festivals ajoutés aux favoris pour le moment</Text>
             </View>
-          )}
+          )
+      ):(
+        <View style={styles.nofestivalContainer}>
+          <Text style={styles.text}>Pour profiter de cette fonctionnalité, il te faut un compte</Text>
+          <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
+            <Text style={styles.connect}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
     </View>
   )
@@ -108,5 +121,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     textAlign: 'center',
     marginHorizontal: 25
-  }
+  },
+  GotoConnectButton: {
+    backgroundColor: '#FFE45E',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white",
+    margin: 20
+  },
+  connect: {
+    color: "#19525A",
+    fontSize: 24,
+    fontFamily: 'Poppins_700Bold',
+  },
 });

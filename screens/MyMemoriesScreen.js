@@ -37,8 +37,11 @@ export default function MyMemoriesScreenScreen({ navigation }) {
         setMemoriesFestivals(data.memoriesFestivals)
       })
     },[user])
-  }
+  };
   
+  const GotoConnect = () => {
+    navigation.navigate('Connect1');
+  };
 
   const festivals = memoriesFestivals.map((e,i) => {
     return (<FestivalCardHorizontal key={i} {...e} isLiked={true}/>)
@@ -53,7 +56,8 @@ export default function MyMemoriesScreenScreen({ navigation }) {
         <Text style={styles.title1}>Souvenirs</Text>
       </View>
 
-      {memoriesFestivals.length ? (
+      {user.token ? (
+        memoriesFestivals.length ? (
             <ScrollView>
               <View style={styles.festivalsContainer}>
                 {festivals}
@@ -63,7 +67,16 @@ export default function MyMemoriesScreenScreen({ navigation }) {
             <View style={styles.nofestivalContainer}>
               <Text style={styles.text}>Pas de festivals souvenirs pour le moment</Text>
             </View>
-        )}
+        )
+      ):(
+        <View style={styles.nofestivalContainer}>
+          <Text style={styles.text}>Pour profiter de cette fonctionnalité, il te faut un compte</Text>
+          <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
+            <Text style={styles.connect}>Se connecter</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      
 
     </View>
   )
@@ -108,5 +121,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_600SemiBold',
     textAlign: 'center',
     marginHorizontal: 25
+  },
+  GotoConnectButton: {
+    backgroundColor: '#FFE45E',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white",
+    margin: 20
+  },
+  connect: {
+    color: "#19525A",
+    fontSize: 24,
+    fontFamily: 'Poppins_700Bold',
   },
 });

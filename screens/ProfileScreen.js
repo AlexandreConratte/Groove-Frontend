@@ -68,15 +68,20 @@ export default function ProfileScreen({ navigation }) {
     }).then(response => response.json())
     .then(data => {
       if(data.result){
-        setUserInfo(data.user)
-        setFirstname(data.user.firstname)
-        setLastname(data.user.lastname)
-        setCity(data.user.city)
-        setBirthDate(data.user.birthdate)
-        setEmail(data.user.email)
-        setPhone(data.user.phone)
-        setSelectedItems(data.user.styles)
-        setSelectedItems2(data.user.artists)
+        setUserInfo(data.user);
+        setFirstname(data.user.firstname);
+        setLastname(data.user.lastname);
+        setCity(data.user.city);
+        const date = new Date(data.user.birthdate);
+        const day = String(date.getUTCDate()).padStart(2, '0');
+        const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+        const year = date.getUTCFullYear();
+        const formattedDate = `${day}/${month}/${year}`
+        setBirthDate(formattedDate);
+        setEmail(data.user.email);
+        setPhone(data.user.phone);
+        setSelectedItems(data.user.styles);
+        setSelectedItems2(data.user.artists);
         setInitialData({
           firstname: data.user.firstname,
           lastname: data.user.lastname,
@@ -106,7 +111,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const GoBack = () => {
-    navigation.GoBack()
+    navigation.navigate('Home')
     setModalisVisible(false)
   };  
 
@@ -168,14 +173,42 @@ export default function ProfileScreen({ navigation }) {
     setSelectedItems2(newSelectedItems2);
   };
 
+  function convertToMongoDBDate(dateStr) {
+    const [day, month, year] = dateStr.split('/');
+    const date = new Date(`${year}-${month}-${day}T00:00:00.000Z`);
+    return date.toISOString();
+  };
+
+  function isValidDate(dateStr) {
+    const dateRegex = /^\d{2}\/\d{2}\/\d{4}$/;
+    return dateRegex.test(dateStr);
+  };
+
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  
+
   const handleSendPress = () => {
     const toSendData = { token: user.token }
 
     if (firstname !== initialData.firstname) toSendData.firstname = firstname;
     if (lastname !== initialData.lastname) toSendData.lastname = lastname;
+    if (!isValidEmail(email)) {
+      alert("L'email n'est pas dans un format valide.");
+      return;
+    }
     if (email !== initialData.email) toSendData.email = email;
     if (phone !== initialData.phone) toSendData.phone = phone;
     if (city !== initialData.city) toSendData.city = city;
+    if (!isValidDate(birthdate)) {
+      alert("Le format de la date de naissance n'est pas valide. Utilisez le format JJ/MM/AAAA.");
+      return;
+    }
+    if (birthdate !== initialData.birthdate) {
+      toSendData.birthdate = convertToMongoDBDate(birthdate);
+    };
     if (selectedItems !== initialData.styles) toSendData.styles = selectedItems;
     if (selectedItems2 !== initialData.artists) toSendData.artists = selectedItems2;
 
@@ -185,7 +218,9 @@ export default function ProfileScreen({ navigation }) {
       body: JSON.stringify(toSendData),
     }).then(response => response.json())
     .then(data => {
-      setUpdateMode(false)
+      if(data.result) {
+        setUpdateMode(false)
+      }
     })
   }
 
@@ -301,9 +336,24 @@ export default function ProfileScreen({ navigation }) {
         
               <View style={styles.photoContainer}>
                 {userInfo && userInfo.picture ? (
-                  <Image source={{uri : userInfo.picture}} style={styles.profilePicture}/>
+                  <>
+                    <Image source={{uri : userInfo.picture}} style={styles.profilePicture}/>
+                    <TouchableOpacity style={styles.updatePicture}>
+                      <View style={styles.updateTextContainer}>
+                        <Text style={styles.updateTextPicture}>Modifier la photo</Text>
+                      </View>
+                    </TouchableOpacity>
+                    
+                  </>
                 ):(
-                  <Image source={{uri : noProfilPicture}} style={styles.noProfilePicture}/>
+                  <>
+                    <Image source={{uri : noProfilPicture}} style={styles.noProfilePicture}/>
+                    <TouchableOpacity style={styles.updatePicture}>
+                      <View style={styles.updateTextContainer}>
+                        <Text style={styles.updateTextPicture}>Ajouter une photo</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </>
                 )}
               </View>
 
@@ -344,6 +394,7 @@ export default function ProfileScreen({ navigation }) {
                 </View>
                 <View style={styles.box}>
                   <Text style={styles.text}>Date de naissance</Text>
+                  <Text style={styles.text}>(format JJ/MM/AAAA)</Text>
                   <TextInput placeholder="Date de naissance" onChangeText={(value) => setBirthDate(value)}
                     value={birthdate}
                     style={[styles.input, { borderColor: focusedInput === 'birthdate' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'birthdate' ? 2 : 1 }
@@ -816,5 +867,28 @@ const styles = StyleSheet.create({
   },
   sendContainer: {
     alignItems: 'center'
+  },
+  updatePicture: {
+    position: 'absolute',
+    bottom: 0,
+    height: '50%',
+    width: '100%',
+    borderBottomLeftRadius: 100,
+    borderBottomRightRadius: 100, 
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    opacity: 0.6
+  },
+  updateTextContainer: {
+    opacity: 1,
+    marginHorizontal: 10,
+    marginTop: 10
+  },
+  updateTextPicture: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525A',
+    fontSize: 14,
+    textAlign: 'center',
   }
 });

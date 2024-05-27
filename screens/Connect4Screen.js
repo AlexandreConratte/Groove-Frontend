@@ -46,8 +46,8 @@ export default function Connect4Screen({ navigation }) {
   });
 
 
-   const BACKEND_URL = "https://backend-groove.vercel.app"
-   // const BACKEND_URL = "http://10.1.0.205:3000"
+   //const BACKEND_URL = "https://backend-groove.vercel.app"
+   const BACKEND_URL = "http://10.1.3.11:3000"
   
   // début selection des styles
   useEffect(() => {
