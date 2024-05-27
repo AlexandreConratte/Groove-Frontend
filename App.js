@@ -18,6 +18,7 @@ import MyMemories from './screens/MyMemoriesScreen';
 import Profile from './screens/ProfileScreen';
 import Settings from './screens/SettingsScreen';
 import Festival from './screens/FestivalScreen'
+import Group from './screens/GroupScreen'
 
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -93,6 +94,7 @@ export default function App() {
        <Stack.Screen name="Connect5" component={Connect5} />
        <Stack.Screen name="Festival" component={Festival} />
        <Stack.Screen name="Friends" component={Friends} />
+       <Stack.Screen name="Group" component={Group} />
        <Stack.Screen name="MyFestivals" component={MyFestivals} />
        <Stack.Screen name="MyMemories" component={MyMemories} />
        <Stack.Screen name="Profile" component={Profile} />

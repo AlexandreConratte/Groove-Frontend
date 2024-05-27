@@ -52,6 +52,10 @@ export default function FriendsScreen({ navigation }) {
       .then((data) => setusersdata(data.friends))
   }
 
+  const goToGroupPage=(params)=>{
+    navigation.navigate('Group', { ...params })
+  }
+
   useEffect(() => {
     affichage1()
     affichage2()
@@ -103,9 +107,8 @@ export default function FriendsScreen({ navigation }) {
   })
 
   const groups = dataGroups.map((e, i) => {
-    return (<Group key={i} {...e} />)
+    return (<Group key={i} {...e} goToGroupPage={goToGroupPage} />)
   })
-
 
 
   return (
@@ -175,7 +178,7 @@ export default function FriendsScreen({ navigation }) {
           <Text style={styles.title2}>Mes groupes :</Text>
           <ScrollView contentContainerStyle={styles.groupsContainer} horizontal={true}>
             {groups}
-            <Group />
+            <Group goToGroupPage={goToGroupPage}/>
           </ScrollView>
         </View>
         <View style={styles.friendsContainer}>

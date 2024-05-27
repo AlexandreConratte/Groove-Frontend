@@ -17,7 +17,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const BACKEND_URL = "https://backend-groove.vercel.app"
 
 export default function SearchResultsScreen({ navigation }) {
@@ -141,6 +140,7 @@ export default function SearchResultsScreen({ navigation }) {
       </View>
     );
   };
+  
   //recheche de styles
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -227,9 +227,6 @@ export default function SearchResultsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        setTimeout(() => {
-          return(<LoadingAnimation />);
-        }, 2000);
         (foundedCity === '') && navigation.navigate('SearchResultsScreen', { ...data })
       })
   }

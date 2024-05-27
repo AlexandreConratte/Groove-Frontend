@@ -20,6 +20,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { getDistance } from 'geolib';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default function SearchResultsScreen({ route, navigation }) {
   let [fontsLoaded] = useFonts({
@@ -36,6 +37,7 @@ export default function SearchResultsScreen({ route, navigation }) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [modalVisible, setModal] = useState(false);
   const [festivalSelected, setfestivalSelected] = useState({});
+  const [loading, setloading] = useState(true);
   const userCoordinate = useSelector((state) => state.user.value.coordinate)
   let festivals = []
   const objet = route.params;
@@ -44,9 +46,18 @@ export default function SearchResultsScreen({ route, navigation }) {
   let coordinate = {latitude : 48.866667,longitude : 2.333333}
   userCoordinate.latitude&& (coordinate = userCoordinate)
 
+  setTimeout(() => {
+    setloading(false)
+  }, 4000);
+
   if (!fontsLoaded) {
     return <Text></Text>;
   }
+
+  if (loading){
+  return(<LoadingAnimation />);
+  }
+
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
 

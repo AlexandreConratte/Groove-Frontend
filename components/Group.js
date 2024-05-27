@@ -28,24 +28,30 @@ export default function Group(props) {
   if (!fontsLoaded) {
     return <Text></Text>;
   }
+  let content
 
-  let content = <FontAwesome5 name='plus' size={100} color={'#19525A'} />
-
-  if(props.name){
-    let s =''
-    props.members.length>1&&(s='s') 
-    content=<>
-    <Text style={styles.title}>{props.name}</Text>
-    <Text style={styles.text}>{props.festival.name}</Text>
-    <Text style={styles.text}>{props.members.length} membre{s}</Text>
-    </>
+  if (props.name) {
+    let s = ''
+    props.members.length > 1 && (s = 's')
+    content =
+      <TouchableOpacity style={styles.container} onPress={() => props.goToGroupPage(props)}>
+        <Text style={styles.title}>{props.name}</Text>
+        <Text style={styles.text}>{props.festival.name}</Text>
+        <Text style={styles.text}>{props.members.length} membre{s}</Text>
+      </TouchableOpacity>
+  }
+  else {
+    content =
+      <TouchableOpacity style={styles.container} onPress={() => props.goToGroupPage()}>
+        <FontAwesome5 name='plus' size={100} color={'#19525A'} />
+      </TouchableOpacity>
   }
 
   return (
-      <View style={styles.container}>
-        {content}
-      </View>
-  );
+    <>
+      {content}
+    </>
+  )
 }
 
 const windowWidth = Dimensions.get('window').width;
@@ -68,11 +74,11 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
-    alignItems:'center',
-    justifyContent:'center',
-    borderColor:'#8AE0E0',
-    borderWidth:3,
-    borderRadius:20
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: '#8AE0E0',
+    borderWidth: 3,
+    borderRadius: 20
   },
   title: {
     fontSize: 24,
@@ -82,7 +88,7 @@ const styles = StyleSheet.create({
   text: {
     fontFamily: 'Poppins_400Regular',
     color: '#19525a',
-    textAlign:'center'
+    textAlign: 'center'
   },
 
 });
