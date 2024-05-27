@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, Platform } from 'react-native';
+import { Dimensions, Image, StyleSheet, Text, View, Platform } from 'react-native';
 import {
   useFonts,
   Poppins_100Thin,
@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   name: {
     textAlign: 'center',
     fontFamily: 'Poppins_400Regular',
+    color: '#19525A',
   },
   image: {
     width: '90%',

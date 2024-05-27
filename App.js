@@ -22,9 +22,9 @@ import Group from './screens/GroupScreen'
 
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import { useSelector } from "react-redux";
 import user from "./reducers/user";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-
 
 const store = configureStore({
   reducer: { user },
@@ -46,6 +46,10 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
 
 const TabNavigator = () => {
+  const User = useSelector((state) => state.user.value);
+  const borderColor = User.settings.nightMode ? '#FFFFFF' : '#19525A';
+  const borderTopColor = User.settings.nightMode ? '#FFFFFF' : '#19525A';
+  
   return (
     <Tab.Navigator 
       initialRouteName="Home"
@@ -61,15 +65,15 @@ const TabNavigator = () => {
             ? require('./assets/loupe-jaune.png')
             : require('./assets/loupe-blanche.png');
           return (
-            <View style={{ position: 'absolute', top: -50, backgroundColor: '#15C2C2', width: windowWidth/3.5, height: windowWidth / 3.5, borderRadius: windowWidth / 6.4, borderColor:'#19525A', borderWidth: 2, alignItems: 'center', justifyContent: 'center'}}>
-              <Image source={iconSource} style={{ width: windowWidth/3, height: windowHeight/8 ,padding: 0, left: 5.5, bottom: 2}} />
+            <View style={[styles.searchIconContainer, { borderColor }]}>
+              <Image source={iconSource} style={styles.searchIcon} />
             </View>
           );
         }
         ;
       },
       tabBarShowLabel: false,
-      tabBarStyle: {backgroundColor: '#19525A', width: windowWidth, height: (windowHeight/10)},
+      tabBarStyle: {backgroundColor: '#19525A', width: windowWidth, height: (windowHeight/10), borderTopWidth: 3, borderTopColor },
       tabBarActiveTintColor: '#FFE45E',
       tabBarInactiveTintColor: 'white',
       headerShown: false,
@@ -111,5 +115,23 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  searchIconContainer: {
+    position: 'absolute',
+    top: -50,
+    backgroundColor: '#15C2C2',
+    width: windowWidth / 3.5,
+    height: windowWidth / 3.5,
+    borderRadius: windowWidth / 6.4,
+    borderWidth: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  searchIcon: {
+    width: windowWidth / 3,
+    height: windowHeight / 8,
+    padding: 0,
+    left: 5.5,
+    bottom: 2,
   },
 });

@@ -3,7 +3,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
 const BACKEND_URL = "https://backend-groove.vercel.app"
-import { login, updateLikedFestival, updateMemoriesFestival } from '../reducers/user';
+import { login, updateLikedFestival, updateMemoriesFestival, updateNightMode } from '../reducers/user';
 import {
   useFonts,
   Poppins_100Thin,
@@ -82,11 +82,16 @@ export default function Connect1Screen({ navigation }) {
             body: JSON.stringify({ token: data.token }),
           }).then(response => response.json())
             .then(data => {
-              //console.log(data)
               const festivalsIds = data.memoriesFestivals.map(festival => festival._id);
               dispatch(updateMemoriesFestival(festivalsIds))
             })
-
+            //to add in reducer nightMode 
+            fetch(`${BACKEND_URL}/settings/mode`,{
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ token: data.token}),
+            }).then(response => response.json())
+            .then(data => dispatch(updateNightMode(data.nightMode)))
         }
       });
   };

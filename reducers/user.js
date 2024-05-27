@@ -6,7 +6,9 @@ const initialState = {
     connection : { username: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
     picture: ''},
     likedFestivals : [],
-    memoriesFestivals : [], },
+    memoriesFestivals : [], 
+    settings: { nightMode: false, notifications: false }
+  },
 };
 
 export const userSlice = createSlice({
@@ -44,8 +46,11 @@ export const userSlice = createSlice({
     updateMemoriesFestival: (state, action) => {
       state.value.memoriesFestivals = (action.payload)
     },
+    updateNightMode: (state, action) => {
+      state.value.settings.nightMode = (action.payload)
+    }
   },
 });
   
-export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival, resetdataFields,} = userSlice.actions;
+export const { login, logout, signupUser, addCoordinate, updateLikedFestival, updateMemoriesFestival, resetdataFields, updateNightMode } = userSlice.actions;
 export default userSlice.reducer;
