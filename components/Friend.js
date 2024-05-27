@@ -11,6 +11,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 export default function Friend(props) {
   let [fontsLoaded] = useFonts({
@@ -29,9 +30,10 @@ export default function Friend(props) {
     return <Text></Text>;
   }
 
-  if(props.picture){
+  if (props.picture) {
     image = props.picture
-  } 
+  }
+  
 
   return (
     <View style={styles.container}>
@@ -44,13 +46,13 @@ export default function Friend(props) {
       <View style={styles.textContainer}>
         <Text style={styles.title}>{props.username}</Text>
         <Text>{props.city}</Text>
+        <TouchableOpacity onPress={() => props.deleteFriend(props.token)} style={styles.icontrash}>
+          <FontAwesome5 name='trash' size={25} color={'#19525A'} />
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -69,9 +71,9 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
-    flexDirection:'row',
-    justifyContent:'space-between',
-    padding:10
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10
   },
   image: {
     height: 130,
@@ -80,16 +82,21 @@ const styles = StyleSheet.create({
     borderColor: '#8AE0E0',
     borderWidth: 3,
   },
-  imageContainer:{
-    alignItems:'center',
-    justifyContent:'center'
+  imageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   title: {
     fontSize: 30,
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
-  textContainer:{
-    width:'60%',
+  textContainer: {
+    width: '60%',
+  },
+  icontrash: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   }
 });

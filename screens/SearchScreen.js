@@ -228,6 +228,9 @@ export default function SearchResultsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => {
+        setTimeout(() => {
+          return(<LoadingAnimation />);
+        }, 2000);
         (foundedCity === '') && navigation.navigate('SearchResultsScreen', { ...data })
       })
   }

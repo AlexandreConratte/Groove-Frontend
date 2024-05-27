@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform} from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch } from "react-redux";
 import { useState, useEffect } from 'react';
@@ -36,14 +36,14 @@ export default function Connect1Screen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isConnected, setIsConnected] = useState(false)
-  
+
 
   const [displaySignIn, setDisplaySignIn] = useState(false)
 
   const dispatch = useDispatch()
 
   const popSignIn = () => {
-  
+
     setDisplaySignIn(!displaySignIn)
     setUsername('');
     setPassword('');
@@ -54,7 +54,7 @@ export default function Connect1Screen({ navigation }) {
     fetch(`${BACKEND_URL}/users/signin`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username : username, password : password}),
+      body: JSON.stringify({ username: username, password: password }),
     }).then(response => response.json())
       .then(data => {
         //console.log(data)
@@ -65,22 +65,22 @@ export default function Connect1Screen({ navigation }) {
           setDisplaySignIn(false)
           navigation.navigate('Home')
           setIsConnected(true);
-            //to add in reducer festivals i already liked
-            fetch(`${BACKEND_URL}/users/findLiked`,{
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token: data.token}),
-            }).then(response => response.json())
+          //to add in reducer festivals i already liked
+          fetch(`${BACKEND_URL}/users/findLiked`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: data.token }),
+          }).then(response => response.json())
             .then(data => {
               const festivalIds = data.festivalsLiked.map(festival => festival._id);
               dispatch(updateLikedFestival(festivalIds));
             })
-            //to add in reducer memories i already have 
-            fetch(`${BACKEND_URL}/users/findMemories`,{
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token: data.token}),
-            }).then(response => response.json())
+          //to add in reducer memories i already have 
+          fetch(`${BACKEND_URL}/users/findMemories`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: data.token }),
+          }).then(response => response.json())
             .then(data => {
               const festivalsIds = data.memoriesFestivals.map(festival => festival._id);
               dispatch(updateMemoriesFestival(festivalsIds))
@@ -103,53 +103,53 @@ export default function Connect1Screen({ navigation }) {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
 
-    <View style={styles.container}>
+      <View style={styles.container}>
 
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
-          <FontAwesome name='arrow-left' size={33} color="#19525a" />
-        </TouchableOpacity>
-        <Text style={styles.title1}>Connect</Text>
-      </View>
-
-      <View style={styles.buttonsContain}>
-        <View >
-          <Text style={styles.text}>J'ai déjà un compte :</Text>
-          <TouchableOpacity onPress={() => popSignIn()} style={styles.connexionButton}>
-            <Text style={styles.connexion}>Connexion</Text>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
+            <FontAwesome name='arrow-left' size={33} color="#19525a" />
           </TouchableOpacity>
+          <Text style={styles.title1}>Connect</Text>
         </View>
 
-        <Modal visible={displaySignIn} style={styles.modalContainer} transparent={true}>
-        <View style={styles.modalBackground}>
-          
-          <View style={styles.signInContainer}>
-          <TouchableOpacity onPress={popSignIn} >
-            <Text style={styles.close}>X</Text>
-          </TouchableOpacity>
-            <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
-              value={username} style={styles.input}/>
-            <TextInput placeholder="Mot de passe" onChangeText={(value) => setPassword(value)}
-              value={password} style={styles.input}/>
-            <TouchableOpacity onPress={() => handleConnection()}>
-              <Text style={styles.modalconnexion}>Connexion</Text>
+        <View style={styles.buttonsContain}>
+          <View >
+            <Text style={styles.text}>J'ai déjà un compte :</Text>
+            <TouchableOpacity onPress={() => popSignIn()} style={styles.connexionButton}>
+              <Text style={styles.connexion}>Connexion</Text>
             </TouchableOpacity>
           </View>
+
+          <Modal visible={displaySignIn} style={styles.modalContainer} transparent={true}>
+            <View style={styles.modalBackground}>
+
+              <View style={styles.signInContainer}>
+                <TouchableOpacity onPress={popSignIn} >
+                  <Text style={styles.close}>X</Text>
+                </TouchableOpacity>
+                <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
+                  value={username} style={styles.input} />
+                <TextInput placeholder="Mot de passe" onChangeText={(value) => setPassword(value)}
+                  value={password} style={styles.input} />
+                <TouchableOpacity onPress={() => handleConnection()}>
+                  <Text style={styles.modalconnexion}>Connexion</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+
+          <View >
+            <Text style={styles.text}>Je veux créer un compte :</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Connect2')} style={styles.inscriptionButton}>
+              <Text style={styles.inscription}>Inscription</Text>
+            </TouchableOpacity>
           </View>
-        </Modal>
+          <Text>--------------- ou ---------------</Text>
 
-        <View >
-          <Text style={styles.text}>Je veux créer un compte :</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Connect2')} style={styles.inscriptionButton}>
-            <Text style={styles.inscription}>Inscription</Text>
-          </TouchableOpacity>
+          <Text>Google Connexion</Text>
         </View>
-        <Text>--------------- ou ---------------</Text>
 
-        <Text>Google Connexion</Text>
       </View>
-
-    </View>
     </KeyboardAvoidingView>
 
   )
@@ -159,28 +159,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-    header: {
-      height: 86,
-      justifyContent: "space-around",
-      borderBottomColor: '#19525A',
-      borderBottomWidth: 3,
-      width: Dimensions.get('window').width,
-      alignItems: "center",
-      flexDirection: "row",
-      marginTop: 10
-    },
-    title1: {
-      fontSize: 30,
-      color: '#19525A',
-      fontFamily: 'Poppins_600SemiBold'
-    },
-    iconArrow: {
-      position: 'absolute',
-      left: 9,
-      height: '60%',
-      width: '10%',
-      marginBottom: 5
-    },
+  header: {
+    height: 86,
+    justifyContent: "space-around",
+    borderBottomColor: '#19525A',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: 10
+  },
+  title1: {
+    fontSize: 30,
+    color: '#19525A',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
   buttonsContain: {
     justifyContent: "space-evenly",
     flex: 1,
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "400",
     backgroundColor: '#19525a',
-    borderRadius : 6,
+    borderRadius: 6,
     padding: 5,
     color: "white"
 
@@ -265,7 +265,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     borderRadius: 30,
     padding: 35,
-    borderColor : '#19525a', 
+    borderColor: '#19525a',
     borderWidth: 3,
     shadowColor: '#000',
     shadowOffset: {
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
   close: {
     justifyContent: "flex-end",
     fontSize: 18,
-    fontWeight : "600"
+    fontWeight: "600"
   },
   input: {
     width: '100%',
@@ -290,8 +290,8 @@ const styles = StyleSheet.create({
     borderColor: '#19525a',
     borderRadius: 8,
     height: 50,
-    fontSize : 15,
-  
+    fontSize: 15,
+
   },
 
 

@@ -79,8 +79,8 @@ export default function HomeScreen({ navigation }) {
         //tri en fonction des dates 
         const now = Date.now()
         const result = data.festivals.map((e) => {
-          const start = new Date(e.start)
-          const diff = start - now
+          const start = new Date(e.start) 
+          const diff = start.getTime() - now
           return ({ ...e, diff })
         })
         const resultbis = result.filter((e) => e.diff > 0)
@@ -145,7 +145,7 @@ export default function HomeScreen({ navigation }) {
   }
 
   if (!fontsLoaded) {
-    return <LoadingAnimation />;
+    return <Text></Text>;
   }
 
   return (
