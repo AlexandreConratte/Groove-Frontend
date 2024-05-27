@@ -28,6 +28,11 @@ export default function Friend(props) {
   if (!fontsLoaded) {
     return <Text></Text>;
   }
+
+  if(props.picture){
+    image = props.picture
+  } 
+
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -40,8 +45,6 @@ export default function Friend(props) {
         <Text style={styles.title}>{props.username}</Text>
         <Text>{props.city}</Text>
       </View>
-
-
     </View>
   );
 }
@@ -89,5 +92,4 @@ const styles = StyleSheet.create({
   textContainer:{
     width:'60%',
   }
-
 });

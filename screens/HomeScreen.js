@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
+import { Image, StyleSheet, Text,SafeAreaView, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
 import FestivalCard from '../components/FestivalCard';
 import { useEffect, useState } from 'react';
 import { UseSelector } from 'react-redux';
@@ -21,6 +21,7 @@ import {
 import { addCoordinate } from '../reducers/user'
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from 'react-native';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 //const windowWidth = Dimensions.get('window').width;
 //const windowHeight = Dimensions.get('window').height;
@@ -144,7 +145,7 @@ export default function HomeScreen({ navigation }) {
   }
 
   if (!fontsLoaded) {
-    return <Text></Text>;
+    return <LoadingAnimation />;
   }
 
   return (
@@ -186,7 +187,7 @@ export default function HomeScreen({ navigation }) {
           {loc}
         </View>
       </ScrollView>
-    </KeyboardAvoidingView>
+  </KeyboardAvoidingView>
   )
 }
 
