@@ -18,7 +18,8 @@ export default function FriendsScreen({ navigation }) {
   const [usersdata, setusersdata] = useState([]);
   const [filteredData, setFilteredData] = useState(usersdata);
 
-  useEffect(() => {
+  //Affichage des groupes où l'utilisateur connecté est présent
+  const affichage1 = () => {
     fetch(`${BACKEND_URL}/groups/findAllByUsername`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -26,9 +27,10 @@ export default function FriendsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => setdataGroups(data.groups))
-  }, []);
+  }
 
-  useEffect(() => {
+  //Affichage des amis de l'utilisateur connecté
+  const affichage2 = () => {
     fetch(`${BACKEND_URL}/users/getAllFriends`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -36,9 +38,11 @@ export default function FriendsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => setdataFriends(data.friends))
-  }, []);
 
-  useEffect(() => {
+  }
+
+  //Récupération de tous les users de la BDD
+  const affichage3 = () => {
     fetch(`${BACKEND_URL}/users/getAllUsers`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -46,26 +50,27 @@ export default function FriendsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => setusersdata(data.friends))
+  }
+
+  useEffect(() => {
+    affichage1()
+    affichage2()
+    affichage3()
   }, []);
 
-  const deleteFriend=(friendToken)=>{
-    fetch(`http://10.1.3.14:3000/users/deleteFriend`, {
+  const deleteFriend = (friendToken) => {
+    fetch(`${BACKEND_URL}/users/deleteFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data.message)
+      .then(() => {
+        affichage1()
+        affichage2()
+        affichage3()
       })
   }
-  const friends = dataFriends.map((e, i) => {
-    return (<Friend key={i} deleteFriend={deleteFriend} {...e} />)
-  })
-
-  const groups = dataGroups.map((e, i) => {
-    return (<Group key={i} {...e} />)
-  })
 
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -81,24 +86,32 @@ export default function FriendsScreen({ navigation }) {
   };
 
   const handleSelectItem = (item) => {
-    fetch(`http://10.1.3.14:3000/users/addFriend`, {
+    fetch(`${BACKEND_URL}/users/addFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken: item.token }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data.message)
+      .then(() => {
+        affichage1()
+        affichage2()
+        affichage3()
       })
   }
+  const friends = dataFriends.map((e, i) => {
+    return (<Friend key={i} deleteFriend={deleteFriend} {...e} />)
+  })
+
+  const groups = dataGroups.map((e, i) => {
+    return (<Group key={i} {...e} />)
+  })
 
 
 
   return (
     <View style={styles.container}>
-      <Modal visible={modalAddFriend} transparent={true} style={styles.modalBackground} onBackdropPress={() => this.setmodalAddFriend(false)}>
+      <Modal visible={modalAddFriend} transparent={true} style={styles.modalBackground}>
         <View style={styles.modalBackground}>
-
           <View style={styles.modalContainer}>
             <TouchableOpacity style={styles.close} onPress={() => setmodalAddFriend(false)}>
               <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
