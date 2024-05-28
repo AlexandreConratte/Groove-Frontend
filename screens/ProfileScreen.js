@@ -111,7 +111,7 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const GoBack = () => {
-    navigation.navigate('Home')
+    navigation.navigate('Menu')
     setModalisVisible(false)
   };  
 
@@ -518,6 +518,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   connect: {
     fontWeight: "bold",
@@ -800,15 +801,15 @@ const styles = StyleSheet.create({
   },
   updatePicture: {
     position: 'absolute',
-    bottom: 0,
-    height: '50%',
+    height: '100%',
     width: '100%',
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100, 
+    borderRadius: 100,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    opacity: 0.6
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   updateTextContainer: {
     opacity: 1,
@@ -816,7 +817,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   updateTextPicture: {
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
     fontSize: 14,
     textAlign: 'center',
@@ -905,6 +906,7 @@ const nightModeStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   connect: {
     fontWeight: "bold",

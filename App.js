@@ -17,8 +17,9 @@ import MyFestivals from './screens/MyFestivalsScreen';
 import MyMemories from './screens/MyMemoriesScreen';
 import Profile from './screens/ProfileScreen';
 import Settings from './screens/SettingsScreen';
-import Festival from './screens/FestivalScreen'
-import Group from './screens/GroupScreen'
+import Festival from './screens/FestivalScreen';
+import Group from './screens/GroupScreen';
+import Credits from './screens/CreditsScreens';
 
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
@@ -103,6 +104,7 @@ export default function App() {
        <Stack.Screen name="MyMemories" component={MyMemories} />
        <Stack.Screen name="Profile" component={Profile} />
        <Stack.Screen name="Settings" component={Settings} />
+       <Stack.Screen name="Credits" component={Credits} />
      </Stack.Navigator>
    </NavigationContainer>
    </Provider>

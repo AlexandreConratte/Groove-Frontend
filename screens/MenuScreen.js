@@ -22,9 +22,9 @@ export default function MenuScreen({ navigation }) {
             <FontAwesome5 name='book' size={75} color={user.settings.nightMode ? '#8AE0E0' : '#8AE0E0'}/>
             <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Souvenirs</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Festival')} style={user.settings.nightMode ? nightModeStyle.button : styles.button}>
-            <FontAwesome5 name='map-marked-alt' size={75} color={user.settings.nightMode ? '#8AE0E0' : '#8AE0E0'}/>
-            <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Carte</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Credits')} style={user.settings.nightMode ? nightModeStyle.button : styles.button}>
+            <FontAwesome5 name='music' size={75} color={user.settings.nightMode ? '#8AE0E0' : '#8AE0E0'}/>
+            <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Crédits</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={user.settings.nightMode ? nightModeStyle.lightButton : styles.lightButton}>
             <FontAwesome5 name='user-friends' size={75} color={user.settings.nightMode ? '#ffeb86' : '#8BA8AC'}/>
