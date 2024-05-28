@@ -16,10 +16,11 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
 import FestivalOnMap from '../components/FestivalOnMap';
 
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import { getDistance } from 'geolib';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 export default function SearchResultsScreen({ route, navigation }) {
   let [fontsLoaded] = useFonts({
@@ -36,17 +37,28 @@ export default function SearchResultsScreen({ route, navigation }) {
   const [isEnabled, setIsEnabled] = useState(false);
   const [modalVisible, setModal] = useState(false);
   const [festivalSelected, setfestivalSelected] = useState({});
+  const [loading, setloading] = useState(true);
   const userCoordinate = useSelector((state) => state.user.value.coordinate)
   let festivals = []
   const objet = route.params;
   let affichage = <></>
   let markers = []
   let coordinate = {latitude : 48.866667,longitude : 2.333333}
-  userCoordinate.latitude&& (coordinate = userCoordinate)
+  userCoordinate.latitude&& (coordinate = userCoordinate);
+  const user = useSelector((state) => state.user.value);
+
+  setTimeout(() => {
+    setloading(false)
+  }, 4000);
 
   if (!fontsLoaded) {
     return <Text></Text>;
   }
+
+  if (loading){
+  return(<LoadingAnimation />);
+  }
+
   const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
 
@@ -129,30 +141,31 @@ export default function SearchResultsScreen({ route, navigation }) {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title1}>Recherche</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Recherche</Text>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.critereButton} onPress={() => navigation.navigate('Search')}>
-          <FontAwesome5 name="filter" size={30} color={"#19525A"} />
-          <Text style={styles.critereText}>Critères</Text>
+      <View style={user.settings.nightMode ? nightModeStyle.buttonContainer : styles.buttonContainer}>
+        <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.critereButton : styles.critereButton} onPress={() => navigation.navigate('Search')}>
+          <FontAwesome5 name="filter" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
+          <Text style={user.settings.nightMode ? nightModeStyle.critereText : styles.critereText}>Critères</Text>
         </TouchableOpacity>
-        <View style={styles.switch}>
-          <Text style={styles.critereText}>Liste</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.switch : styles.switch}>
+          <Text style={user.settings.nightMode ? nightModeStyle.critereText : styles.critereText}>Liste</Text>
           <Switch
-            style={styles.toggle}
-            trackColor={{ false: '#19525A', true: '#19525A' }}
-            thumbColor={isEnabled ? '#FFE45D' : '#FFE45D'}
+            style={user.settings.nightMode ? nightModeStyle.toggle : styles.toggle}
+            trackColor={user.settings.nightMode ? { false: '#FFE45D', true: '#FFE45D' } : { false: '#19525A', true: '#19525A' }}
+            thumbColor={user.settings.nightMode ? (isEnabled ? '#19525A' : '#FFE45D') : (isEnabled ? '#FFE45D' : '#FFE45D')}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={isEnabled}
           />
-          <Text style={styles.critereText}>Carte</Text>
+          <Text style={user.settings.nightMode ? nightModeStyle.critereText : styles.critereText}>Carte</Text>
         </View>
       </View>
       {affichage}
     </KeyboardAvoidingView>
+
   )
 }
 
@@ -252,7 +265,106 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20
   },
+})
 
+const nightModeStyle = StyleSheet.create({
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+  },
+  map: {
+    flex: 1,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 350
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    alignItems: 'flex-end',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  close: {
+    width: '100%',
+    justifyContent: 'flex-end',
 
-
+    marginRight: 10
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    backgroundColor: '#19525A',
+  },
+  buttonContainer: {
+    flexDirection: 'row'
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  festivalsContainer: {
+    alignItems: 'center',
+  },
+  critereButton: {
+    width: '50%',
+    borderRightWidth: 3,
+    borderRightColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    borderBottomColor: '#FFFFFF',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  critereText: {
+    fontFamily: 'Poppins_400Regular',
+    fontSize: 15,
+    color: '#FFFFFF'
+  },
+  switch: {
+    width: '50%',
+    borderBottomWidth: 3,
+    borderBottomColor: '#FFFFFF',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row'
+  },
+  notfound: {
+    alignItems: 'center',
+    backgroundColor: '#FAF9FE',
+    height: '100%'
+  },
+  text: {
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 24,
+    textAlign: 'center'
+  },
+  myposition: {
+    height: 20,
+    width: 20
+  },
+  toggle: {
+    marginHorizontal: 8
+  }
 })

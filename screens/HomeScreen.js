@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
+import { Image, StyleSheet, Text,SafeAreaView, TouchableOpacity, View, KeyboardAvoidingView, ScrollView, Platform, Dimensions, Modal } from 'react-native';
 import FestivalCard from '../components/FestivalCard';
 import { useEffect, useState } from 'react';
 import { UseSelector } from 'react-redux';
@@ -21,6 +21,7 @@ import {
 import { addCoordinate } from '../reducers/user'
 import { useDispatch, useSelector } from "react-redux";
 import { Linking } from 'react-native';
+import LoadingAnimation from '../components/LoadingAnimation';
 
 //const windowWidth = Dimensions.get('window').width;
 //const windowHeight = Dimensions.get('window').height;
@@ -78,8 +79,8 @@ export default function HomeScreen({ navigation }) {
         //tri en fonction des dates 
         const now = Date.now()
         const result = data.festivals.map((e) => {
-          const start = new Date(e.start)
-          const diff = start - now
+          const start = new Date(e.start) 
+          const diff = start.getTime() - now
           return ({ ...e, diff })
         })
         const resultbis = result.filter((e) => e.diff > 0)
@@ -148,41 +149,41 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title1}>Home</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Home</Text>
       </View>
 
-      <Modal visible={modalisVisible} transparent={true} style={styles.modalBackground}>
-        <View style={styles.modalBackground}>
+      <Modal visible={modalisVisible} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+        <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
 
-          <View style={styles.modalContainer}>
-            <Text style={styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
-            <Text style={styles.descripText}>Pour une expérience personnalisée </Text>
-            <TouchableOpacity onPress={() => GotoConnect()} style={styles.GotoConnectButton}>
-              <Text style={styles.connect}>Connecte Toi</Text>
+          <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
+            <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>BIENVENUE SUR GROOVE !</Text>
+            <Text style={user.settings.nightMode ? nightModeStyle.descripText : styles.descripText}>Pour une expérience personnalisée </Text>
+            <TouchableOpacity onPress={() => GotoConnect()} style={user.settings.nightMode ? nightModeStyle.GotoConnectButton : styles.GotoConnectButton}>
+              <Text style={user.settings.nightMode ? nightModeStyle.connect : styles.connect}>Connecte Toi</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setModalisVisible(false)} style={styles.GoToApp}>
-              <Text style={styles.acced}>Accéder à l'application</Text>
+            <TouchableOpacity onPress={() => setModalisVisible(false)} style={user.settings.nightMode ? nightModeStyle.GoToApp : styles.GoToApp}>
+              <Text style={user.settings.nightMode ? nightModeStyle.acced : styles.acced}>Accéder à l'application</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-      <ScrollView contentContainerStyle={styles.scrollPrincipal}>
-        <View style={styles.section}>
-          <Text style={styles.title2}>A venir...</Text>
+      <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.scrollPrincipal : styles.scrollPrincipal}>
+        <View style={user.settings.nightMode ? nightModeStyle.section : styles.section}>
+          <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>A venir...</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
             {next}
           </ScrollView>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.title2}>Les + populaires</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.section : styles.section}>
+          <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Les + populaires</Text>
           <ScrollView contentContainerStyle={styles.scrollSecondaire} horizontal={true}>
             {popular}
           </ScrollView>
         </View>
-        <View style={styles.section}>
-          <Text style={styles.title2}>Autour de vous</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.section : styles.section}>
+          <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Autour de vous</Text>
           {loc}
         </View>
       </ScrollView>
@@ -313,3 +314,127 @@ const styles = StyleSheet.create({
     justifyContent:'center'
   }
 });
+
+const nightModeStyle = StyleSheet.create({
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#19525A'
+  },
+
+  scrollSecondaire: {
+    flexDirection: 'row',
+    alignItems: 'center',
+
+  },
+  section: {
+    width: Dimensions.get('window').width,
+    height: 400,
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  title2: {
+    color: '#FFFFFF',
+    marginLeft: 10,
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 24,
+  },
+  GotoConnectButton: {
+    backgroundColor: '#19525a',
+    height: 50,
+    width: 195,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    color: "white"
+  },
+  GoToApp: {
+    backgroundColor: '#FFE45D',
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  modalContainer: {
+    width: 274,
+    height: 292,
+    justifyContent: 'center',
+    backgroundColor: "white",
+    borderColor: '#FFE45D',
+    borderWidth: 3,
+    alignItems: 'center',
+  },
+  welcomeText: {
+    fontSize: 24,
+    fontFamily: 'Poppins_600SemiBold',
+    margin: 5,
+    textAlign: "center",
+    paddingLeft: 8,
+    paddingRight: 8,
+    marginBottom: 10,
+    color: '#19525a',
+    textShadowColor: '#19525a',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10
+  },
+  descripText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    padding: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525a',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  connect: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: "#FFFFFF",
+    fontSize: 26,
+  },
+  acced: {
+    fontSize: 14,
+    fontFamily: 'Poppins_600SemiBold',
+    paddingHorizontal: 10
+  },
+  permission: {
+    padding: 10,
+    backgroundColor: '#19525a',
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 10,
+    width: "80%"
+  },
+  permissionText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: "white",
+    fontSize: 20,
+  },
+  permissionContainer:{
+    width:'100%',
+    height:'100%',
+    alignItems:'center',
+    justifyContent:'center'
+  }
+})

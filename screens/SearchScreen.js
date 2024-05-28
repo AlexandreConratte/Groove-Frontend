@@ -17,7 +17,6 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import Slider from '@react-native-community/slider';
 import { useDispatch, useSelector } from 'react-redux';
 
-
 const BACKEND_URL = "https://backend-groove.vercel.app"
 
 export default function SearchResultsScreen({ navigation }) {
@@ -56,7 +55,8 @@ export default function SearchResultsScreen({ navigation }) {
   const grand = "Grand > 30000"
   const [foundedCity, setfoundedCity] = useState('');
   const [place, setPlace] = useState({});
-  const userCoordinate = useSelector((state) => state.user.value.coordinate)
+  const userCoordinate = useSelector((state) => state.user.value.coordinate);
+  const user = useSelector((state) => state.user.value);
 
   const selectTaille = (item) => {
     if (item === taille)
@@ -98,13 +98,13 @@ export default function SearchResultsScreen({ navigation }) {
       setShow(true);
     };
     return (
-      <View style={styles.datebox}>
-        <Text style={styles.text}>{label}</Text>
+      <View style={user.settings.nightMode ? nightModeStyle.datebox : styles.datebox}>
+        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
           <TextInput
-            style={styles.inputDate}
+            style={user.settings.nightMode ? nightModeStyle.inputDate : styles.inputDate}
             placeholder="Date de debut"
-            placeholderTextColor='#19525a'
+            placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
             value={start}
             editable={false} />
         </TouchableOpacity>
@@ -127,13 +127,13 @@ export default function SearchResultsScreen({ navigation }) {
       setShow(true);
     };
     return (
-      <View style={styles.datebox}>
-        <Text style={styles.text}>{label}</Text>
+      <View style={user.settings.nightMode ? nightModeStyle.datebox : styles.datebox}>
+        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
           <TextInput
-            style={styles.inputDate}
+            style={user.settings.nightMode ? nightModeStyle.inputDate : styles.inputDate}
             placeholder="Date de fin"
-            placeholderTextColor='#19525a'
+            placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
             value={end}
             editable={false} />
         </TouchableOpacity>
@@ -141,6 +141,7 @@ export default function SearchResultsScreen({ navigation }) {
       </View>
     );
   };
+  
   //recheche de styles
   const handleSearch = (query) => {
     setSearchQuery(query);
@@ -235,21 +236,26 @@ export default function SearchResultsScreen({ navigation }) {
   const cityNotFound = <Text style={styles.cityNotFound}>{foundedCity}</Text>
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title1}>Recherche</Text>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Recherche</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.allElement} >
-        <View style={styles.dateContainer}>
+      <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.allElement : styles.allElement}>
+        <View style={user.settings.nightMode ? nightModeStyle.dateContainer : styles.dateContainer}>
           <DateInputStart label="Date de debut" />
           <DateInputEnd label="Date de fin" />
         </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Selectionner votre ville</Text>
-          <View style={styles.searchcity}>
-            <TextInput placeholder="Ville" onChangeText={(value) => setVille(value)}
+        <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Selectionner votre ville</Text>
+          <View style={user.settings.nightMode ? nightModeStyle.searchcity : styles.searchcity}>
+            <TextInput 
+              placeholder="Ville" 
+              placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
+              onChangeText={(value) => setVille(value)}
               value={ville}
-              style={[styles.inputville, { borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'ville' ? 2 : 1 }
+              style={[
+                user.settings.nightMode ? nightModeStyle.inputville : styles.inputville,
+                { borderColor: focusedInput === 'ville' ? '#15C2C2' : '#7CB7BF', borderWidth: focusedInput === 'ville' ? 2 : 1 }
               ]}
               onFocus={() => setFocusedInput('ville')}
               onBlur={() => setFocusedInput(null)}
@@ -259,9 +265,9 @@ export default function SearchResultsScreen({ navigation }) {
             </TouchableOpacity>
           </View>
           {cityNotFound}
-          <Text style={styles.text}>Distance max : {distance} km</Text>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Distance max : {distance} km</Text>
           <Slider
-            style={styles.slider}
+            style={user.settings.nightMode ? nightModeStyle.slider : styles.slider}
             minimumValue={50}
             maximumValue={1000}
             step={50}
@@ -272,90 +278,89 @@ export default function SearchResultsScreen({ navigation }) {
             thumbTintColor="#15C2C2"
           />
         </View>
-        <View style={styles.box}>
-          {/*rechercher un style*/}
-          <Text style={styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
           <TextInput
-            style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
+            style={[
+              user.settings.nightMode ? nightModeStyle.input : styles.input,
+              { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF', borderWidth: focusedInput === 'style' ? 2 : 1 }
             ]}
             placeholder="Rechercher un style"
-            placeholderTextColor='#19525a'
+            placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
             value={searchQuery}
             onChangeText={(text) => handleSearch(text)}
             onFocus={() => setFocusedInput('style')}
             onBlur={() => setFocusedInput(null)}
           />
-          <ScrollView style={styles.scrollView}>
+          <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
             {filteredData.map((item, i) => (
               <TouchableOpacity
                 key={i}
-                style={styles.item}
+                style={user.settings.nightMode ? nightModeStyle.item : styles.item}
                 onPress={() => handleSelectItem(item)}
               >
-                <Text style={styles.text}>{item.name}</Text>
+                <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <View style={styles.selectedContainer}>
+          <View style={user.settings.nightMode ? nightModeStyle.selectedContainer : styles.selectedContainer}>
             {selectedItems.map((item, i) => (
-              <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectItem(item)}>
-                <Text style={styles.text}>{item.name}</Text>
+              <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.selectedItemText : styles.selectedItemText} onPress={() => handleSelectItem(item)}>
+                <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          {/*rechercher un artiste*/}
-          <Text style={styles.text}>Selectionner 1 ou plusieurs artistes</Text>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Selectionner 1 ou plusieurs artistes</Text>
           <TextInput
-            style={[styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }
+            style={[
+              user.settings.nightMode ? nightModeStyle.input : styles.input,
+              { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF', borderWidth: focusedInput === 'artiste' ? 2 : 1 }
             ]}
             onFocus={() => setFocusedInput('artiste')}
             onBlur={() => setFocusedInput(null)}
             placeholder="Rechercher un artiste"
-            placeholderTextColor='#19525a'
+            placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
             value={searchQuery2}
             onChangeText={(text) => handleSearch2(text)}
           />
-          <ScrollView style={styles.scrollView}>
+          <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
             {filteredData2.map((item2, i) => (
               <TouchableOpacity
                 key={i}
-                style={[
-                  styles.item,
-                ]}
+                style={user.settings.nightMode ? nightModeStyle.item : styles.item}
                 onPress={() => handleSelectItem2(item2)}
               >
-                <Text style={styles.text}>{item2.name}</Text>
+                <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item2.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <View style={styles.selectedContainer}>
+          <View style={user.settings.nightMode ? nightModeStyle.selectedContainer : styles.selectedContainer}>
             {selectedItems2.map((item2, i) => (
-              <TouchableOpacity key={i} style={styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
-                <Text style={styles.text}>{item2.name}</Text>
+              <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.selectedItemText2 : styles.selectedItemText2} onPress={() => handleSelectItem2(item2)}>
+                <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item2.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
-
         </View>
-        <View style={styles.box}>
-          <Text style={styles.text}>Taille du festival (en nombre moyen de participants /jour) : </Text>
-          <View style={styles.buttonTailleContainer}>
-            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'petit' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('petit')}>
-              <Text style={[styles.buttonTailleText, { color: taille === 'petit' ? '#FFE45D' : '#19525a' }]}>{petit}</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
+          <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Taille du festival (en nombre moyen de participants /jour) : </Text>
+          <View style={user.settings.nightMode ? nightModeStyle.buttonTailleContainer : styles.buttonTailleContainer}>
+            <TouchableOpacity style={[user.settings.nightMode ? nightModeStyle.buttonTaille : styles.buttonTaille, { backgroundColor: taille === 'petit' ? (user.settings.nightMode ? '#FFFFFF' : '#19525A') : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('petit')}>
+              <Text style={[user.settings.nightMode ? nightModeStyle.buttonTailleText : styles.buttonTailleText, { color: taille === 'petit' ? (user.settings.nightMode ? '#19525A' : '#FFE45D') : (user.settings.nightMode ? '#FFFFFF' : '#19525a') }]}>{petit}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'moyen' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('moyen')}>
-              <Text style={[styles.buttonTailleText, { color: taille === 'moyen' ? '#FFE45D' : '#19525a' }]}>{moyen}</Text>
+            <TouchableOpacity style={[user.settings.nightMode ? nightModeStyle.buttonTaille : styles.buttonTaille, { backgroundColor: taille === 'moyen' ? (user.settings.nightMode ? '#FFFFFF' : '#19525A') : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('moyen')}>
+              <Text style={[user.settings.nightMode ? nightModeStyle.buttonTailleText : styles.buttonTailleText, { color: taille === 'moyen' ? (user.settings.nightMode ? '#19525A' : '#FFE45D') : (user.settings.nightMode ? '#FFFFFF' : '#19525a') }]}>{moyen}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.buttonTaille, { backgroundColor: taille === 'grand' ? '#19525A' : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('grand')}>
-              <Text style={[styles.buttonTailleText, { color: taille === 'grand' ? '#FFE45D' : '#19525a' }]}>{grand}</Text>
+            <TouchableOpacity style={[user.settings.nightMode ? nightModeStyle.buttonTaille : styles.buttonTaille, { backgroundColor: taille === 'grand' ? (user.settings.nightMode ? '#FFFFFF' : '#19525A') : 'rgba(0, 0, 0, 0)' }]} onPress={() => selectTaille('grand')}>
+              <Text style={[user.settings.nightMode ? nightModeStyle.buttonTailleText : styles.buttonTailleText, { color: taille === 'grand' ? (user.settings.nightMode ? '#19525A' : '#FFE45D') : (user.settings.nightMode ? '#FFFFFF' : '#19525a') }]}>{grand}</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => search()}>
-            <Text style={styles.buttonText}>Rechercher</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.buttonContainer : styles.buttonContainer}>
+          <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.button : styles.button} onPress={() => search()}>
+            <Text style={user.settings.nightMode ? nightModeStyle.buttonText : styles.buttonText}>Rechercher</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -528,6 +533,176 @@ const styles = StyleSheet.create({
   label: {
     fontFamily: 'Poppins_400Regular',
     color: '#19525a'
+  },
+  slider: {
+    marginBottom: 20
+  }
+})
+
+const nightModeStyle = StyleSheet.create({
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    backgroundColor: '#19525A'
+  },
+  allElement: {
+    padding: 10,
+    alignItems: 'center',
+  },
+  scrollView: {
+    maxHeight: 200,
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    width: '90%',
+    justifyContent:'space-between'
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
+  button: {
+    padding: 10,
+    backgroundColor: '#15C2C2',
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginBottom: 100,
+    width: '90%',
+    height: 70,
+  },
+  box: {
+    width: '90%',
+    marginVertical: 10
+  },
+  datebox:{
+    width: '45%',
+    marginVertical: 10
+  },
+  buttonContainer: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 20
+  },
+  buttonTailleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  buttonTaille: {
+    marginTop: 10,
+    marginBottom: 50,
+    borderColor: '#FFFFFF',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    paddingHorizontal: 12
+  },
+  buttonTailleText: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF',
+    fontSize: 15
+  },
+  input: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF'
+  },
+  inputville: {
+    width: '80%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF',
+    marginBottom: 0,
+  },
+  searchcity: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  inputDate: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF'
+
+  },
+  selectedContainer: {
+    flexDirection: 'row',
+    marginVertical: 10,
+    flexWrap: 'wrap',
+  },
+  selectedItemText: {
+    backgroundColor: '#FFE45D',
+    color: '#FFFFFF',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    elevation: 2,
+    fontFamily: 'Poppins_400Regular',
+  },
+  selectedItemText2: {
+    backgroundColor: '#D2FFF4',
+    color: '#FFFFFF',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    elevation: 2,
+
+  },
+  item: {
+    padding: 5,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7CB7BF',
+  },
+  cityNotFound: {
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_400Regular',
+  },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#FFFFFF'
+  },
+  label: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF'
   },
   slider: {
     marginBottom: 20
