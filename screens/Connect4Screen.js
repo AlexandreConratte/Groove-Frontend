@@ -19,6 +19,8 @@ import { login, resetdataFields } from '../reducers/user';
 import { uploadImage } from '../modules/uploadImage';
 
 
+const windowWidth = Dimensions.get('window').width;
+
 export default function Connect4Screen({ navigation }) {
 
   const user = useSelector((state) => state.user.value);
@@ -30,6 +32,7 @@ export default function Connect4Screen({ navigation }) {
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [artistsData, setArtistsData] = useState([]);
   const [filteredData, setFilteredData] = useState(artistsData);
+  const [focusedInput, setFocusedInput] = useState(null)
 
 
   let [fontsLoaded] = useFonts({
@@ -138,7 +141,7 @@ export default function Connect4Screen({ navigation }) {
       artists: artistIds,
       picture: getUrl
     };
-  
+
     const signUp = await fetch(`${BACKEND_URL}/users/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -146,10 +149,10 @@ export default function Connect4Screen({ navigation }) {
     })
     const resultSignUp = await signUp.json()
     if (resultSignUp.result) {
-      
-      dispatch(login({ token }));
+
+      dispatch(login({ token: resultSignUp.token }));
       dispatch(resetdataFields())
-      navigation.navigate('Home')
+      navigation.navigate('Connect5')
       console.log("Inscription validée")
     }
     else {
@@ -162,36 +165,36 @@ export default function Connect4Screen({ navigation }) {
     return <View></View>
   }
 
-
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
-          <FontAwesome5 name='arrow-left' size={33} color={"#19525a"} />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
+          <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? "#FFFFFF" : "#19525a"} />
         </TouchableOpacity>
-        <Text style={styles.title1}>Connect</Text>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Connect</Text>
       </View>
+
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
         <View style={styles.select_textContainer}>
-          <Text style={styles.select_text}>
+          <Text style={user.settings.nightMode ? nightModeStyle.select_text : styles.select_text}>
             Sélectionne tes styles de musique préférés (5max) :
           </Text>
         </View>
 
-
-        <View style={styles.listContainer}>
+        <View style={styles.MusicStyleContainer}>
           {allstyles}
         </View>
 
         <View style={styles.select_textContainer}>
-          <Text style={styles.select_text}>
+          <Text style={user.settings.nightMode ? nightModeStyle.select_text : styles.select_text}>
             Sélectionne tes artistes favoris (5max) :
           </Text>
           <TextInput
-            style={styles.input}
+            style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 }]}
             placeholder="Rechercher un artiste"
-            value={searchQuery}
+            placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null }  onFocus={() => setFocusedInput('username')}
+            onBlur={() => setFocusedInput(null)}
+            value={searchQuery} 
             onChangeText={(text) => handleSearch(text)}
           />
 
@@ -199,29 +202,27 @@ export default function Connect4Screen({ navigation }) {
             {filteredData.map((item, i) => (
               <TouchableOpacity
                 key={i}
-                style={[
-                  styles.item,
-                ]}
+                style={user.settings.nightMode ? nightModeStyle.item : styles.item}
                 onPress={() => handleSelectArtists(item)}
               >
-                <Text style={styles.itemText}>{item.name}</Text>
+                <Text style={user.settings.nightMode ? nightModeStyle.itemText : styles.itemText}>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
           <View style={styles.selectedContainer}>
             {selectedArtists.map((item, i) => (
-              <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectArtists(item)}>
+              <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.selectedItemText : styles.selectedItemText} onPress={() => handleSelectArtists(item)}>
                 <Text>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
         </View>
 
-
-        <View>
-          <TouchableOpacity onPress={() => finalSignUpClick()} style={styles.nextButton}>
-            <Text style={styles.nextText}>Suivant</Text>
-          </TouchableOpacity>
+        <TouchableOpacity onPress={() => finalSignUpClick()} style={user.settings.nightMode ? nightModeStyle.nextButton : styles.nextButton}>
+          <Text style={user.settings.nightMode ? nightModeStyle.nextText : styles.nextText}>Suivant</Text>
+        </TouchableOpacity>
+        <View style={styles.progressBar}>
+          <View style={styles.progressBarSecond}></View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -230,17 +231,10 @@ export default function Connect4Screen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-
     flex: 1,
     backgroundColor: '#FFFFFF',
     alignItems: "center",
 
-  },
-  text: {
-    fontFamily: 'Poppins_400Regular',
-    color: '#19525A'
   },
   iconArrow: {
     position: 'absolute',
@@ -269,14 +263,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginTop: 10,
-    position: "static",
+    marginTop: 20,
     marginBottom: 30
   },
   nextText: {
-    fontWeight: "600",
     color: "white",
-    fontSize: 25
+    fontSize: 30,
+    fontFamily: 'Poppins_600SemiBold',
   },
   input: {
     width: 280,
@@ -286,14 +279,16 @@ const styles = StyleSheet.create({
     borderColor: '#7CB7BF',
     borderRadius: 8,
     height: 50,
+    fontFamily: 'Poppins_400Regular',
     fontSize: 15,
     marginLeft: 20
   },
   select_textContainer: {
     width: Dimensions.get('window').width,
     marginTop: 30,
-    marginLeft: 20,
-    alignItems: "flex-start"
+
+    alignItems: "center",
+    justifyContent: "center"
 
   },
   select_text: {
@@ -323,7 +318,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18
   },
-  listContainer: {
+  MusicStyleContainer: {
     flexWrap: "wrap",
     flexDirection: "row",
     marginHorizontal: 10,
@@ -348,6 +343,7 @@ const styles = StyleSheet.create({
   },
   scrollPrincipal: {
     alignItems: "center",
+    paddingBottom : 30
   },
   scrollView: {
     maxHeight: 200,
@@ -366,6 +362,8 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 5,
     alignItems: "center",
+    fontFamily: 'Poppins_400Regular',
+
   },
   scrollView: {
     maxHeight: 200,
@@ -380,7 +378,141 @@ const styles = StyleSheet.create({
     borderBottomColor: '#7CB7BF',
     width: 280,
   },
-
-
-
+  progressBar: {
+    height: 20,
+    width: (windowWidth / 1.2),
+    backgroundColor: '#D2FFF4',
+    borderRadius: 50,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+    margin: 10
+  },
+  progressBarSecond: {
+    height: 20,
+    width: '75%',
+    backgroundColor: '#15C2C2',
+    borderRadius: 50
+  }
 });
+
+
+
+const nightModeStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#19525A',
+    alignItems: "center",
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#15C2C2',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  nextButton: {
+    backgroundColor: '#FFE45D',
+    height: 76,
+    width: 264,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    marginTop: 10,
+    marginBottom: 30
+  },
+  nextText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a',
+    fontSize: 30
+  },
+  input: {
+    width: 280,
+    padding: 10,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    marginLeft: 20,
+    color: '#FFFFFF', // Couleur du texte pour le mode sombre
+    fontFamily: 'Poppins_400Regular',
+  },
+  select_textContainer: {
+    width: Dimensions.get('window').width,
+    marginTop: 30,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  select_text: {
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 18,
+    color: '#FFFFFF',
+    margin: 20,
+    marginRight: 80,
+    fontWeight: "bold",
+  },
+  buttonstyle: {
+    backgroundColor: '#383838',
+    borderColor: "#B0B0B0",
+    borderWidth: 1,
+    borderRadius: 8,
+    margin: 8,
+    padding: 3,
+    paddingHorizontal: 10,
+    alignItems: "center",
+    elevation: 2,
+    marginVertical: 10
+  },
+  stylelist: {
+    color: "#B0B0B0",
+    fontWeight: 'bold',
+    fontSize: 18
+  },
+  scrollView: {
+    maxWidth: '100%',
+    width: "100%"
+  },
+  selectedItemText: {
+    backgroundColor: '#FFE45D',
+    color: '#FFFFFF',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    alignItems: "center",
+    fontFamily: 'Poppins_400Regular',
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#B0B0B0',
+    width: 280,
+  },
+  itemText: {
+    color: '#FFFFFF', // Couleur du texte pour le mode sombre
+  },
+});
+
+

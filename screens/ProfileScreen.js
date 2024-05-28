@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#FFFFFF",
     fontSize: 24,
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Poppins_500Medium',
   },
   acced: {
     fontSize: 12,

@@ -86,9 +86,10 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     color: '#ffffff',
+    fontFamily: "Poppins_400Regular",
   },
   button: {
-    width: 140,
+    width: 150,
     height: 40,
     marginTop: 20,
     padding: 10,
@@ -98,6 +99,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
+    fontFamily: "Poppins_400Regular",
 
   },
 });

@@ -87,16 +87,13 @@ export default function Connect2Screen({ navigation }) {
     else {  
        setErrorMail(false)
       }
-
-    if (valid) {
-      const checkuser = await fetch(`${BACKEND_URL}/users/checkUser`, {
+  
+        const checkuser = await fetch(`${BACKEND_URL}/users/checkUser`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),
       })
       const resultuser = await checkuser.json()
-
-      //console.log(resultuser)
       if (resultuser.result) {
         setErrorExistUser(true)
         //console.log('Nom utilisateur déjà existant')
@@ -118,11 +115,11 @@ export default function Connect2Screen({ navigation }) {
       } else {
         setErrorExistMail(false)
       }
-      if (!resultuser.result && !resultmail.result) {
+      if (!resultuser.result && !resultmail.result && valid === true) {
         dispatch(signupUser({ username, email, password, phone }))
         navigation.navigate('Connect3',);
       }
-    }
+    
 
 
   }
@@ -209,10 +206,6 @@ export default function Connect2Screen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  text: {
-    fontFamily: 'Poppins_400Regular',
-    color: '#19525A'
   },
   header: {
     height: 86,
