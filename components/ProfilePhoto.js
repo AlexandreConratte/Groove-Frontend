@@ -4,12 +4,10 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import * as ImagePicker from 'expo-image-picker'
 import { signupUser } from '../reducers/user';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
 
 
 const ProfilePhoto = () => {
-
-  const BACKEND_URL = "https://backend-groove.vercel.app"
-
 
   const [image, setImage] = useState(null);
   const dispatch = useDispatch();
@@ -29,28 +27,25 @@ const ProfilePhoto = () => {
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.4,
     });
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      dispatch(signupUser({picture : result.assets[0].uri}))
-     // console.log(result.assets[0].uri)
+      dispatch(signupUser({ picture: result.assets[0].uri }))
     }
   };
 
-  const takePhoto = async ()=>  {
+  const takePhoto = async () => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
-    }); 
+      quality: 0.4,
+    });
     if (!result.canceled) {
       setImage(result.assets[0].uri)
-      dispatch(signupUser({picture : result.assets[0].uri}))
+      dispatch(signupUser({ picture: result.assets[0].uri }))
     }
   }
-
-
 
   return (
     <View style={styles.container}>
@@ -93,7 +88,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   button: {
-    width:140,
+    width: 140,
     height: 40,
     marginTop: 20,
     padding: 10,
@@ -103,7 +98,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#ffffff',
-    
+
   },
 });
 

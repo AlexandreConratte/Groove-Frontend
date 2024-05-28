@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, Platform, TextInput, ScrollView, } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useDispatch , useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
   useFonts,
@@ -16,8 +16,7 @@ import {
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
 import { login, resetdataFields } from '../reducers/user';
-
-
+import { uploadImage } from '../modules/uploadImage';
 
 
 export default function Connect4Screen({ navigation }) {
@@ -31,7 +30,7 @@ export default function Connect4Screen({ navigation }) {
   const [selectedArtists, setSelectedArtists] = useState([]);
   const [artistsData, setArtistsData] = useState([]);
   const [filteredData, setFilteredData] = useState(artistsData);
-  
+
 
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -45,17 +44,15 @@ export default function Connect4Screen({ navigation }) {
     Poppins_900Black,
   });
 
+  const BACKEND_URL = "https://backend-groove.vercel.app"
 
-   const BACKEND_URL = "https://backend-groove.vercel.app"
-   // const BACKEND_URL = "http://10.1.0.205:3000"
-  
   // début selection des styles
   useEffect(() => {
     fetch(`${BACKEND_URL}/styles/findAll`)
       .then((response) => response.json())
       .then((data) => {
         setStylesData(data.styles)
-       // console.log(data.styles)
+        // console.log(data.styles)
       })
       .catch((error) => console.error('Error:', error));
   }, []);
@@ -63,13 +60,13 @@ export default function Connect4Screen({ navigation }) {
   const Select_a_Style = (style) => {
     setSelectedStyles((selectedStyles) => {
       if (selectedStyles.includes(style)) {
-        
+
         return selectedStyles.filter((e) => e !== style);
-       
+
       } else if (selectedStyles.length < 5) {
         return [...selectedStyles, style];
       }
-      
+
       return selectedStyles;
     });
   };
@@ -77,7 +74,7 @@ export default function Connect4Screen({ navigation }) {
   const allstyles = stylesData.map((data, i) => {
     const isSelected = selectedStyles.includes(data._id);
     return (
-      <TouchableOpacity key={i} title={data.name} style={ isSelected ? styles.selectedButtonStyle : styles.buttonstyle }
+      <TouchableOpacity key={i} title={data.name} style={isSelected ? styles.selectedButtonStyle : styles.buttonstyle}
         onPress={() => Select_a_Style(data._id)}>
         <Text style={[styles.stylelist, isSelected && styles.selectedStyletext]}>{data.name}</Text>
       </TouchableOpacity>
@@ -95,7 +92,7 @@ export default function Connect4Screen({ navigation }) {
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    if (query.length>0) {
+    if (query.length > 0) {
       const newData = artistsData.filter((item) => {
         const itemName = item.name.toLowerCase();
         return itemName.includes(query.toLowerCase());
@@ -105,7 +102,7 @@ export default function Connect4Screen({ navigation }) {
       setFilteredData(artistsData);
     }
   };
-  const handleSelectArtists= (item) => {
+  const handleSelectArtists = (item) => {
     let newSelectedArtists = [...selectedArtists];
 
     if (newSelectedArtists.includes(item)) {
@@ -117,33 +114,17 @@ export default function Connect4Screen({ navigation }) {
     setSearchQuery('');
   };
 
-  // fonction pour upload les photos dans le cloudinary au moment du sign up , en reprenant l'uri du reducer
-  const uploadPhoto =  async (uri) => {
-    const formData = new FormData();
-    formData.append('photoFromFront', {
-      uri: uri,
-      name: 'photo.jpg',
-      type: 'image/jpeg',
-    })
 
-    const uploadPict = await fetch(`${BACKEND_URL}/users/photo`, {
-      method: 'POST',
-      body: formData,
-    })
-     const resultPhoto = await uploadPict.json()
-     if(resultPhoto.result && resultPhoto.url) {
-       console.log(resultPhoto)
-       return resultPhoto.url
-      };
-    
-  }
-  
- // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
-  const finalSignUpClick = () => {
+
+  // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
+  const finalSignUpClick = async () => {
+
+    // console.log(user.connection.picture)
+
+    const getUrl = await uploadImage(user.connection.picture)  // upload l'image avec le module uploadImage sur le cloudinary et récupère l'url
+    console.log("succes", getUrl)
 
     const artistIds = selectedArtists.map(artist => artist._id);
-
-    const photoUrl = uploadPhoto(user.connection.picture)
 
     const userData = {
       username: user.connection.username,
@@ -155,48 +136,36 @@ export default function Connect4Screen({ navigation }) {
       city: user.connection.city,
       styles: selectedStyles,
       artists: artistIds,
-      picture : photoUrl
+      picture: getUrl
     };
-    //console.log(artistIds)
-    // console.log(selectedStyles)
-    // console.log(user.connection.city)
-
-    fetch(`${BACKEND_URL}/users/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      })
-      .then(response => response.json())
-      .then(data => { 
-        if (data.token) {
-          uploadPhoto(user.connection.picture)
-          dispatch(login({ token: data.token })); 
-          
-          dispatch(resetdataFields()); 
-          //console.log('Sign up successful', data);
-          navigation.navigate('Home')
-        } else {
-          console.error('Sign up failed', data);
-        }})
-        
-         
-   /* fetch(`${BACKEND_URL}/users/signin`, {
-      method: "POST",
-      headers : { 'Content-Type' : 'application/json'},
-      body : JSON.stringify({username: "yolo", password : "yolo"})
+  
+    const signUp = await fetch(`${BACKEND_URL}/users/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
     })
-    .then( response => response.json())
-    .then(data  => console.log(data)) */
-    };
+    const resultSignUp = await signUp.json()
+    if (resultSignUp.result) {
+      
+      dispatch(login({ token }));
+      dispatch(resetdataFields())
+      navigation.navigate('Home')
+      console.log("Inscription validée")
+    }
+    else {
+      console.error(`L/'inscription a échouée`);
+    }
+  }
+
 
   if (!fontsLoaded) {
     return <View></View>
   }
 
-  
+
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
-  
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
           <FontAwesome5 name='arrow-left' size={33} color={"#19525a"} />
@@ -204,22 +173,22 @@ export default function Connect4Screen({ navigation }) {
         <Text style={styles.title1}>Connect</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
-      <View style={styles.select_textContainer}>
-        <Text style={styles.select_text}>
-          Sélectionne tes styles de musique préférés (5max) :
-        </Text>
-      </View>
+        <View style={styles.select_textContainer}>
+          <Text style={styles.select_text}>
+            Sélectionne tes styles de musique préférés (5max) :
+          </Text>
+        </View>
 
 
-      <View style={styles.listContainer}>
-        {allstyles}
-      </View>
+        <View style={styles.listContainer}>
+          {allstyles}
+        </View>
 
-      <View style={styles.select_textContainer}>
-        <Text style={styles.select_text}>
-          Sélectionne tes artistes favoris (5max) :
-        </Text>
-        <TextInput
+        <View style={styles.select_textContainer}>
+          <Text style={styles.select_text}>
+            Sélectionne tes artistes favoris (5max) :
+          </Text>
+          <TextInput
             style={styles.input}
             placeholder="Rechercher un artiste"
             value={searchQuery}
@@ -227,7 +196,7 @@ export default function Connect4Screen({ navigation }) {
           />
 
           <ScrollView style={styles.scrollView}>
-            {filteredData.map((item,i) => (
+            {filteredData.map((item, i) => (
               <TouchableOpacity
                 key={i}
                 style={[
@@ -240,20 +209,20 @@ export default function Connect4Screen({ navigation }) {
             ))}
           </ScrollView>
           <View style={styles.selectedContainer}>
-            {selectedArtists.map((item,i) => (
+            {selectedArtists.map((item, i) => (
               <TouchableOpacity key={i} style={styles.selectedItemText} onPress={() => handleSelectArtists(item)}>
                 <Text>{item.name}</Text>
               </TouchableOpacity>
             ))}
           </View>
-      </View>
-      
+        </View>
 
-      <View>
-        <TouchableOpacity onPress={() => finalSignUpClick()} style={styles.nextButton}>
-          <Text style={styles.nextText}>Suivant</Text>
-        </TouchableOpacity>
-      </View>
+
+        <View>
+          <TouchableOpacity onPress={() => finalSignUpClick()} style={styles.nextButton}>
+            <Text style={styles.nextText}>Suivant</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -342,75 +311,75 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     margin: 8,
     padding: 3,
-    paddingHorizontal : 10,
+    paddingHorizontal: 10,
     alignItems: "center",
     elevation: 2,
     marginVertical: 10
-    
+
 
   },
   stylelist: {
     color: "#15C2C2",
     fontWeight: 'bold',
-    fontSize : 18
+    fontSize: 18
   },
   listContainer: {
     flexWrap: "wrap",
     flexDirection: "row",
-    marginHorizontal : 10,
-  
+    marginHorizontal: 10,
+
   },
   scrollView: {
     maxWidth: '100%',
     width: "100%"
-  }, 
+  },
   selectedButtonStyle: {
     backgroundColor: '#FFE45D',
     borderRadius: 8,
     margin: 10,
     padding: 3,
-    paddingHorizontal :10,
+    paddingHorizontal: 10,
     alignItems: "center",
     elevation: 2
   },
-  selectedStyletext : {
+  selectedStyletext: {
     color: "#19525A",
     fontWeight: 'bold'
   },
-  scrollPrincipal: { 
-  alignItems: "center",  
-}, 
-scrollView: {
-  maxHeight: 200,
-  marginTop:-11
-},
-selectedContainer: {
-  flexDirection: 'row',
-  marginVertical:10,
-  flexWrap:'wrap',
-  width:280
-},
-selectedItemText: {
-  backgroundColor: '#FFE45D',
-  color: '#19525A',
-  borderRadius: 5,
-  padding: 5,
-  margin: 5,
-  alignItems: "center",
-},
-scrollView: {
-  maxHeight: 200,
-  marginTop:-11,  
-  marginHorizontal : 20,
+  scrollPrincipal: {
+    alignItems: "center",
+  },
+  scrollView: {
+    maxHeight: 200,
+    marginTop: -11
+  },
+  selectedContainer: {
+    flexDirection: 'row',
+    marginVertical: 10,
+    flexWrap: 'wrap',
+    width: 280
+  },
+  selectedItemText: {
+    backgroundColor: '#FFE45D',
+    color: '#19525A',
+    borderRadius: 5,
+    padding: 5,
+    margin: 5,
+    alignItems: "center",
+  },
+  scrollView: {
+    maxHeight: 200,
+    marginTop: -11,
+    marginHorizontal: 20,
 
-},
-item: {
-  padding: 10,
-  fontSize: 18,
-  borderBottomWidth: 1,
-  borderBottomColor: '#7CB7BF',
-  width:280,
-},
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7CB7BF',
+    width: 280,
+  },
 
 
 

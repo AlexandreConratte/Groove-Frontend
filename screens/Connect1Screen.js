@@ -16,7 +16,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-
+import AuthGoogle from '../components/AuthGoogle';
 
 
 export default function Connect1Screen({ navigation }) {
@@ -48,7 +48,6 @@ export default function Connect1Screen({ navigation }) {
     setUsername('');
     setPassword('');
   }
-
 
   const handleConnection = () => {
     fetch(`${BACKEND_URL}/users/signin`, {
@@ -140,8 +139,11 @@ export default function Connect1Screen({ navigation }) {
           </TouchableOpacity>
         </View>
         <Text>--------------- ou ---------------</Text>
-
-        <Text>Google Connexion</Text>
+         {/* <TouchableOpacity>
+            <Text>Connecte-toi avec Google:</Text>
+            <AuthGoogle/>
+  </TouchableOpacity>  */}
+       
       </View>
 
     </View>
