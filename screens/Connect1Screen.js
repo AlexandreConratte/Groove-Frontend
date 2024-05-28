@@ -16,6 +16,8 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
+import AuthGoogle from '../components/AuthGoogle';
+
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height; 
@@ -145,6 +147,12 @@ export default function Connect1Screen({ navigation }) {
 
           <Text>Google Connexion</Text>
         </View>
+        <Text>--------------- ou ---------------</Text>
+         {/* <TouchableOpacity>
+            <Text>Connecte-toi avec Google:</Text>
+            <AuthGoogle/>
+  </TouchableOpacity>  */}
+       
 
       </View>
     </KeyboardAvoidingView>
