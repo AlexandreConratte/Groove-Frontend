@@ -868,13 +868,12 @@ const nightModeStyle = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
-
   modalContainer: {
     width: 274,
     height: 292,
     justifyContent: 'center',
     backgroundColor: "white",
-    borderColor: '#19525a',
+    borderColor: '#FFE45D',
     borderWidth: 3,
     alignItems: 'center',
   },
