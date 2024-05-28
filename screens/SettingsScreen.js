@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     width: Dimensions.get('window').width,
     alignItems: 'center',
-
   },
   title1: {
     fontSize: 30,
