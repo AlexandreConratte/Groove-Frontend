@@ -38,7 +38,6 @@ export default function FriendsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then((data) => setdataFriends(data.friends))
-
   }
 
   //Récupération de tous les users de la BDD
@@ -112,83 +111,80 @@ export default function FriendsScreen({ navigation }) {
 
 
   return (
-    <View style={styles.container}>
-      <Modal visible={modalAddFriend} transparent={true} style={styles.modalBackground}>
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
-            <TouchableOpacity style={styles.close} onPress={() => setmodalAddFriend(false)}>
-              <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
-            </TouchableOpacity>
-            <TextInput
-              style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
-              ]}
-              placeholder="Rechercher un(e) ami(e)"
-              placeholderTextColor='#19525a'
-              value={searchQuery}
-              onChangeText={(text) => handleSearch(text)}
-              onFocus={() => setFocusedInput('style')}
-              onBlur={() => setFocusedInput(null)}
-            />
-            <ScrollView style={styles.scrollViewModal}>
-              {filteredData.map((item, i) => {
-                if (!dataFriends.find((e) => e.username === item.username)) {
-                  return (<View
-                    key={i}
-                    style={styles.item}
-                  >
-                    <Text style={styles.text}>{item.username}</Text>
-                    <TouchableOpacity
-                      style={styles.addButton}
-                      onPress={() => handleSelectItem(item)}
-                    >
-                      <Text style={styles.textButton}>Ajouter</Text>
+    <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+        <Modal visible={modalAddFriend} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+            <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+                <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
+                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.close : styles.close} onPress={() => setmodalAddFriend(false)}>
+                        <FontAwesome5 name="window-close" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
                     </TouchableOpacity>
-                  </View>
-                  )
-                }
-                else {
-                  return (<View key={i} style={styles.item}>
-                    <Text style={styles.text}>{item.username}</Text>
-                  </View>
-                  )
-                }
-              }
-              )}
-            </ScrollView>
-          </View>
-        </View>
-      </Modal>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={styles.iconArrow}>
-          <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
-        </TouchableOpacity>
-        <Text style={styles.title1}>Mes ami(e)s</Text>
-      </View>
-      <ScrollView>
-        <View style={styles.pictureContainer}>
-          <ImageBackground source={{ uri: "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/Festival-de-musique_amis_oar251.jpg" }} resizeMode="cover" style={styles.image}>
-            <TouchableOpacity style={styles.addFriendContainer} onPress={() => setmodalAddFriend(true)}>
-              <Text style={styles.addFriends}>Ajouter des amis</Text>
-              <FontAwesome5 name='user-plus' size={13.5} color={'#15C2C2'} />
+                    <TextInput
+                        style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]}
+                        placeholder="Rechercher un(e) ami(e)"
+                        placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a' }
+                        value={searchQuery}
+                        onChangeText={(text) => handleSearch(text)}
+                        onFocus={() => setFocusedInput('style')}
+                        onBlur={() => setFocusedInput(null)}
+                    />
+                    <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollViewModal : styles.scrollViewModal}>
+                        {filteredData.map((item, i) => {
+                            if (!dataFriends.find((e) => e.username === item.username)) {
+                                return (
+                                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
+                                        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
+                                        <TouchableOpacity
+                                            style={user.settings.nightMode ? nightModeStyle.addButton : styles.addButton}
+                                            onPress={() => handleSelectItem(item)}
+                                        >
+                                            <Text style={user.settings.nightMode ? nightModeStyle.textButton : styles.textButton}>Ajouter</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                )
+                            } else {
+                                return (
+                                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
+                                        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
+                                    </View>
+                                )
+                            }
+                        })}
+                    </ScrollView>
+                </View>
+            </View>
+        </Modal>
+        <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+            <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
+                <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
             </TouchableOpacity>
-          </ImageBackground>
+            <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Mes ami(e)s</Text>
         </View>
+        <ScrollView>
+            <View style={user.settings.nightMode ? nightModeStyle.pictureContainer : styles.pictureContainer}>
+                <ImageBackground source={{ uri: "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/Festival-de-musique_amis_oar251.jpg" }} resizeMode="cover" style={user.settings.nightMode ? nightModeStyle.image : styles.image}>
+                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.addFriendContainer : styles.addFriendContainer} onPress={() => setmodalAddFriend(true)}>
+                        <Text style={user.settings.nightMode ? nightModeStyle.addFriends : styles.addFriends}>Ajouter des amis</Text>
+                        <FontAwesome5 name='user-plus' size={13.5} color={'#15C2C2'} />
+                    </TouchableOpacity>
+                </ImageBackground>
+            </View>
 
-        <View style={styles.groups}>
-          <Text style={styles.title2}>Mes groupes :</Text>
-          <ScrollView contentContainerStyle={styles.groupsContainer} horizontal={true}>
-            {groups}
-            <Group goToGroupPage={goToGroupPage}/>
-          </ScrollView>
-        </View>
-        <View style={styles.friendsContainer}>
-          <Text style={styles.title2}>Mes amis :</Text>
-          <View style={styles.scrollView}>
-            {friends}
-          </View>
-        </View>
-      </ScrollView>
+            <View style={user.settings.nightMode ? nightModeStyle.groups : styles.groups}>
+                <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes groupes :</Text>
+                <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.groupsContainer : styles.groupsContainer} horizontal={true}>
+                    {groups}
+                    <Group goToGroupPage={goToGroupPage} />
+                </ScrollView>
+            </View>
+            <View style={user.settings.nightMode ? nightModeStyle.friendsContainer : styles.friendsContainer}>
+                <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes amis :</Text>
+                <View style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
+                    {friends}
+                </View>
+            </View>
+        </ScrollView>
     </View>
+
   )
 }
 
@@ -316,6 +312,139 @@ const styles = StyleSheet.create({
   textButton: {
     fontFamily: 'Poppins_600SemiBold',
     color: 'white'
+  },
+  close: {
+    position: 'absolute',
+    right: 5,
+    top: 5
+  }
+});
+
+const nightModeStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#19525A'
+  },
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  title2: {
+    fontFamily: 'Poppins_700Bold',
+    fontSize: 16,
+    color: '#FFFFFF',
+    margin: 10
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
+  pictureContainer: {
+    height: 172
+  },
+  addFriendContainer: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderColor: '#19525A',
+    borderWidth: 2,
+    borderRadius: 10.5,
+    width: 153,
+    height: 32,
+    color: '#19525A',
+    backgroundColor: 'white'
+  },
+  addFriends: {
+    fontFamily: 'Poppins_400Regular',
+    color: '#19525A',
+    fontSize: 14,
+    marginRight: 4
+  },
+  groupsContainer: {
+    flexDirection: 'row',
+  },
+  groups: {
+    borderTopColor: '#FFFFFF',
+    borderTopWidth: 3,
+    paddingBottom: 10
+  },
+  friendsContainer: {
+    borderTopColor: '#FFFFFF',
+    borderTopWidth: 3,
+  },
+  image: {
+    height: '100%'
+  },
+  input: {
+    width: '80%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    fontSize: 12,
+    fontFamily: 'Poppins_400Regular',
+    color: '#FFFFFF',
+    marginBottom: 10,
+  },
+  scrollView: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  modalContainer: {
+    paddingTop: 40,
+    width: 250,
+    height: 300,
+    justifyContent: 'center',
+    backgroundColor: "#19525a",
+    borderColor: '#FFFFFF',
+    borderWidth: 3,
+    alignItems: 'center',
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scrollViewModal: {
+    maxHeight: 200,
+    width: '80%'
+  },
+  item: {
+    padding: 5,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: '#7CB7BF',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#FFFFFF'
+  },
+  addButton: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 5,
+    padding: 3
+  },
+  textButton: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525a'
   },
   close: {
     position: 'absolute',

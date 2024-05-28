@@ -117,7 +117,7 @@ export default function FestivalCard(props) {
         </View>
       </TouchableOpacity>
 
-      <Modal visible={modalisVisible} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+      <Modal visible={modalisVisible} transparent={true}>
         <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
 
           <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
