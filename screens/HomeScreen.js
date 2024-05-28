@@ -375,7 +375,7 @@ const nightModeStyle = StyleSheet.create({
     height: 292,
     justifyContent: 'center',
     backgroundColor: "white",
-    borderColor: '#19525a',
+    borderColor: '#FFE45D',
     borderWidth: 3,
     alignItems: 'center',
   },

@@ -1,7 +1,7 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useDispatch } from "react-redux";
-import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { useState } from 'react';
 const BACKEND_URL = "https://backend-groove.vercel.app"
 import { login, updateLikedFestival, updateMemoriesFestival, updateNightMode } from '../reducers/user';
 import {
@@ -17,7 +17,8 @@ import {
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
 
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height; 
 
 export default function Connect1Screen({ navigation }) {
 
@@ -36,19 +37,16 @@ export default function Connect1Screen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isConnected, setIsConnected] = useState(false)
-
-
   const [displaySignIn, setDisplaySignIn] = useState(false)
 
-  const dispatch = useDispatch()
+  const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   const popSignIn = () => {
-
     setDisplaySignIn(!displaySignIn)
     setUsername('');
     setPassword('');
   }
-
 
   const handleConnection = () => {
     fetch(`${BACKEND_URL}/users/signin`, {
@@ -101,47 +99,46 @@ export default function Connect1Screen({ navigation }) {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.container}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
 
-      <View style={styles.container}>
+      <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
 
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconArrow}>
-            <FontAwesome name='arrow-left' size={33} color="#19525a" />
+        <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
+            <FontAwesome name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
           </TouchableOpacity>
-          <Text style={styles.title1}>Connect</Text>
+          <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Connect</Text>
         </View>
 
-        <View style={styles.buttonsContain}>
-          <View >
-            <Text style={styles.text}>J'ai déjà un compte :</Text>
-            <TouchableOpacity onPress={() => popSignIn()} style={styles.connexionButton}>
-              <Text style={styles.connexion}>Connexion</Text>
+        <View style={user.settings.nightMode ? nightModeStyle.buttonsContain : styles.buttonsContain}>
+          <View>
+            <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>J'ai déjà un compte :</Text>
+            <TouchableOpacity onPress={popSignIn} style={user.settings.nightMode ? nightModeStyle.connexionButton : styles.connexionButton}>
+              <Text style={user.settings.nightMode ? nightModeStyle.connexion : styles.connexion}>Connexion</Text>
             </TouchableOpacity>
           </View>
 
-          <Modal visible={displaySignIn} style={styles.modalContainer} transparent={true}>
-            <View style={styles.modalBackground}>
-
-              <View style={styles.signInContainer}>
-                <TouchableOpacity onPress={popSignIn} >
-                  <Text style={styles.close}>X</Text>
+          <Modal visible={displaySignIn} style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer} transparent={true}>
+            <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+              <View style={user.settings.nightMode ? nightModeStyle.signInContainer : styles.signInContainer}>
+                <TouchableOpacity onPress={popSignIn} style={user.settings.nightMode ? nightModeStyle.modalClose : styles.modalClose}>
+                  <FontAwesome name='remove' size={40} color='#19525a'/>
                 </TouchableOpacity>
-                <TextInput placeholder="Pseudo" onChangeText={(value) => setUsername(value)}
-                  value={username} style={styles.input} />
-                <TextInput placeholder="Mot de passe" onChangeText={(value) => setPassword(value)}
-                  value={password} style={styles.input} />
-                <TouchableOpacity onPress={() => handleConnection()}>
-                  <Text style={styles.modalconnexion}>Connexion</Text>
-                </TouchableOpacity>
+                <View style={user.settings.nightMode ? nightModeStyle.modalInputContainer : styles.modalInputContainer}>
+                  <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={user.settings.nightMode ? nightModeStyle.input : styles.input} />
+                  <TextInput placeholder="Mot de passe" placeholderTextColor='#19525a' onChangeText={(value) => setPassword(value)} value={password} style={user.settings.nightMode ? nightModeStyle.input : styles.input} />
+                  <TouchableOpacity onPress={() => handleConnection()} style={user.settings.nightMode ? nightModeStyle.modalConnexionContainer : styles.modalConnexionContainer}>
+                    <Text style={user.settings.nightMode ? nightModeStyle.modalConnexionText : styles.modalConnexionText}>Connexion</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </Modal>
 
-          <View >
-            <Text style={styles.text}>Je veux créer un compte :</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Connect2')} style={styles.inscriptionButton}>
-              <Text style={styles.inscription}>Inscription</Text>
+          <View>
+            <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Je veux créer un compte :</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Connect2')} style={user.settings.nightMode ? nightModeStyle.inscriptionButton : styles.inscriptionButton}>
+              <Text style={user.settings.nightMode ? nightModeStyle.inscription : styles.inscription}>Inscription</Text>
             </TouchableOpacity>
           </View>
           <Text>--------------- ou ---------------</Text>
@@ -151,7 +148,6 @@ export default function Connect1Screen({ navigation }) {
 
       </View>
     </KeyboardAvoidingView>
-
   )
 }
 
@@ -161,13 +157,11 @@ const styles = StyleSheet.create({
   },
   header: {
     height: 86,
-    justifyContent: "space-around",
+    justifyContent: 'flex-end',
     borderBottomColor: '#19525A',
     borderBottomWidth: 3,
     width: Dimensions.get('window').width,
-    alignItems: "center",
-    flexDirection: "row",
-    marginTop: 10
+    alignItems: 'center',
   },
   title1: {
     fontSize: 30,
@@ -194,37 +188,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-
   },
   connexionButton: {
     backgroundColor: '#d2fff4',
     height: 76,
     width: 264,
-
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    fontWeight: "300"
   },
   text: {
-    fontSize: 25,
+    fontFamily: 'Poppins_700Bold',
     color: '#19525a',
-    fontWeight: "600",
-    marginBottom: 5
-
+    marginBottom: 5,
+    fontSize: 16
   },
   inscription: {
-    fontWeight: "600",
-    color: "white",
-    fontSize: 25
-
-
+    fontFamily: 'Poppins_700Bold',
+    color: "#FFFFFF",
+    fontSize: 24
   },
   connexion: {
-    fontWeight: "600",
+    fontFamily: 'Poppins_700Bold',
     color: '#19525a',
-    fontSize: 25
-
+    fontSize: 24
   },
   modalBackground: {
     flex: 1,
@@ -232,67 +219,183 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
-  modalContainer: {
-    width: 300,
-    height: 200,
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalconnexion: {
-    fontSize: 18,
-    fontWeight: "400",
+  modalConnexionContainer: {
     backgroundColor: '#19525a',
     borderRadius: 6,
-    padding: 5,
-    color: "white"
-
+    marginTop: 10
+  },
+  modalConnexionText: {
+    fontFamily: 'Poppins_500Medium',
+    color: '#FFFFFF',
+    fontSize: 20,
+    padding: 10
   },
   signInContainer: {
-    height: 300,
-    width: 250,
+    height: (windowHeight/2),
+    width: (windowWidth/1.3),
     alignItems: 'center',
     backgroundColor: "#D2FFF4",
     flexDirection: ' column',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-end',
     borderRadius: 30,
-    padding: 35,
+    padding: 25,
     borderColor: '#19525a',
     borderWidth: 3,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    fontSize: 30,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
-  close: {
-    justifyContent: "flex-end",
-    fontSize: 18,
-    fontWeight: "600"
+  modalInputContainer: {
+    width: '100%',
+    height: '90%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalClose: {
+    position: 'absolute',
+    left: 20,
+    top: 20
   },
   input: {
     width: '100%',
-    padding: 10,
-    marginVertical: 10,
+    paddingHorizontal: 10,
+    margin: 10,
     borderWidth: 1,
     borderColor: '#19525a',
     borderRadius: 8,
-    height: 50,
+    height: 60,
     fontSize: 15,
-
   },
+});
 
-
-})
+const nightModeStyle = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#19525A'
+  },
+  header: {
+    height: 86,
+    justifyContent: 'flex-end',
+    borderBottomColor: '#FFFFFF',
+    borderBottomWidth: 3,
+    width: Dimensions.get('window').width,
+    alignItems: 'center',
+  },
+  title1: {
+    fontSize: 30,
+    color: '#FFFFFF',
+    fontFamily: 'Poppins_600SemiBold'
+  },
+  iconArrow: {
+    position: 'absolute',
+    left: 9,
+    height: '60%',
+    width: '10%',
+    marginBottom: 5
+  },
+  buttonsContain: {
+    justifyContent: "space-evenly",
+    flex: 1,
+    alignItems: "center",
+    alignContent: "center"
+  },
+  inscriptionButton: {
+    backgroundColor: '#FFE45D',
+    height: 76,
+    width: 264,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  connexionButton: {
+    backgroundColor: '#d2fff4',
+    height: 76,
+    width: 264,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  text: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#FFFFFF',
+    marginBottom: 5,
+    fontSize: 16,
+  },
+  inscription: {
+    fontFamily: 'Poppins_700Bold',
+    color: "#19525a",
+    fontSize: 24
+  },
+  connexion: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#19525a',
+    fontSize: 24
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalConnexionContainer: {
+    backgroundColor: '#19525a',
+    borderRadius: 6,
+    marginTop: 10
+  },
+  modalConnexionText: {
+    fontFamily: 'Poppins_500Medium',
+    color: '#FFFFFF',
+    fontSize: 20,
+    padding: 10
+  },
+  signInContainer: {
+    height: (windowHeight/2),
+    width: (windowWidth/1.3),
+    alignItems: 'center',
+    backgroundColor: "#D2FFF4",
+    flexDirection: ' column',
+    justifyContent: 'flex-end',
+    borderRadius: 30,
+    padding: 25,
+    borderColor: '#19525a',
+    borderWidth: 3,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  modalInputContainer: {
+    width: '100%',
+    height: '90%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalClose: {
+    position: 'absolute',
+    left: 20,
+    top: 20
+  },
+  input: {
+    width: '100%',
+    paddingHorizontal: 10,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#19525a',
+    borderRadius: 8,
+    height: 60,
+    fontSize: 15,
+  },
+});
