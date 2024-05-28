@@ -106,7 +106,7 @@ export default function Connect1Screen({ navigation }) {
       <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
 
         <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
+          <TouchableOpacity onPress={() => navigation.navigate('Home')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
             <FontAwesome name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
           </TouchableOpacity>
           <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Connect</Text>
