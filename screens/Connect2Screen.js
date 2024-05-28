@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     marginTop: 20,
-    marginBottom: 60,
+    paddingBottom: 50,
   },
   iconArrow: {
     position: 'absolute',
