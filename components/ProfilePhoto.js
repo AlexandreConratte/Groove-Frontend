@@ -33,8 +33,8 @@ const ProfilePhoto = () => {
     const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (library.status !== 'granted') {
       Alert.alert(
-        'Permission Required',
-        'This app needs access to your camera to take a photo.',
+        'Permission nécessaire',
+        'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
         [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Open Settings', onPress: () => Linking.openSettings() },
