@@ -51,6 +51,7 @@ export default function Connect1Screen({ navigation }) {
     setDisplaySignIn(!displaySignIn)
     setUsername('');
     setPassword('');
+    setErrorLogin(false)
   }
 
   const handleConnection = () => {
@@ -132,12 +133,12 @@ export default function Connect1Screen({ navigation }) {
                   <FontAwesome name='remove' size={40} color='#19525a' />
                 </TouchableOpacity>
                 <View style={user.settings.nightMode ? nightModeStyle.modalInputContainer : styles.modalInputContainer}>
-                  <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={[user.settings.nightMode ? nightModeStyle.input : styles.input ,  { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'username' ? 2 : 1 }]}
+                  <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={[user.settings.nightMode ? nightModeStyle.modalInput : styles.modalInput ,  { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'username' ? 2 : 1 }]}
                         onFocus={() => setFocusedInput('username')}
                         onBlur={() => setFocusedInput(null)}/>
-                  <TextInput placeholder="Mot de passe" placeholderTextColor='#19525a' secureTextEntry={true} autoCapitalize="none" onChangeText={(value) => setPassword(value)} value={password} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, , { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 } ]} onFocus={() => setFocusedInput('password')}
+                  <TextInput placeholder="Mot de passe" placeholderTextColor='#19525a' secureTextEntry={true} autoCapitalize="none" onChangeText={(value) => setPassword(value)} value={password} style={[user.settings.nightMode ? nightModeStyle.modalInput : styles.modalInput, , { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 } ]} onFocus={() => setFocusedInput('password')}
                         onBlur={() => setFocusedInput(null)}/>
-                        {errorLogin && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}> Nom d'utilisateur ou mot de passe invalide</Text>}
+                        {errorLogin && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}> Nom d'utilisateur ou mot de passe incorrect</Text>}
 
                   <TouchableOpacity onPress={() => handleConnection()} style={user.settings.nightMode ? nightModeStyle.modalConnexionContainer : styles.modalConnexionContainer}>
                     <Text style={user.settings.nightMode ? nightModeStyle.modalConnexionText : styles.modalConnexionText}>Connexion</Text>
@@ -159,7 +160,7 @@ export default function Connect1Screen({ navigation }) {
        
         <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.googleButton : styles.googleButton}> 
         <Image source={require('../assets/google.png')} style={styles.googleIcon}/>
-          <Text style={styles.textGoogle}>Connecte toi avec Google</Text>
+          <Text style={styles.textGoogle}>Se connecter avec Google</Text>
         </TouchableOpacity>
         </View>
       </View>
@@ -195,7 +196,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     flex: 1,
     alignItems: "center",
-    alignContent: "center"
+    alignContent: "center",
+    paddingBottom : 40
   },
   inscriptionButton: {
     backgroundColor: '#19525a',
@@ -251,14 +253,16 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "space-evenly",
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    height: windowHeight,
+    width: windowWidth
   },
   modalConnexionContainer: {
     backgroundColor: '#19525a',
     borderRadius: 6,
-    marginTop: 10,
+    marginVertical: 10,
     ...Platform.select({
       ios: {
         shadowColor: 'black',
@@ -269,6 +273,7 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
+    justifyContent: ""
   },
   modalConnexionText: {
     fontFamily: 'Poppins_500Medium',
@@ -297,9 +302,6 @@ const styles = StyleSheet.create({
         elevation: 6,
       },
     }),
-  },
-  modalContainer: {
-    justifyContent: "space-around"
   },
   modalInputContainer: {
     width: '100%',
@@ -332,7 +334,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFE45D',
     height: 76,
     width: 264,
-    justifyContent: "center",
+    padding : 10,
     alignItems: "center",
     borderRadius: 10,
     flexDirection: 'row',
@@ -348,20 +350,36 @@ const styles = StyleSheet.create({
     }),
   },
   textGoogle : { 
-    fontFamily: "Poppins_500Medium",
-    color: '#19525a',
-    marginBottom: 5,
-    fontSize: 15
+    fontFamily: "Poppins_600SemiBold",
+    color: '#19525a', 
+    fontSize: 20,
+    flex: 1,
+    textAlign: "center",
+    marginHorizontal : 10
   },
   googleIcon: { 
-    width: 30,
-    height: 30,
-    marginRight: 10,},
+    width: 45,
+    height: 45,
+    marginHorizontal: 15,},
     error: {
       color: "red",
       fontSize: 14,
-      fontFamily: 'Poppins_400Regular'
+      fontFamily: 'Poppins_400Regular',
+      fontWeight: 'bold',
+      textAlign: "center",
+      marginBottom: 15
     },
+    modalInput : {width: '100%',
+    paddingHorizontal: 10,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#19525a',
+    borderRadius: 8,
+    height: 60,
+    fontSize: 15,
+    backgroundColor : "#FFFFFF"
+
+    }
 });
 
 const nightModeStyle = StyleSheet.create({
