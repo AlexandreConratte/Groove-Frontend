@@ -2,7 +2,8 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform,
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../reducers/user';
 import {
   useFonts,
   Poppins_100Thin,
@@ -60,6 +61,7 @@ export default function ProfileScreen({ navigation }) {
 
   const [focusedInput, setFocusedInput] = useState(null);
   const user = useSelector((state) => state.user.value);
+  const dispacth = useDispatch();
 
   useEffect(()=> {
     if (user.token){
@@ -260,6 +262,11 @@ export default function ProfileScreen({ navigation }) {
     setPicture('')
   }
 
+  const handleLogout = () => {
+    dispacth(logout());
+    navigation.navigate('Home');
+  }
+
   return (
     <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
       <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
@@ -352,6 +359,13 @@ export default function ProfileScreen({ navigation }) {
               )}
             </View>
           </View>
+          
+          <View style={user.settings.nightMode ? nightModeStyle.logoutButtonContainer : styles.logoutButtonContainer}>
+            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.logoutButton : styles.logoutButton} onPress={handleLogout}>
+              <Text style={user.settings.nightMode ? nightModeStyle.logoutButtonText : styles.logoutButtonText}>Se déconnecter</Text>
+            </TouchableOpacity>  
+          </View>
+          
         </ScrollView>
       ) : (
         updateMode ? (
@@ -916,6 +930,25 @@ const styles = StyleSheet.create({
     color: '#19525A',
     fontSize: 14,
     textAlign: 'center',
+  },
+  logoutButtonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  logoutButton: {
+    width: 150,
+    height: 30,
+    backgroundColor: '#7CB7BF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8
+  },
+  logoutButtonText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525A',
+    fontSize: 14,
+    textAlign: 'center',
   }
 });
 
@@ -1340,4 +1373,23 @@ const nightModeStyle = StyleSheet.create({
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
+  logoutButtonContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10
+  },
+  logoutButton: {
+    width: 150,
+    height: 30,
+    backgroundColor: '#7CB7BF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8
+  },
+  logoutButtonText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525A',
+    fontSize: 14,
+    textAlign: 'center',
+  }
 });

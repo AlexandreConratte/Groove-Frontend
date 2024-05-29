@@ -1,17 +1,5 @@
 import { ScrollView, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {
-  useFonts,
-  Poppins_100Thin,
-  Poppins_200ExtraLight,
-  Poppins_300Light,
-  Poppins_400Regular,
-  Poppins_500Medium,
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-  Poppins_800ExtraBold,
-  Poppins_900Black,
-} from '@expo-google-fonts/poppins';
 import { useSelector, useDispatch } from 'react-redux';
 import { useEffect, useState } from 'react';
 import FestivalCardHorizontal from '../components/FestivalCardHorizontal';
