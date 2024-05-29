@@ -21,6 +21,8 @@ const windowHeight = Dimensions.get('window').height;
 
 export default function Connect5Screen({ navigation }) {
 
+  const user = useSelector((state) => state.user.value);
+
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
