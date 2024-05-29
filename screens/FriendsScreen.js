@@ -19,6 +19,7 @@ export default function FriendsScreen({ navigation }) {
   const [usersdata, setusersdata] = useState([]);
   const [filteredData, setFilteredData] = useState(usersdata);
 
+<<<<<<< HEAD
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
@@ -39,6 +40,9 @@ export default function FriendsScreen({ navigation }) {
   }, []);
 
 
+=======
+  
+>>>>>>> 8dbc873d81925463eaf9065da517b14813b9b588
   //Affichage des groupes où l'utilisateur connecté est présent
   const affichage1 = () => {
     fetch(`${BACKEND_URL}/groups/findAllByUsername`, {
@@ -46,8 +50,8 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-      .then((response) => response.json())
-      .then((data) => setdataGroups(data.groups))
+    .then((response) => response.json())
+    .then((data) => setdataGroups(data.groups))
   }
 
   //Affichage des amis de l'utilisateur connecté
@@ -57,10 +61,10 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-      .then((response) => response.json())
-      .then((data) => setdataFriends(data.friends))
+    .then((response) => response.json())
+    .then((data) => setdataFriends(data.friends))
   }
-
+  
   //Récupération de tous les users de la BDD
   const affichage3 = () => {
     fetch(`${BACKEND_URL}/users/getAllUsers`, {
@@ -68,28 +72,28 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-      .then((response) => response.json())
-      .then((data) => setusersdata(data.friends))
+    .then((response) => response.json())
+    .then((data) => setusersdata(data.friends))
   }
-
+  
   const goToGroupPage = (id) => {
     navigation.navigate('Group', {id})
   }
-
+  
   const deleteFriend = (friendToken) => {
     fetch(`${BACKEND_URL}/users/deleteFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken }),
     })
-      .then((response) => response.json())
-      .then(() => {
-        affichage1()
-        affichage2()
-        affichage3()
-      })
+    .then((response) => response.json())
+    .then(() => {
+      affichage1()
+      affichage2()
+      affichage3()
+    })
   }
-
+  
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query.length > 0) {
@@ -102,31 +106,49 @@ export default function FriendsScreen({ navigation }) {
       setFilteredData(usersdata);
     }
   };
-
+  
   const handleSelectItem = (item) => {
     fetch(`${BACKEND_URL}/users/addFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken: item.token }),
     })
-      .then((response) => response.json())
-      .then(() => {
-        affichage1()
-        affichage2()
-        affichage3()
-      })
+    .then((response) => response.json())
+    .then(() => {
+      affichage1()
+      affichage2()
+      affichage3()
+    })
   }
+  
+  const GotoConnect = () => {
+    navigation.navigate('Connect1');
+    setModalisVisible(false)
+  };
 
+  const GoBack = () => {
+    navigation.navigate('Home')
+    setModalisVisible(false)
+  };  
 
+  if (user.token) {
+    setModalisVisible(false);
+    useEffect(() => {
+      affichage1()
+      affichage2()
+      affichage3()
+    }, []);
+  }
+  
   const friends = dataFriends.map((e, i) => {
     return (<Friend key={i} deleteFriend={deleteFriend} {...e} />)
   })
-
+  
   const groups = dataGroups.map((e, i) => {
     return (<Group key={i} {...e} goToGroupPage={goToGroupPage} />)
   })
-
-
+  
+  
   return (
     <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
         <Modal visible={modalAddFriend} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
