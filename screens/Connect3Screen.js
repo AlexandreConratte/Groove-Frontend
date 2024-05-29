@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker'
 import { signupUser } from '../reducers/user';
 import {
   useFonts,
@@ -20,7 +21,9 @@ import {
 } from '@expo-google-fonts/poppins';
 import ProfilePhoto from '../components/ProfilePhoto';
 
+
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function Connect3Screen({ navigation }) {
 
@@ -56,34 +59,40 @@ export default function Connect3Screen({ navigation }) {
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate;
       setDate(currentDate);
-      setShow(Platform.OS === 'ios');
 
       let tempDate = new Date(currentDate);
       let formatDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
       setBirthdate(formatDate);
+
+      if (Platform.OS !== 'ios') {
+        setShow(false);
+      }
     };
+
+    const confirm = (selectedDate) => {
+      onChange(null, selectedDate);
+      setShow(false);
+    };
+
     const showDatepicker = () => {
       setShow(true);
     };
     return (
       <View>
         <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{label}</Text>
-        <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={user.settings.nightMode ? nightModeStyle.inputDate : styles.inputDate} placeholder="Sélectionnez une date" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null} value={birthdate} editable={false} />
-        </TouchableOpacity>
-        {show && ( Platform.OS === 'ios' ? (
-            <Modal transparent={true} animationType="slide" visible={show} onRequestClose={() => setShow(false)}>
-              <View >
-                <View style={styles.modalView}>
-                  <DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} style={{ width: 320, backgroundColor: 'white' }}/>
-                  <Button onPress={() => setShow(false)} title="Confirmer" />
-                </View>
-              </View>
-            </Modal>
-          ) : (
-            <DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange}/>
-          )
+        <TouchableOpacity onPress={showDatepicker} style={styles.fakeDateInput}>
+          <Text style={user.settings.nightMode ? nightModeStyle.fakeDateText : styles.fakeDateText}>{birthdate || 'Date'}</Text> 
+          </TouchableOpacity>
+        {show && (Platform.OS === 'ios' ? (
+          <View styles={styles.modalIOS}>
+           <DateTimePickerModal  isVisible={show} mode="date" date={date} onConfirm={confirm} onCancel={() => setShow(false)} display="inline" pickerContainerStyleIOS={user.settings.nightMode ? nightModeStyle.pickerContainerStyleIOS : styles.pickerContainerStyleIOS}
+           headerTextIOS="Choisissez une date" confirmTextIOS="Confirmer" cancelTextIOS="Annuler"/>
+           </View>
+        ) : (
+          <DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />
+        )
         )}
+        
       </View>
     );
   };
@@ -148,9 +157,9 @@ export default function Connect3Screen({ navigation }) {
               </View>
             </View>
           </View>
-          <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
+          <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
             <DateInput label="Date de naissance *" />
-          </View>
+            </TouchableOpacity>
           <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
             <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Ville *</Text>
             <TextInput
@@ -183,12 +192,11 @@ export default function Connect3Screen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
+  pickerContainerStyleIOS: {
+    backgroundColor: '#19525a',
+    opacity: 0.99,
     borderRadius: 10,
-    padding: 35,
-    alignItems: 'center',
+    paddingBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -244,6 +252,29 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
     fontSize: 16,
     color: '#19525A'
+  },
+  fakeDateInput :  {
+    width: 170,
+    padding: 10,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 16,
+    color: '#19525A',
+    alignItems: "flex-start",
+    justifyContent: "center",
+    fontSize: 16,
+    
+
+  },
+  fakeDateText : {
+    color : 'grey',
+    fontFamily: "Poppins_500Medium",
+    fontSize: 16,
   },
   text: {
     paddingLeft: 5,
@@ -419,6 +450,42 @@ const nightModeStyle = StyleSheet.create({
     fontSize: 13,
     color: '#FFFFFF',
     fontFamily: 'Poppins_500Medium',
+  },
+  fakeDateInput :  {
+    width: 170,
+    padding: 10,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#7CB7BF',
+    borderRadius: 8,
+    height: 50,
+    fontSize: 15,
+    fontFamily: 'Poppins_500Medium',
+    fontSize: 16,
+    color: '#ffffff',
+    alignItems: "flex-start",
+    justifyContent: "center",
+    fontSize: 16,
+  
+  },
+  fakeDateText : {
+    color : '#ffffff',
+    fontFamily: "Poppins_500Medium",
+    fontSize: 16,
+  },
+  pickerContainerStyleIOS: {
+    backgroundColor: '#7CB7BF',
+    opacity: 0.99,
+    borderRadius: 10,
+    paddingBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 
 });
