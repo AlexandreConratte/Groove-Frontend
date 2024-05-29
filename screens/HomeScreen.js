@@ -140,7 +140,7 @@ export default function HomeScreen({ navigation }) {
   }
 
   const GotoConnect = () => {
-    navigation.navigate('Connect1');
+    navigation.navigate('Connect5');
     setModalisVisible(false)
   }
 

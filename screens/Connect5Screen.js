@@ -1,5 +1,6 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, Platform, TextInput, ScrollView, } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View, Dimensions, KeyboardAvoidingView, Platform, TextInput, ScrollView, TouchableHighlight, } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { useSelector } from 'react-redux';
 import {
   useFonts,
@@ -35,6 +36,12 @@ export default function Connect5Screen({ navigation }) {
 
   const user = useSelector((state) => state.user.value);
 
+  const pseudo = user.connection.username
+
+  const goHome = () => {
+    navigation.navigate("Home")
+  }
+
   if (!fontsLoaded) {
     return <View></View>
   }
@@ -47,11 +54,23 @@ export default function Connect5Screen({ navigation }) {
         </TouchableOpacity>
         <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Connect</Text>
       </View>
+
+      <View style={styles.inscripBackground}>
       <Text style={user.settings.nightMode ? nightModeStyle.inscription : styles.inscription}> Inscription Terminée ! </Text>
+      </View>
+
+      <View> 
+        <Text style={styles.welcome}> BIENVENUE SUR GROOVE {pseudo}</Text>
+      </View>
+      <TouchableOpacity onPress = { () => goHome()} style={styles.Adventure}> 
+        <Text>Clique ici pour démarrer ton aventure!</Text>
+      </TouchableOpacity>
 
       <View style={styles.progressBar}>
         <View style={styles.progressBarSecond}></View>
       </View>
+     
+      
     </KeyboardAvoidingView>
   )
 }
@@ -83,9 +102,15 @@ const styles = StyleSheet.create({
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
+  inscripBackground : {
+    borderColor: "black"
+  },
   inscription: {
     color: "#19525A",
-    backgroundColor: "FFE45D"
+    backgroundColor: "FFE45D",
+    fontFamily: "Poppins_500Medium",
+    fontSize : 30,
+    height: 50,
   },
   progressBar: {
     height: 20,
