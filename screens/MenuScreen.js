@@ -1,8 +1,9 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, ScrollView, Platform } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useSelector } from "react-redux";
 
 const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 export default function MenuScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
@@ -12,7 +13,7 @@ export default function MenuScreen({ navigation }) {
       <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
         <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Menu</Text>
       </View>
-      <ScrollView>
+      <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
         <View style={user.settings.nightMode ? nightModeStyle.itemContainer : styles.itemContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('MyFestivals')} style={user.settings.nightMode ? nightModeStyle.lightButton : styles.lightButton}>
             <FontAwesome5 name='heart' solid size={75} color={user.settings.nightMode ? '#ffeb86' : '#8BA8AC'}/>
@@ -47,7 +48,9 @@ export default function MenuScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   header: {
     height: 86,
@@ -62,13 +65,20 @@ const styles = StyleSheet.create({
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
   },
+  scrollView: {
+    flexGrow: 1,
+    width: windowWidth,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   itemContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    height: '100%',
+    width: '100%',
+    paddingVertical: 30,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 45,
-    paddingTop: 35
+    justifyContent: 'center'
   },
   button: {
     width: (windowWidth/2.5),
@@ -78,7 +88,16 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation:5,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
     backgroundColor:'white'
   },
   lightButton: {
@@ -89,7 +108,16 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation:5,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 10,
+      },
+    }),
     backgroundColor:'white'
   },
   text: {
@@ -136,7 +164,16 @@ const nightModeStyle = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation:5,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 30,
+      },
+    }),
     backgroundColor:'#19525A'
   },
   lightButton: {
@@ -147,7 +184,16 @@ const nightModeStyle = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    elevation:5,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 30,
+      },
+    }),
     backgroundColor:'#19525A'
   },
   text: {

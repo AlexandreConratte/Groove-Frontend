@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View, Switch } from 'react-native';
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View, Switch, Platform } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
@@ -52,7 +52,7 @@ export default function SettingsScreen({ navigation }) {
         <View style={ user.settings.nightMode ? nightModeStyle.setting : styles.setting}>
           <Text style={ user.settings.nightMode ? nightModeStyle.text : styles.text}>Mode Nuit</Text>
           <Switch 
-          trackColor={{ false: '#FFE45D', true: '#FFE45D' }}
+          trackColor={{ false: '#19525A', true: '#FFE45D' }}
           thumbColor={isEnabledNightMode ? '#19525A' : '#FFE45D'}
           onValueChange={toggleSwitch}
           value={isEnabledNightMode}
@@ -61,7 +61,7 @@ export default function SettingsScreen({ navigation }) {
         <View style={ user.settings.nightMode ? nightModeStyle.setting : styles.setting}>
           <Text style={ user.settings.nightMode ? nightModeStyle.text : styles.text}>Notifications</Text>
           <Switch 
-          trackColor={{ false: '#FFE45D', true: '#FFE45D' }}
+          trackColor={{ false: '#19525A', true: '#FFE45D' }}
           thumbColor={isEnabledNotifications ? '#19525A' : '#FFE45D'}
           onValueChange={toggleSwitchNotifications}
           value={isEnabledNotifications}

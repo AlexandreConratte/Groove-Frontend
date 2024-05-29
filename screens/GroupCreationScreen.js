@@ -135,12 +135,12 @@ export default function GroupCreationScreen({ route, navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={styles.iconArrow}>
-                    <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
+        <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+            <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.heaiconArrowder}>
+                    <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
                 </TouchableOpacity>
-                <Text style={styles.groupName}>Nouveau Groupe</Text>
+                <Text style={user.settings.nightMode ? nightModeStyle.groupName : styles.groupName}>Nouveau Groupe</Text>
             </View>
             <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.globalScrollview : styles.globalScrollview}>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
@@ -341,3 +341,113 @@ const styles = StyleSheet.create({
         fontSize: 20
     },
 });
+
+const nightModeStyle = StyleSheet.create({
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#19525A'
+    },
+    header: {
+        height: 86,
+        justifyContent: 'flex-end',
+        borderBottomColor: '#FFFFFF',
+        borderBottomWidth: 3,
+        width: Dimensions.get('window').width,
+        alignItems: 'center',
+    },
+
+    text: {
+        fontFamily: 'Poppins_600SemiBold',
+        color: '#FFFFFF'
+    },
+    iconArrow: {
+        position: 'absolute',
+        left: 9,
+        height: '60%',
+        width: '10%',
+        marginBottom: 5
+    },
+
+    groupName: {
+        fontSize: 20,
+        fontFamily: 'Poppins_600SemiBold',
+        color: '#FFFFFF',
+    },
+
+
+    item: {
+        padding: 5,
+        fontSize: 18,
+        borderBottomWidth: 1,
+        borderBottomColor: '#7CB7BF',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
+    input: {
+        width: '100%',
+        padding: 10,
+        borderWidth: 1,
+        borderColor: '#7CB7BF',
+        borderRadius: 8,
+        height: 50,
+        fontSize: 15,
+        fontFamily: 'Poppins_400Regular',
+        color: '#FFFFFF'
+    },
+    scrollView: {
+        maxHeight: 200,
+    },
+    selectedContainer: {
+        marginVertical: 10,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    selectedItemText: {
+        backgroundColor: '#FFE45D',
+        borderRadius: 5,
+        padding: 10,
+        margin: 5,
+        elevation: 2,
+        width: '100%',
+
+    },
+    textSelected: {
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 24,
+        color: '#19525a',
+        textAlign: 'center'
+    },
+    box: {
+        width: '100%',
+        marginVertical: 10,
+    },
+    globalScrollview: {
+        width: Dimensions.get('window').width,
+        borderWidth: 1,
+        borderColor: 'black',
+        paddingHorizontal: 10
+    },
+    button: {
+        padding: 10,
+        backgroundColor: '#15C2C2',
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 10,
+        marginBottom: 100,
+        width: '90%',
+        height: 70,
+    },
+    buttonContainer: {
+        width: '100%',
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#FFFFFF',
+        fontFamily: 'Poppins_600SemiBold',
+        fontSize: 20
+    },
+})
