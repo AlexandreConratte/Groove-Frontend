@@ -19,7 +19,13 @@ export const userSlice = createSlice({
       state.value.token = action.payload.token;  
     },
     logout: (state) => {
-      state.value = {};
+      state.value = { token : "",  
+      coordinate : { longitude: null, latitude: null },
+      connection : { username: '', firstname: '', lastname: '', birthdate: '', city: '', styles: [], artists: [], friends: [], likedFestivals: [], memoriesFestivals: [],
+      picture: ''},
+      likedFestivals : [],
+      memoriesFestivals : [], 
+      settings: { nightMode: false, notifications: false } };
     },
     signupUser : (state, action) => {
       state.value.connection = { ...state.value.connection, ...action.payload };
