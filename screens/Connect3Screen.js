@@ -47,7 +47,6 @@ export default function Connect3Screen({ navigation }) {
   const [city, setCity] = useState('');
   const [focusedInput, setFocusedInput] = useState(null)
   const [date, setDate] = useState(new Date());
-  const [modalPhoto, setModalPhoto] = useState(false)
 
   const DateInput = ({ label }) => {
     const [show, setShow] = useState(false);
@@ -69,16 +68,12 @@ export default function Connect3Screen({ navigation }) {
       <View>
         <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } value={birthdate} editable={false} />
+          <TextInput style={user.settings.nightMode ? nightModeStyle.inputDate : styles.inputDate} placeholder="Sélectionnez une date" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } value={birthdate} editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
     );
   };
-
-  const addPhoto = () => {
-    setModalPhoto(true)
-  }
 
   const nextStep = () => {
     dispatch(signupUser({ firstname, lastname, birthdate: date.getTime(), city }))
@@ -101,9 +96,7 @@ export default function Connect3Screen({ navigation }) {
         </View>
         <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.containerConnect : styles.containerConnect}>
           <View style={user.settings.nightMode ? nightModeStyle.profilphoto : styles.profilphoto}>
-            <TouchableOpacity onPress={() => addPhoto()}>
-              <ProfilePhoto />
-            </TouchableOpacity>
+            <ProfilePhoto />
           </View>
           <View style={user.settings.nightMode ? nightModeStyle.allInputs : styles.allInputs}>
             <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
@@ -386,6 +379,18 @@ const nightModeStyle = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
     fontSize: 14,
     marginBottom: 30,
+},
+inputDate: {
+  width: 170,
+  padding: 10,
+  marginVertical: 10,
+  borderWidth: 1,
+  borderColor: '#7CB7BF',
+  borderRadius: 8,
+  height: 50,
+  fontSize: 13,
+  color: '#FFFFFF',
+  fontFamily: 'Poppins_500Medium',
 },
 
 });

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Modal, TextInput, Dimensions, KeyboardAvoidingView, Platform , Image} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from 'react';
@@ -16,11 +16,12 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import AuthGoogle from '../components/AuthGoogle';
+
+
 
 
 const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height; 
+const windowHeight = Dimensions.get('window').height;
 
 export default function Connect1Screen({ navigation }) {
 
@@ -40,6 +41,8 @@ export default function Connect1Screen({ navigation }) {
   const [password, setPassword] = useState('');
   const [isConnected, setIsConnected] = useState(false)
   const [displaySignIn, setDisplaySignIn] = useState(false)
+  const [focusedInput, setFocusedInput] = useState(null)
+  const [errorLogin, setErrorLogin] = useState(false)
 
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
@@ -48,6 +51,7 @@ export default function Connect1Screen({ navigation }) {
     setDisplaySignIn(!displaySignIn)
     setUsername('');
     setPassword('');
+    setErrorLogin(false)
   }
 
   const handleConnection = () => {
@@ -85,13 +89,15 @@ export default function Connect1Screen({ navigation }) {
               const festivalsIds = data.memoriesFestivals.map(festival => festival._id);
               dispatch(updateMemoriesFestival(festivalsIds))
             })
-            //to add in reducer nightMode 
-            fetch(`${BACKEND_URL}/settings/mode`,{
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ token: data.token}),
-            }).then(response => response.json())
+          //to add in reducer nightMode 
+          fetch(`${BACKEND_URL}/settings/mode`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: data.token }),
+          }).then(response => response.json())
             .then(data => dispatch(updateNightMode(data.nightMode)))
+        }   else { 
+            setErrorLogin(true)
         }
       });
   };
@@ -107,7 +113,7 @@ export default function Connect1Screen({ navigation }) {
 
         <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('Home')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
-            <FontAwesome name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
+            <FontAwesome name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
           </TouchableOpacity>
           <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Connect</Text>
         </View>
@@ -124,11 +130,16 @@ export default function Connect1Screen({ navigation }) {
             <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
               <View style={user.settings.nightMode ? nightModeStyle.signInContainer : styles.signInContainer}>
                 <TouchableOpacity onPress={popSignIn} style={user.settings.nightMode ? nightModeStyle.modalClose : styles.modalClose}>
-                  <FontAwesome name='remove' size={40} color='#19525a'/>
+                  <FontAwesome name='remove' size={40} color='#19525a' />
                 </TouchableOpacity>
                 <View style={user.settings.nightMode ? nightModeStyle.modalInputContainer : styles.modalInputContainer}>
-                  <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={user.settings.nightMode ? nightModeStyle.input : styles.input} />
-                  <TextInput placeholder="Mot de passe" placeholderTextColor='#19525a' onChangeText={(value) => setPassword(value)} value={password} style={user.settings.nightMode ? nightModeStyle.input : styles.input} />
+                  <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={[user.settings.nightMode ? nightModeStyle.modalInput : styles.modalInput ,  { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'username' ? 2 : 1 }]}
+                        onFocus={() => setFocusedInput('username')}
+                        onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="Mot de passe" placeholderTextColor='#19525a' secureTextEntry={true} autoCapitalize="none" onChangeText={(value) => setPassword(value)} value={password} style={[user.settings.nightMode ? nightModeStyle.modalInput : styles.modalInput, , { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 } ]} onFocus={() => setFocusedInput('password')}
+                        onBlur={() => setFocusedInput(null)}/>
+                        {errorLogin && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}> Nom d'utilisateur ou mot de passe incorrect</Text>}
+
                   <TouchableOpacity onPress={() => handleConnection()} style={user.settings.nightMode ? nightModeStyle.modalConnexionContainer : styles.modalConnexionContainer}>
                     <Text style={user.settings.nightMode ? nightModeStyle.modalConnexionText : styles.modalConnexionText}>Connexion</Text>
                   </TouchableOpacity>
@@ -142,18 +153,16 @@ export default function Connect1Screen({ navigation }) {
             <TouchableOpacity onPress={() => navigation.navigate('Connect2')} style={user.settings.nightMode ? nightModeStyle.inscriptionButton : styles.inscriptionButton}>
               <Text style={user.settings.nightMode ? nightModeStyle.inscription : styles.inscription}>Inscription</Text>
             </TouchableOpacity>
+            
           </View>
-          <Text>--------------- ou ---------------</Text>
-
-          <Text>Google Connexion</Text>
-        </View>
-        <Text>--------------- ou ---------------</Text>
-         {/* <TouchableOpacity>
-            <Text>Connecte-toi avec Google:</Text>
-            <AuthGoogle/>
-  </TouchableOpacity>  */}
+         
+          <Text style={user.settings.nightMode ? nightModeStyle.text_ou : styles.text_ou}>--------------- ou ---------------</Text>
        
-
+        <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.googleButton : styles.googleButton}> 
+        <Image source={require('../assets/google.png')} style={styles.googleIcon}/>
+          <Text style={styles.textGoogle}>Se connecter avec Google</Text>
+        </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   )
@@ -187,7 +196,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     flex: 1,
     alignItems: "center",
-    alignContent: "center"
+    alignContent: "center",
+    paddingBottom : 40
   },
   inscriptionButton: {
     backgroundColor: '#19525a',
@@ -196,6 +206,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+     ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   connexionButton: {
     backgroundColor: '#d2fff4',
@@ -204,6 +224,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   text: {
     fontFamily: 'Poppins_700Bold',
@@ -223,14 +253,27 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "space-evenly",
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
+    height: windowHeight,
+    width: windowWidth
   },
   modalConnexionContainer: {
     backgroundColor: '#19525a',
     borderRadius: 6,
-    marginTop: 10
+    marginVertical: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+    justifyContent: ""
   },
   modalConnexionText: {
     fontFamily: 'Poppins_500Medium',
@@ -239,8 +282,8 @@ const styles = StyleSheet.create({
     padding: 10
   },
   signInContainer: {
-    height: (windowHeight/2),
-    width: (windowWidth/1.3),
+    height: (windowHeight / 2),
+    width: (windowWidth / 1.3),
     alignItems: 'center',
     backgroundColor: "#D2FFF4",
     flexDirection: ' column',
@@ -281,6 +324,62 @@ const styles = StyleSheet.create({
     height: 60,
     fontSize: 15,
   },
+  text_ou: {
+    color: '#19525a',
+    fontSize: 15,
+    fontFamily: "Poppins_300Light",
+    fontWeight: "bold"
+  },
+  googleButton : { 
+    backgroundColor: '#FFE45D',
+    height: 76,
+    width: 264,
+    padding : 10,
+    alignItems: "center",
+    borderRadius: 10,
+    flexDirection: 'row',
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  textGoogle : { 
+    fontFamily: "Poppins_600SemiBold",
+    color: '#19525a', 
+    fontSize: 20,
+    flex: 1,
+    textAlign: "center",
+    marginHorizontal : 10
+  },
+  googleIcon: { 
+    width: 45,
+    height: 45,
+    marginHorizontal: 15,},
+    error: {
+      color: "red",
+      fontSize: 14,
+      fontFamily: 'Poppins_400Regular',
+      fontWeight: 'bold',
+      textAlign: "center",
+      marginBottom: 15
+    },
+    modalInput : {width: '100%',
+    paddingHorizontal: 10,
+    margin: 10,
+    borderWidth: 1,
+    borderColor: '#19525a',
+    borderRadius: 8,
+    height: 60,
+    fontSize: 15,
+    backgroundColor : "#FFFFFF"
+
+    }
 });
 
 const nightModeStyle = StyleSheet.create({
@@ -312,7 +411,7 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: "space-evenly",
     flex: 1,
     alignItems: "center",
-    alignContent: "center"
+    alignContent: "center",
   },
   inscriptionButton: {
     backgroundColor: '#FFE45D',
@@ -321,6 +420,16 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   connexionButton: {
     backgroundColor: '#d2fff4',
@@ -329,6 +438,16 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   text: {
     fontFamily: 'Poppins_700Bold',
@@ -355,7 +474,17 @@ const nightModeStyle = StyleSheet.create({
   modalConnexionContainer: {
     backgroundColor: '#19525a',
     borderRadius: 6,
-    marginTop: 10
+    marginTop: 10,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   modalConnexionText: {
     fontFamily: 'Poppins_500Medium',
@@ -364,8 +493,8 @@ const nightModeStyle = StyleSheet.create({
     padding: 10
   },
   signInContainer: {
-    height: (windowHeight/2),
-    width: (windowWidth/1.3),
+    height: (windowHeight / 2),
+    width: (windowWidth / 1.3),
     alignItems: 'center',
     backgroundColor: "#D2FFF4",
     flexDirection: ' column',
@@ -406,4 +535,34 @@ const nightModeStyle = StyleSheet.create({
     height: 60,
     fontSize: 15,
   },
+  text_ou: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontFamily: "Poppins_300Light",
+    fontWeight: "bold"
+  },
+  googleButton : { 
+    backgroundColor: '#FFFFFF',
+    height: 76,
+    width: 264,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+    flexDirection: 'row',
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
+  },
+  error: {
+    color: '#ff4040',
+    fontSize: 14,
+    fontFamily: 'Poppins_600SemiBold'
+  }
 });

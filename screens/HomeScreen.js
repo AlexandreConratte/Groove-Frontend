@@ -236,7 +236,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginBottom: 10,
-    color: "white"
+    color: "white",
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   GoToApp: {
     backgroundColor: '#FFE45D',
@@ -361,7 +371,17 @@ const nightModeStyle = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
     marginBottom: 10,
-    color: "white"
+    color: "white",
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   GoToApp: {
     backgroundColor: '#FFE45D',
