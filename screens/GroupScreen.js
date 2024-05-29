@@ -153,16 +153,16 @@ export default function GroupScreen({ route, navigation }) {
         if (membersData) {
             members = membersData.map((e, i) => {
                 return (
-                    <View key={i} style={styles.userContainer}>
-                        <Text style={styles.title}>{e.user.username}</Text>
-                        <View style={styles.logoContainer}>
-                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'participant', e.id)}>
-                                <Ionicons name={(e.selection === 'participant') ? 'checkmark-circle' : 'checkmark-circle-outline'} size={40} color={(e.selection === 'participant') ? '#15C2C2' : '#19525A'} />
+                    <View key={i} style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+                        <Text style={user.settings.nightMode ? nightModeStyle.title : styles.title}>{e.user.username}</Text>
+                        <View style={user.settings.nightMode ? nightModeStyle.logoContainer : styles.logoContainer}>
+                            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.icon2 : styles.icon2} onPress={() => changeStatut(e.selection, 'participant', e.id)}>
+                             <Ionicons name={(e.selection === 'participant') ? 'checkmark-circle' : 'checkmark-circle-outline'} size={40} color={(e.selection === 'participant') ? '#15C2C2' : '#19525A'} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'hesitate', e.id)}>
+                            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.icon2 : styles.icon2} onPress={() => changeStatut(e.selection, 'hesitate', e.id)}>
                                 <Ionicons name={(e.selection === 'hesitate') ? 'help-circle' : 'help-circle-outline'} size={40} color={(e.selection === 'hesitate') ? '#FFE45D' : '#19525A'} />
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'impossible', e.id)}>
+                            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.icon2 : styles.icon2} onPress={() => changeStatut(e.selection, 'impossible', e.id)}>
                                 <Ionicons name={(e.selection === 'impossible') ? 'close-circle' : 'close-circle-outline'} size={40} color={(e.selection === 'impossible') ? '#FF4848' : '#19525A'} />
                             </TouchableOpacity>
                         </View>
@@ -398,4 +398,8 @@ const styles = StyleSheet.create({
         color: '#19525a',
         marginBottom: 10,
     },
+});
+
+const nightModeStyle = StyleSheet.create({
+
 });

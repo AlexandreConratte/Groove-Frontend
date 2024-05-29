@@ -155,7 +155,7 @@ export default function SearchResultsScreen({ route, navigation }) {
           <Switch
             style={user.settings.nightMode ? nightModeStyle.toggle : styles.toggle}
             trackColor={user.settings.nightMode ? { false: '#FFE45D', true: '#FFE45D' } : { false: '#19525A', true: '#19525A' }}
-            thumbColor={user.settings.nightMode ? (isEnabled ? '#19525A' : '#FFE45D') : (isEnabled ? '#FFE45D' : '#FFE45D')}
+            thumbColor={user.settings.nightMode ? (isEnabled ? '#15C2C2' : '#15C2C2') : (isEnabled ? '#FFE45D' : '#FFE45D')}
             ios_backgroundColor="#3e3e3e"
             onValueChange={toggleSwitch}
             value={isEnabled}
