@@ -1,5 +1,6 @@
 import { Dimensions, StyleSheet, Text, TouchableOpacity, View , Modal, Platform, Image, ScrollView, TextInput, KeyboardAvoidingView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
@@ -14,6 +15,8 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
+import ProfilePhoto from '../components/ProfilePhoto';
+import { uploadImage } from '../modules/uploadImage';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -33,6 +36,7 @@ export default function ProfileScreen({ navigation }) {
     Poppins_900Black,
   });
   const [modalisVisible, setModalisVisible] = useState(true);
+  const [modalPictureisVisible, setModalPictureisVisible] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [updateMode, setUpdateMode] = useState(false);
   const [firstname, setFirstname] = useState('');
@@ -41,6 +45,7 @@ export default function ProfileScreen({ navigation }) {
   const [birthdate, setBirthDate] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [picture, setPicture] = useState('');
   const [initialData, setInitialData] = useState({});
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,17 +76,22 @@ export default function ProfileScreen({ navigation }) {
           setFirstname(data.user.firstname);
           setLastname(data.user.lastname);
           setCity(data.user.city);
-          const date = new Date(data.user.birthdate);
-          const day = String(date.getUTCDate()).padStart(2, '0');
-          const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-          const year = date.getUTCFullYear();
-          const formattedDate = `${day}/${month}/${year}`
-          setBirthDate(formattedDate);
+          if (data.user.birthdate) {
+            const date = new Date(data.user.birthdate);
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const year = date.getUTCFullYear();
+            const formattedDate = `${day}/${month}/${year}`;
+            setBirthDate(formattedDate);
+          } else {
+            setBirthDate(''); // Mettre une chaîne vide si la date de naissance est null
+          }
           setEmail(data.user.email);
           setPhone(data.user.phone);
+          setPicture(data.user.picture);
           setSelectedItems(data.user.styles);
           setSelectedItems2(data.user.artists);
-          setInitialData({
+          setInitialData({ 
             firstname: data.user.firstname,
             lastname: data.user.lastname,
             email: data.user.email,
@@ -193,22 +203,26 @@ export default function ProfileScreen({ navigation }) {
   const handleSendPress = () => {
     const toSendData = { token: user.token }
 
-    if (firstname !== initialData.firstname) toSendData.firstname = firstname;
-    if (lastname !== initialData.lastname) toSendData.lastname = lastname;
+    if (firstname !== initialData.firstname || firstname === '') toSendData.firstname = firstname;
+    if (lastname !== initialData.lastname || lastname === '') toSendData.lastname = lastname;
     if (!isValidEmail(email)) {
-      alert("L'email n'est pas dans un format valide.");
+      alert("L'email n'est pas dans un format valide. L'adresse email est obligatoire");
       return;
     }
     if (email !== initialData.email) toSendData.email = email;
-    if (phone !== initialData.phone) toSendData.phone = phone;
-    if (city !== initialData.city) toSendData.city = city;
-    if (!isValidDate(birthdate)) {
-      alert("Le format de la date de naissance n'est pas valide. Utilisez le format JJ/MM/AAAA.");
-      return;
-    }
+    if (phone !== initialData.phone || phone === '') toSendData.phone = phone;
+    if (city !== initialData.city || city === '') toSendData.city = city;
     if (birthdate !== initialData.birthdate) {
-      toSendData.birthdate = convertToMongoDBDate(birthdate);
-    };
+      if (birthdate === '') {
+        toSendData.birthdate = null; 
+      } else if (!isValidDate(birthdate)) {
+        alert("Le format de la date de naissance n'est pas valide. Utilisez le format JJ/MM/AAAA.");
+        return;
+      } else {
+        toSendData.birthdate = convertToMongoDBDate(birthdate);
+      }
+    }
+    if (picture !== initialData.picture || picture === '') toSendData.picture = picture;
     if (selectedItems !== initialData.styles) toSendData.styles = selectedItems;
     if (selectedItems2 !== initialData.artists) toSendData.artists = selectedItems2;
 
@@ -226,6 +240,24 @@ export default function ProfileScreen({ navigation }) {
 
   if (!fontsLoaded) {
     return <Text></Text> ;
+  }
+
+  const updatePicture = () => {
+    setModalPictureisVisible(true)
+  };
+
+  const closeModal = () => {
+    setModalPictureisVisible(false)
+  }
+
+  const handleSubmitPicture = async () => {
+    const getUrl = await uploadImage(user.connection.picture);
+    setPicture(getUrl)
+    setModalPictureisVisible(false)
+  }
+
+  const deletePicture = () => {
+    setPicture('')
   }
 
   return (
@@ -330,10 +362,10 @@ export default function ProfileScreen({ navigation }) {
               </View>
 
               <View style={user.settings.nightMode ? nightModeStyle.photoContainer : styles.photoContainer}>
-                {userInfo && userInfo.picture ? (
+                {picture ? (
                   <>
-                    <Image source={{uri : userInfo.picture}} style={user.settings.nightMode ? nightModeStyle.profilePicture : styles.profilePicture}/>
-                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.updatePicture : styles.updatePicture}>
+                    <Image source={{uri : picture}} style={user.settings.nightMode ? nightModeStyle.profilePicture : styles.profilePicture}/>
+                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.updatePicture : styles.updatePicture} onPress={updatePicture}>
                       <View style={user.settings.nightMode ? nightModeStyle.updateTextContainer : styles.updateTextContainer}>
                         <Text style={user.settings.nightMode ? nightModeStyle.updateTextPicture : styles.updateTextPicture}>Modifier la photo</Text>
                       </View>
@@ -342,14 +374,34 @@ export default function ProfileScreen({ navigation }) {
                 ):(
                   <>
                     <Image source={{uri : noProfilPicture}} style={user.settings.nightMode ? nightModeStyle.noProfilePicture : styles.noProfilePicture}/>
-                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.updatePicture : styles.updatePicture}>
+                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.updatePicture : styles.updatePicture} onPress={updatePicture}>
                       <View style={user.settings.nightMode ? nightModeStyle.updateTextContainer : styles.updateTextContainer}>
                         <Text style={user.settings.nightMode ? nightModeStyle.updateTextPicture : styles.updateTextPicture}>Ajouter une photo</Text>
                       </View>
                     </TouchableOpacity>
                   </>
                 )}
+                
+                <Modal visible={modalPictureisVisible} transparent={true}>
+                  <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+                    <View style={user.settings.nightMode ? nightModeStyle.modalPictureContainer : styles.modalPictureContainer}>
+                      <TouchableOpacity onPress={closeModal} style={user.settings.nightMode ? nightModeStyle.modalClose : styles.modalClose}>
+                        <FontAwesome name='remove' size={40} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
+                      </TouchableOpacity>
+                      <View style={user.settings.nightMode ? nightModeStyle.picturePhotoContainer : styles.picturePhotoContainer}>
+                        <ProfilePhoto/>  
+                      </View>
+                      <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.modalPictureSubmit : styles.modalPictureSubmit} onPress={handleSubmitPicture}>
+                        <Text style={user.settings.nightMode ? nightModeStyle.modalPictureSubmitText : styles.modalPictureSubmitText}>Valider</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
               </View>
+              {userInfo.picture && (
+              <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.deletePictureButton : styles.deletePictureButton} onPress={deletePicture}>
+                <Text style={user.settings.nightMode ? nightModeStyle.deletePictureText : styles.deletePictureText}>Supprimer la photo</Text>
+              </TouchableOpacity>)}
 
               <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.updatePencilContainer : styles.updatePencilContainer} onPress={handleSendPencilPress}>
                 <FontAwesome5 name='pencil-alt' size={35} color={'#19525A'}/>
@@ -359,34 +411,34 @@ export default function ProfileScreen({ navigation }) {
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Prénom</Text>
                   <TextInput placeholder="Prénom"
-                    placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null }
+                    placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null }
                     onChangeText={(value) => setFirstname(value)} value={firstname} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'firsname' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'firsname' ? 2 : 1 }]} onFocus={() => setFocusedInput('firsname')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Nom</Text>
-                  <TextInput placeholder="Nom" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } onChangeText={(value) => setLastname(value)} value={lastname} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'lastname' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'lastname' ? 2 : 1 }]} onFocus={() => setFocusedInput('lastname')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="Nom" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null } onChangeText={(value) => setLastname(value)} value={lastname} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'lastname' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'lastname' ? 2 : 1 }]} onFocus={() => setFocusedInput('lastname')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Ville</Text>
-                  <TextInput placeholder="Ville" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } onChangeText={(value) => setCity(value)} value={city} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'city' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'city' ? 2 : 1 }]} onFocus={() => setFocusedInput('city')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="Ville" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null } onChangeText={(value) => setCity(value)} value={city} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'city' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'city' ? 2 : 1 }]} onFocus={() => setFocusedInput('city')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Date de naissance</Text>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>(format JJ/MM/AAAA)</Text>
-                  <TextInput placeholder="Date de naissance" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } onChangeText={(value) => setBirthDate(value)} value={birthdate} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'birthdate' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'birthdate' ? 2 : 1 }]} onFocus={() => setFocusedInput('birthdate')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="Date de naissance" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null } onChangeText={(value) => setBirthDate(value)} value={birthdate} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'birthdate' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'birthdate' ? 2 : 1 }]} onFocus={() => setFocusedInput('birthdate')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>E-mail</Text>
-                  <TextInput placeholder="E-mail" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } onChangeText={(value) => setEmail(value)} value={email} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'email' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'email' ? 2 : 1 }]} onFocus={() => setFocusedInput('email')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="E-mail" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null } onChangeText={(value) => setEmail(value)} value={email} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'email' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'email' ? 2 : 1 }]} onFocus={() => setFocusedInput('email')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Téléphone</Text>
-                  <TextInput placeholder="Téléphone" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } onChangeText={(value) => setPhone(value)} value={phone} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'phone' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'phone' ? 2 : 1 }]} onFocus={() => setFocusedInput('phone')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput placeholder="Téléphone" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : null } onChangeText={(value) => setPhone(value)} value={phone} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'phone' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'phone' ? 2 : 1 }]} onFocus={() => setFocusedInput('phone')} onBlur={() => setFocusedInput(null)}/>
                 </View>
                 <View style={user.settings.nightMode ? nightModeStyle.box : styles.box}>
                   {/*rechercher un style*/}
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Selectionner 1 ou plusieurs types de musique</Text>
-                  <TextInput style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]} placeholder="Rechercher un style" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a' } value={searchQuery} onChangeText={(text) => handleSearch(text)} onFocus={() => setFocusedInput('style')} onBlur={() => setFocusedInput(null)}/>
+                  <TextInput style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]} placeholder="Rechercher un style" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : '#19525a' } value={searchQuery} onChangeText={(text) => handleSearch(text)} onFocus={() => setFocusedInput('style')} onBlur={() => setFocusedInput(null)}/>
                   <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
                     {filteredData.map((item, i) => (
                       <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item} onPress={() => handleSelectItem(item)}>
@@ -404,7 +456,7 @@ export default function ProfileScreen({ navigation }) {
 
                   {/*rechercher un artiste*/}
                   <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Selectionner 1 ou plusieurs artistes</Text>
-                  <TextInput style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }]} onFocus={() => setFocusedInput('artiste')} onBlur={() => setFocusedInput(null)} placeholder="Rechercher un artiste" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a' } value={searchQuery2} onChangeText={(text) => handleSearch2(text)}/>
+                  <TextInput style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'artiste' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'artiste' ? 2 : 1 }]} onFocus={() => setFocusedInput('artiste')} onBlur={() => setFocusedInput(null)} placeholder="Rechercher un artiste" placeholderTextColor={user.settings.nightMode ? '#c2c2c2' : '#19525a' } value={searchQuery2} onChangeText={(text) => handleSearch2(text)}/>
                   <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
                     {filteredData2.map((item2, i) => (
                       <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item} onPress={() => handleSelectItem2(item2)}>
@@ -480,7 +532,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 10,
   },
-
+  modalPictureContainer: {
+    width: (windowWidth/1.2),
+    height: (windowHeight/1.5),
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    borderColor: '#19525a',
+    borderWidth: 3,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   modalContainer: {
     width: 274,
     height: 292,
@@ -530,6 +591,40 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "bold",
     fontFamily: 'Poppins_400Regular',
+  },
+  modalClose: {
+    position: 'absolute',
+    top: 10,
+    left: 10
+  },
+  modalPictureSubmit: {
+    backgroundColor: '#19525A',
+    width: '40%',
+    height: '12%',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 30
+  },
+  modalPictureSubmitText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 18,
+    color: '#FFFFFF'
+  },
+  deletePictureButton: {
+    position: 'absolute',
+    left: (windowWidth/2)-82,
+    top: 260,
+    width: 164,
+    height: 30,
+    backgroundColor: '#15C2C2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8
+  },
+  deletePictureText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525A'
   },
   bannerContainer: {
     height: 172,
@@ -919,6 +1014,35 @@ const nightModeStyle = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: 'Poppins_400Regular',
   },
+  modalPictureContainer: {
+    width: (windowWidth/1.2),
+    height: (windowHeight/1.5),
+    backgroundColor: '#19525A',
+    borderRadius: 8,
+    borderColor: '#FFFFFF',
+    borderWidth: 3,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modalClose: {
+    position: 'absolute',
+    top: 10,
+    left: 10
+  },
+  modalPictureSubmit: {
+    backgroundColor: '#FFFFFF',
+    width: '40%',
+    height: '12%',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 30
+  },
+  modalPictureSubmitText: {
+    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 18,
+    color: '#19525A'
+  },
   bannerContainer: {
     height: 172,
     borderBottomColor: '#FFFFFF',
@@ -1191,15 +1315,15 @@ const nightModeStyle = StyleSheet.create({
   },
   updatePicture: {
     position: 'absolute',
-    bottom: 0,
-    height: '50%',
+    height: '100%',
     width: '100%',
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100, 
+    borderRadius: 100,
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    opacity: 0.6
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   updateTextContainer: {
     opacity: 1,
@@ -1207,7 +1331,7 @@ const nightModeStyle = StyleSheet.create({
     marginTop: 10
   },
   updateTextPicture: {
-    fontFamily: 'Poppins_400Regular',
+    fontFamily: 'Poppins_600SemiBold',
     color: '#19525A',
     fontSize: 14,
     textAlign: 'center',
@@ -1215,5 +1339,5 @@ const nightModeStyle = StyleSheet.create({
   selectedItemtext: {
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold'
-  }
+  },
 });

@@ -32,10 +32,11 @@ export default function FriendsScreen({ navigation }) {
 
   useEffect(() => {
     if(user.token){
-      setModalisVisible(false)
       affichage1()
       affichage2()
       affichage3()
+    } else {
+      setModalisVisible(true)
     }
   }, []);
 
