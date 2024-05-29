@@ -55,7 +55,6 @@ export default function Connect4Screen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         setStylesData(data.styles)
-        // console.log(data.styles)
       })
       .catch((error) => console.error('Error:', error));
   }, []);
