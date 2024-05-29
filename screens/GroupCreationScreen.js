@@ -1,4 +1,4 @@
-import { Dimensions, Image, Platform, TextInput, Modal, StyleSheet, Text, TouchableOpacity, View, ScrollView, ImageBackground } from 'react-native';
+import { Dimensions,Alert, Image, Platform, TextInput, Modal, StyleSheet, Text, TouchableOpacity, View, ScrollView, ImageBackground } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Group from '../components/Group';
@@ -51,15 +51,23 @@ export default function GroupCreationScreen({ route, navigation }) {
 
     //creation du groupe
     const createGroup = async () => {
-        const membersToken = selectedMembers.map((e) => e.token)
-        membersToken.push(user.token)
-        const response = await fetch(`${BACKEND_URL}/groups/newGroup`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: groupName, festival: selectedFestival[0]._id, members: membersToken }),
-        })
-        const data = await response.json()
-        navigation.navigate('Group', { id: data.id })
+        if (groupName && (selectedFestival.length > 0)){
+            const membersToken = selectedMembers.map((e) => e.token)
+            membersToken.push(user.token)
+            const response = await fetch(`${BACKEND_URL}/groups/newGroup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: groupName, festival: selectedFestival[0]._id, members: membersToken }),
+            })
+            const data = await response.json()
+            navigation.navigate('Group', { id: data.id })
+        }
+        else {
+            Alert.alert(
+                'Champ(s) vide(s)',
+                'Vous devez obligatoirement choisir un nom de groupe et un festival pour continuer',
+              );
+        }
     }
 
     //recherche et ajout du festival
