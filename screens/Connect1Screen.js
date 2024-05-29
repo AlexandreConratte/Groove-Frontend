@@ -256,8 +256,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: 'center',
     backgroundColor: 'rgba(0,0,0,0.5)',
-    height: windowHeight,
-    width: windowWidth
+  },
+  modalContainer : {
+      width: windowWidth,
+      height: windowHeight,
   },
   modalConnexionContainer: {
     backgroundColor: '#19525a',
@@ -382,6 +384,8 @@ const styles = StyleSheet.create({
     }
 });
 
+
+
 const nightModeStyle = StyleSheet.create({
   container: {
     flex: 1,
@@ -465,6 +469,10 @@ const nightModeStyle = StyleSheet.create({
     color: '#19525a',
     fontSize: 24
   },
+  modalContainer : {
+    width: windowWidth,
+    height: windowHeight,
+},
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
@@ -564,5 +572,15 @@ const nightModeStyle = StyleSheet.create({
     color: '#ff4040',
     fontSize: 14,
     fontFamily: 'Poppins_600SemiBold'
+  },
+  modalInput : {width: '100%',
+  paddingHorizontal: 10,
+  margin: 10,
+  borderWidth: 1,
+  borderColor: '#19525a',
+  borderRadius: 8,
+  height: 60,
+  fontSize: 15,
+  backgroundColor : "#FFFFFF"
   }
 });
