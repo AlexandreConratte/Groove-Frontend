@@ -19,6 +19,7 @@ import Profile from './screens/ProfileScreen';
 import Settings from './screens/SettingsScreen';
 import Festival from './screens/FestivalScreen';
 import Group from './screens/GroupScreen';
+import GroupCreation from './screens/GroupCreationScreen';
 import Credits from './screens/CreditsScreens';
 
 import { Provider } from 'react-redux';
@@ -100,6 +101,7 @@ export default function App() {
        <Stack.Screen name="Festival" component={Festival} />
        <Stack.Screen name="Friends" component={Friends} />
        <Stack.Screen name="Group" component={Group} />
+       <Stack.Screen name="GroupCreation" component={GroupCreation} />
        <Stack.Screen name="MyFestivals" component={MyFestivals} />
        <Stack.Screen name="MyMemories" component={MyMemories} />
        <Stack.Screen name="Profile" component={Profile} />

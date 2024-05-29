@@ -23,19 +23,9 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function GroupScreen({ route, navigation }) {
-    const [festivalData, setfestivalData] = useState([]);
-    const [groupData, setgroupData] = useState({});
-    const [membersData, setmembersData] = useState([]);
-    const [modalAddFriend, setmodalAddFriend] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [usersdata, setusersdata] = useState([]);
-    const [filteredData, setFilteredData] = useState(usersdata);
-    const [focusedInput, setFocusedInput] = useState(null)
-    const [dataFriends, setdataFriends] = useState([]);
-
     const user = useSelector((state) => state.user.value)
     const objet = route.params;
-    let members = []
+
     let [fontsLoaded] = useFonts({
         Poppins_100Thin,
         Poppins_200ExtraLight,
@@ -48,227 +38,221 @@ export default function GroupScreen({ route, navigation }) {
         Poppins_900Black,
     });
 
-    useEffect(() => {
-        fetch(`${BACKEND_URL}/groups/groupInfo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ groupId: objet.id }),
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                fetchMembersData(data.groups)
-                setgroupData(data.groups)
-                fetch(`${BACKEND_URL}/festivals/findById`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: data.groups.festival }),
-                })
-                    .then((response2) => response2.json())
-                    .then((data2) => setfestivalData(data2.result))
-            })
-    }, []);
-    const affichage1 = () => {
-        fetch(`${BACKEND_URL}/users/getAllUsers`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: user.token }),
-        })
-            .then((response) => response.json())
-            .then((data) => setusersdata(data.friends))
-    }
+    if (objet.id) {
+        const [festivalData, setfestivalData] = useState([]);
+        const [groupData, setgroupData] = useState({});
+        const [membersData, setmembersData] = useState([]);
+        const [modalAddFriend, setmodalAddFriend] = useState(false);
+        const [searchQuery, setSearchQuery] = useState('');
+        const [usersdata, setusersdata] = useState([]);
+        const [filteredData, setFilteredData] = useState(usersdata);
+        const [focusedInput, setFocusedInput] = useState(null)
+        let members = []
 
-    const affichage2 = () => {
-        fetch(`${BACKEND_URL}/users/getAllFriends`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: user.token }),
-        })
-            .then((response) => response.json())
-            .then((data) => setdataFriends(data.friends))
-    }
-
-    useEffect(() => {
-        affichage1()
-        affichage2()
-    }, []);
-     
-    const changeStatut = (oldStatut, newStatut, userId) => {
-        fetch(`${BACKEND_URL}/groups/changeStatut`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ oldStatut, newStatut, userId, groupId: objet.id }),
-        })
-            .then((response) => response.json())
-            .then(data => {
-                if (data.result) {
-                    fetchMembersData(data.updateMembers)
-                }
-            })
-    }
-
-    const fetchMembersData = async (group) => {
-        let tab = []
-        for (const element of group.members) {
-            const response = await fetch(`${BACKEND_URL}/users/infoUser`, {
+        useEffect(() => {
+            fetch(`${BACKEND_URL}/groups/groupInfo`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: element }),
+                body: JSON.stringify({ groupId: objet.id }),
             })
-            const data = await response.json()
-            let selection = ''
-            if (group.participant.find((e) => e == element)) {
-                selection = 'participant'
-            }
-            else if (group.hesitate.find((e) => e == element)) {
-                selection = 'hesitate'
-            }
-            else if (group.impossible.find((e) => e == element)) {
-                selection = 'impossible'
-            }
-            tab.push({ user: data.user, selection, id: element })
+                .then((response) => response.json())
+                .then((data) => {
+                    fetchMembersData(data.groups)
+                    setgroupData(data.groups)
+                    fetch(`${BACKEND_URL}/festivals/findById`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: data.groups.festival }),
+                    })
+                        .then((response2) => response2.json())
+                        .then((data2) => setfestivalData(data2.result))
+                })
+        }, []);
+
+        const affichage1 = () => {
+            fetch(`${BACKEND_URL}/users/getAllUsers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: user.token }),
+            })
+                .then((response) => response.json())
+                .then((data) => setusersdata(data.friends))
         }
 
-        setmembersData(tab)
-    }
 
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        if (query.length > 0) {
-            const newData = usersdata.filter((item) => {
-                const itemName = item.username.toLowerCase();
-                return itemName.includes(query.toLowerCase());
-            });
-            setFilteredData(newData);
-        } else {
-            setFilteredData(usersdata);
-        }
-    };
+        useEffect(() => {
+            affichage1()
+        }, []);
 
-    const handleSelectItem = (item) => { // mofifier pour ajouter des mais dans le groupe
-        fetch(`${BACKEND_URL}/users/addFriend`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: user.token, friendToken: item.token }),
-        })
-            .then((response) => response.json())
-            .then(() => {
-
+        const changeStatut = (oldStatut, newStatut, userId) => {
+            fetch(`${BACKEND_URL}/groups/changeStatut`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ oldStatut, newStatut, userId, groupId: objet.id, userToken: user.token }),
             })
+                .then((response) => response.json())
+                .then(data => {
+                    if (data.result) {
+                        fetchMembersData(data.updateMembers)
+                    }
+                })
+        }
+
+        const fetchMembersData = async (group) => {
+            let tab = []
+            for (const element of group.members) {
+                const response = await fetch(`${BACKEND_URL}/users/infoUser`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: element }),
+                })
+                const data = await response.json()
+                let selection = ''
+                if (group.participant.find((e) => e == element)) {
+                    selection = 'participant'
+                }
+                else if (group.hesitate.find((e) => e == element)) {
+                    selection = 'hesitate'
+                }
+                else if (group.impossible.find((e) => e == element)) {
+                    selection = 'impossible'
+                }
+                tab.push({ user: data.user, selection, id: element })
+            }
+
+            setmembersData(tab)
+        }
+
+        const handleSearch = (query) => {
+            setSearchQuery(query);
+            if (query.length > 0) {
+                const newData = usersdata.filter((item) => {
+                    const itemName = item.username.toLowerCase();
+                    return itemName.includes(query.toLowerCase());
+                });
+                setFilteredData(newData);
+            } else {
+                setFilteredData([]);
+            }
+        };
+
+        const handleSelectItem = (item) => {
+            fetch(`${BACKEND_URL}/groups/newUser`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ groupId: objet.id, user: item.token }),
+            })
+                .then((response) => response.json())
+                .then(data => {
+                    if (data.result) {
+                        fetchMembersData(data.updateMembers)
+                    }
+                })
+        }
+
+        if (membersData) {
+            members = membersData.map((e, i) => {
+                return (
+                    <View key={i} style={styles.userContainer}>
+                        <Text style={styles.title}>{e.user.username}</Text>
+                        <View style={styles.logoContainer}>
+                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'participant', e.id)}>
+                                <Ionicons name={(e.selection === 'participant') ? 'checkmark-circle' : 'checkmark-circle-outline'} size={40} color={(e.selection === 'participant') ? '#15C2C2' : '#19525A'} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'hesitate', e.id)}>
+                                <Ionicons name={(e.selection === 'hesitate') ? 'help-circle' : 'help-circle-outline'} size={40} color={(e.selection === 'hesitate') ? '#FFE45D' : '#19525A'} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'impossible', e.id)}>
+                                <Ionicons name={(e.selection === 'impossible') ? 'close-circle' : 'close-circle-outline'} size={40} color={(e.selection === 'impossible') ? '#FF4848' : '#19525A'} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )
+            })
+        }
+
+        return (
+            <View style={styles.container}>
+                <Modal visible={modalAddFriend} transparent={true} style={styles.modalBackground}>
+                    <View style={styles.modalBackground}>
+                        <View style={styles.modalContainer}>
+                            <TouchableOpacity style={styles.close} onPress={() => setmodalAddFriend(false)}>
+                                <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
+                            </TouchableOpacity>
+                            <TextInput
+                                style={[styles.inputModal, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
+                                ]}
+                                placeholder="Rechercher un(e) ami(e)"
+                                placeholderTextColor='#19525a'
+                                value={searchQuery}
+                                onChangeText={(text) => handleSearch(text)}
+                                onFocus={() => setFocusedInput('style')}
+                                onBlur={() => setFocusedInput(null)}
+                            />
+                            <ScrollView style={styles.scrollViewModal}>
+                                {filteredData.map((item, i) => {
+                                    if (!membersData.find((e) => e.user.username === item.username)) {
+                                        return (<View
+                                            key={i}
+                                            style={styles.item}
+                                        >
+                                            <Text style={styles.text}>{item.username}</Text>
+                                            <TouchableOpacity
+                                                style={styles.addButton}
+                                                onPress={() => handleSelectItem(item)}
+                                            >
+                                                <Text style={styles.textButton}>Ajouter</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        )
+                                    }
+                                    else {
+                                        return (<View key={i} style={styles.item}>
+                                            <Text style={styles.text}>{item.username}</Text>
+                                        </View>
+                                        )
+                                    }
+                                }
+                                )}
+                            </ScrollView>
+                        </View>
+                    </View>
+                </Modal>
+                <View style={styles.global}>
+                    <View style={styles.header}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={styles.iconArrow}>
+                            <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.addUser} onPress={() => setmodalAddFriend(true)}>
+                            <FontAwesome5 name='user-plus' size={33} color={'#19525A'} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <ScrollView>
+                        {festivalData.name && <View style={styles.festivalInfo}>
+                            <View style={styles.imageContainer}>
+                                <Image
+                                    source={{ uri: festivalData.pictures[0] }}
+                                    style={styles.image}
+                                />
+                            </View>
+                            <View style={styles.textContainer}>
+                                <Text style={styles.title1}>{groupData.name}</Text>
+                                <Text style={styles.groupName}>{festivalData.name}</Text>
+                                <Text style={styles.text}>{festivalData.adress.place}, {festivalData.adress.city}</Text>
+                                <Text style={styles.text}>Du {new Date(festivalData.start).toLocaleDateString()}{"\n"}Au {new Date(festivalData.end).toLocaleDateString()}</Text>
+                            </View>
+                        </View>}
+                        {members}
+                    </ScrollView>
+
+                </View>
+            </View>
+        )
     }
     if (!fontsLoaded) {
         return <Text></Text>;
     }
-
-    if (membersData) {
-        console.log(membersData)
-        members = membersData.map((e, i) => {
-            return (
-                <View key={i} style={styles.userContainer}>
-                    <Text style={styles.title}>{e.user.username}</Text>
-                    <View style={styles.logoContainer}>
-                        <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'participant', e.id)}>
-                            <Ionicons name={(e.selection === 'participant') ? 'checkmark-circle' : 'checkmark-circle-outline'} size={40} color={(e.selection === 'participant') ? '#15C2C2' : '#19525A'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'hesitate', e.id)}>
-                            <Ionicons name={(e.selection === 'hesitate') ? 'help-circle' : 'help-circle-outline'} size={40} color={(e.selection === 'hesitate') ? '#FFE45D' : '#19525A'} />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.icon2} onPress={() => changeStatut(e.selection, 'impossible', e.id)}>
-                            <Ionicons name={(e.selection === 'impossible') ? 'close-circle' : 'close-circle-outline'} size={40} color={(e.selection === 'impossible') ? '#FF4848' : '#19525A'} />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            )
-        })
-    }
-
-    /*else {
-        content = <>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={styles.iconArrow}>
-                    <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
-                </TouchableOpacity>
-                <Text style={styles.groupName}>Nouveau Groupe</Text>
-            </View>
-            <View>
-            </View>
-        </>
-    }*/
-
-    return (
-        <View style={styles.container}>
-            <Modal visible={modalAddFriend} transparent={true} style={styles.modalBackground}>
-                <View style={styles.modalBackground}>
-                    <View style={styles.modalContainer}>
-                        <TouchableOpacity style={styles.close} onPress={() => setmodalAddFriend(false)}>
-                            <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
-                        </TouchableOpacity>
-                        <TextInput
-                            style={[styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }
-                            ]}
-                            placeholder="Rechercher un(e) ami(e)"
-                            placeholderTextColor='#19525a'
-                            value={searchQuery}
-                            onChangeText={(text) => handleSearch(text)}
-                            onFocus={() => setFocusedInput('style')}
-                            onBlur={() => setFocusedInput(null)}
-                        />
-                        <ScrollView style={styles.scrollViewModal}>
-                            {usersdata.map((item, i) => {
-                                if (!membersData.find((e) => e.user.username === item.username)) {
-                                    return (<View
-                                        key={i}
-                                        style={styles.item}
-                                    >
-                                        <Text style={styles.text}>{item.username}</Text>
-                                        <TouchableOpacity
-                                            style={styles.addButton}
-                                            onPress={() => handleSelectItem(item)}
-                                        >
-                                            <Text style={styles.textButton}>Ajouter</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    )
-                                }
-                                else {
-                                    return (<View key={i} style={styles.item}>
-                                        <Text style={styles.text}>{item.username}</Text>
-                                    </View>
-                                    )
-                                }
-                            }
-                            )}
-                        </ScrollView>
-                    </View>
-                </View>
-            </Modal>
-            <View style={styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={styles.iconArrow}>
-                    <FontAwesome5 name='arrow-left' size={33} color={'#19525A'} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.addUser} onPress={() => setmodalAddFriend(true)}>
-                    <FontAwesome5 name='user-plus' size={33} color={'#19525A'} />
-                </TouchableOpacity>
-            </View>
-
-            <ScrollView contentContainerStyle={styles.scrollView}>
-                {festivalData.name && <View style={styles.festivalInfo}>
-                    <View style={styles.imageContainer}>
-                        <Image
-                            source={{ uri: festivalData.pictures[0] }}
-                            style={styles.image}
-                        />
-                    </View>
-                    <View style={styles.textContainer}>
-                        <Text style={styles.title1}>{groupData.name}</Text>
-                        <Text style={styles.groupName}>{festivalData.name}</Text>
-                        <Text style={styles.text}>{festivalData.adress.place}, {festivalData.adress.city}</Text>
-                        <Text style={styles.text}>Du {new Date(festivalData.start).toLocaleDateString()}{"\n"}Au {new Date(festivalData.end).toLocaleDateString()}</Text>
-                    </View>
-                </View>}
-                {members}
-            </ScrollView>
-        </View>
-    )
 }
 
 
@@ -277,7 +261,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-
     },
     header: {
         height: 86,
@@ -286,19 +269,11 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         width: Dimensions.get('window').width,
         alignItems: 'center',
-
     },
     title1: {
         fontSize: 30,
         color: '#19525A',
         fontFamily: 'Poppins_600SemiBold',
-
-    },
-    title2: {
-        fontFamily: 'Poppins_700Bold',
-        fontSize: 16,
-        color: '#19525A',
-        margin: 10
     },
     text: {
         fontFamily: 'Poppins_600SemiBold',
@@ -327,12 +302,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: (windowHeight / 4),
     },
-    scrollView: {
-        alignItems: 'center',
-        width: Dimensions.get('window').width,
-        height: '100%',
-    },
-
     userContainer: {
         backgroundColor: '#FFFFFF',
         borderRadius: 5,
@@ -418,7 +387,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Poppins_600SemiBold',
         color: 'white'
     },
-    input: {
+    inputModal: {
         width: '80%',
         padding: 10,
         borderWidth: 1,

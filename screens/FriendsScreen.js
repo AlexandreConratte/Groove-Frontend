@@ -13,20 +13,24 @@ export default function FriendsScreen({ navigation }) {
   const [dataGroups, setdataGroups] = useState([]);
   const [focusedInput, setFocusedInput] = useState(null)
   const [dataFriends, setdataFriends] = useState([]);
-  
+
   const [modalAddFriend, setmodalAddFriend] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [usersdata, setusersdata] = useState([]);
   const [filteredData, setFilteredData] = useState(usersdata);
 
   
+  const goToGroupCreationPage=()=>{
+    navigation.navigate('GroupCreation')
+  }
+
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
   };
 
   const GoBack = () => {
-    navigation.navigate('Home')
+    navigation.navigate('Menu')
     setModalisVisible(false)
   };
 
@@ -48,8 +52,8 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-    .then((response) => response.json())
-    .then((data) => setdataGroups(data.groups))
+      .then((response) => response.json())
+      .then((data) => setdataGroups(data.groups))
   }
 
   //Affichage des amis de l'utilisateur connecté
@@ -59,10 +63,10 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-    .then((response) => response.json())
-    .then((data) => setdataFriends(data.friends))
+      .then((response) => response.json())
+      .then((data) => setdataFriends(data.friends))
   }
-  
+
   //Récupération de tous les users de la BDD
   const affichage3 = () => {
     fetch(`${BACKEND_URL}/users/getAllUsers`, {
@@ -70,28 +74,28 @@ export default function FriendsScreen({ navigation }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token }),
     })
-    .then((response) => response.json())
-    .then((data) => setusersdata(data.friends))
+      .then((response) => response.json())
+      .then((data) => setusersdata(data.friends))
   }
-  
+
   const goToGroupPage = (id) => {
-    navigation.navigate('Group', {id})
+    navigation.navigate('Group', { id })
   }
-  
+
   const deleteFriend = (friendToken) => {
     fetch(`${BACKEND_URL}/users/deleteFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken }),
     })
-    .then((response) => response.json())
-    .then(() => {
-      affichage1()
-      affichage2()
-      affichage3()
-    })
+      .then((response) => response.json())
+      .then(() => {
+        affichage1()
+        affichage2()
+        affichage3()
+      })
   }
-  
+
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (query.length > 0) {
@@ -101,106 +105,106 @@ export default function FriendsScreen({ navigation }) {
       });
       setFilteredData(newData);
     } else {
-      setFilteredData(usersdata);
+      setFilteredData([]);
     }
   };
-  
+
   const handleSelectItem = (item) => {
     fetch(`${BACKEND_URL}/users/addFriend`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token: user.token, friendToken: item.token }),
     })
-    .then((response) => response.json())
-    .then(() => {
-      affichage1()
-      affichage2()
-      affichage3()
-    })
+      .then((response) => response.json())
+      .then(() => {
+        affichage1()
+        affichage2()
+        affichage3()
+      })
   }
-  
+
   const friends = dataFriends.map((e, i) => {
     return (<Friend key={i} deleteFriend={deleteFriend} {...e} />)
   })
-  
+
   const groups = dataGroups.map((e, i) => {
     return (<Group key={i} {...e} goToGroupPage={goToGroupPage} />)
   })
-  
-  
+
+
   return (
     <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
-        <Modal visible={modalAddFriend} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
-            <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
-                <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
-                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.close : styles.close} onPress={() => setmodalAddFriend(false)}>
-                        <FontAwesome5 name="window-close" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
-                    </TouchableOpacity>
-                    <TextInput
-                        style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]}
-                        placeholder="Rechercher un(e) ami(e)"
-                        placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a' }
-                        value={searchQuery}
-                        onChangeText={(text) => handleSearch(text)}
-                        onFocus={() => setFocusedInput('style')}
-                        onBlur={() => setFocusedInput(null)}
-                    />
-                    <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollViewModal : styles.scrollViewModal}>
-                        {filteredData.map((item, i) => {
-                            if (!dataFriends.find((e) => e.username === item.username)) {
-                                return (
-                                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
-                                        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
-                                        <TouchableOpacity
-                                            style={user.settings.nightMode ? nightModeStyle.addButton : styles.addButton}
-                                            onPress={() => handleSelectItem(item)}
-                                        >
-                                            <Text style={user.settings.nightMode ? nightModeStyle.textButton : styles.textButton}>Ajouter</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            } else {
-                                return (
-                                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
-                                        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
-                                    </View>
-                                )
-                            }
-                        })}
-                    </ScrollView>
-                </View>
-            </View>
-        </Modal>
-        <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
-            <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
-                <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
+      <Modal visible={modalAddFriend} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+        <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+          <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
+            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.close : styles.close} onPress={() => setmodalAddFriend(false)}>
+              <FontAwesome5 name="window-close" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
             </TouchableOpacity>
-            <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Mes ami(e)s</Text>
+            <TextInput
+              style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]}
+              placeholder="Rechercher un(e) ami(e)"
+              placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
+              value={searchQuery}
+              onChangeText={(text) => handleSearch(text)}
+              onFocus={() => setFocusedInput('style')}
+              onBlur={() => setFocusedInput(null)}
+            />
+            <ScrollView style={user.settings.nightMode ? nightModeStyle.scrollViewModal : styles.scrollViewModal}>
+              {filteredData.map((item, i) => {
+                if (!dataFriends.find((e) => e.username === item.username)) {
+                  return (
+                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
+                      <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
+                      <TouchableOpacity
+                        style={user.settings.nightMode ? nightModeStyle.addButton : styles.addButton}
+                        onPress={() => handleSelectItem(item)}
+                      >
+                        <Text style={user.settings.nightMode ? nightModeStyle.textButton : styles.textButton}>Ajouter</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                } else {
+                  return (
+                    <View key={i} style={user.settings.nightMode ? nightModeStyle.item : styles.item}>
+                      <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{item.username}</Text>
+                    </View>
+                  )
+                }
+              })}
+            </ScrollView>
+          </View>
         </View>
-        <ScrollView>
-            <View style={user.settings.nightMode ? nightModeStyle.pictureContainer : styles.pictureContainer}>
-                <ImageBackground source={{ uri: "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/Festival-de-musique_amis_oar251.jpg" }} resizeMode="cover" style={user.settings.nightMode ? nightModeStyle.image : styles.image}>
-                    <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.addFriendContainer : styles.addFriendContainer} onPress={() => setmodalAddFriend(true)}>
-                        <Text style={user.settings.nightMode ? nightModeStyle.addFriends : styles.addFriends}>Ajouter des amis</Text>
-                        <FontAwesome5 name='user-plus' size={13.5} color={'#15C2C2'} />
-                    </TouchableOpacity>
-                </ImageBackground>
-            </View>
+      </Modal>
+      <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
+        <TouchableOpacity onPress={() => navigation.navigate('Menu')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
+          <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
+        </TouchableOpacity>
+        <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Mes ami(e)s</Text>
+      </View>
+      <ScrollView>
+        <View style={user.settings.nightMode ? nightModeStyle.pictureContainer : styles.pictureContainer}>
+          <ImageBackground source={{ uri: "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716536230/Festival-de-musique_amis_oar251.jpg" }} resizeMode="cover" style={user.settings.nightMode ? nightModeStyle.image : styles.image}>
+            <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.addFriendContainer : styles.addFriendContainer} onPress={() => setmodalAddFriend(true)}>
+              <Text style={user.settings.nightMode ? nightModeStyle.addFriends : styles.addFriends}>Ajouter des amis</Text>
+              <FontAwesome5 name='user-plus' size={13.5} color={'#15C2C2'} />
+            </TouchableOpacity>
+          </ImageBackground>
+        </View>
 
-            <View style={user.settings.nightMode ? nightModeStyle.groups : styles.groups}>
-                <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes groupes :</Text>
-                <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.groupsContainer : styles.groupsContainer} horizontal={true}>
-                    {groups}
-                    <Group goToGroupPage={goToGroupPage} />
-                </ScrollView>
-            </View>
-            <View style={user.settings.nightMode ? nightModeStyle.friendsContainer : styles.friendsContainer}>
-                <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes amis :</Text>
-                <View style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
-                    {friends}
-                </View>
-            </View>
-        </ScrollView>
+        <View style={user.settings.nightMode ? nightModeStyle.groups : styles.groups}>
+          <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes groupes :</Text>
+          <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.groupsContainer : styles.groupsContainer} horizontal={true}>
+            {groups}
+            <Group goToGroupCreationPage={goToGroupCreationPage} />
+          </ScrollView>
+        </View>
+        <View style={user.settings.nightMode ? nightModeStyle.friendsContainer : styles.friendsContainer}>
+          <Text style={user.settings.nightMode ? nightModeStyle.title2 : styles.title2}>Mes amis :</Text>
+          <View style={user.settings.nightMode ? nightModeStyle.scrollView : styles.scrollView}>
+            {friends}
+          </View>
+        </View>
+      </ScrollView>
 
         <Modal visible={modalisVisible} transparent={true}>
           <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
@@ -573,16 +577,6 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-  },
-
-  modalContainer: {
-    width: 274,
-    height: 292,
-    justifyContent: 'center',
-    backgroundColor: "white",
-    borderColor: '#FFE45D',
-    borderWidth: 3,
-    alignItems: 'center',
   },
   welcomeText: {
     fontSize: 20,

@@ -123,9 +123,15 @@ export default function Connect4Screen({ navigation }) {
   // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
   const finalSignUpClick = async () => {
 
-    const getUrl = await uploadImage(user.connection.picture)  // upload l'image avec le module uploadImage sur le cloudinary et récupère l'url
+    let getUrl = '';
+    if (user.connection.picture) {
+      getUrl = await uploadImage(user.connection.picture) // upload l'image avec le module uploadImage sur le cloudinary et récupère l'url
+    } else {
+      getUrl = "https://res.cloudinary.com/dq5b1pmdu/image/upload/v1716545800/istockphoto-1337144146-612x612_f2ywyb.jpg";
+    }
+
     const artistIds = selectedArtists.map(artist => artist._id);
-     
+
     const userData = {
       username: user.connection.username,
       password: user.connection.password,
