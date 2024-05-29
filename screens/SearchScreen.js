@@ -152,7 +152,7 @@ export default function SearchResultsScreen({ navigation }) {
       });
       setFilteredData(newData);
     } else {
-      setFilteredData(stylesdata);
+      setFilteredData([]);
     }
   };
 
@@ -176,7 +176,7 @@ export default function SearchResultsScreen({ navigation }) {
       });
       setFilteredData2(newData);
     } else {
-      setFilteredData2(artistsdata);
+      setFilteredData2([]);
     }
   };
 
@@ -215,6 +215,7 @@ export default function SearchResultsScreen({ navigation }) {
           }
           else {
             setfoundedCity("Ville introuvable !");
+            return
           }
         })
     }

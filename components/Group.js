@@ -11,11 +11,9 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { useSelector } from 'react-redux';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
 export default function Group(props) {
-  const user = useSelector((state) => state.user.value);
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -36,16 +34,16 @@ export default function Group(props) {
     let s = ''
     props.members.length > 1 && (s = 's')
     content =
-      <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.container : styles.container} onPress={() => props.goToGroupPage(props._id)}>
-        <Text style={user.settings.nightMode ? nightModeStyle.title : styles.title}>{props.name}</Text>
-        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{props.festival.name}</Text>
-        <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{props.members.length} membre{s}</Text>
+      <TouchableOpacity style={styles.container} onPress={() => props.goToGroupPage(props._id)}>
+        <Text style={styles.title}>{props.name}</Text>
+        <Text style={styles.text}>{props.festival.name}</Text>
+        <Text style={styles.text}>{props.members.length} membre{s}</Text>
       </TouchableOpacity>
   }
   else {
     content =
-      <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.container : styles.container} onPress={() => props.goToGroupPage()}>
-        <FontAwesome5 name='plus' size={100} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
+      <TouchableOpacity style={styles.container} onPress={() => props.goToGroupCreationPage()}>
+        <FontAwesome5 name='plus' size={100} color={'#19525A'} />
       </TouchableOpacity>
   }
 
@@ -86,7 +84,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#19525A',
     fontFamily: 'Poppins_600SemiBold',
-    textAlign:'center'
+    textAlign: 'center'
   },
   text: {
     fontFamily: 'Poppins_400Regular',
@@ -94,39 +92,4 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
 
-});
-
-const nightModeStyle = StyleSheet.create({
-  container: {
-    backgroundColor: '#19525A',
-    borderRadius: 5,
-    width: 150,
-    height: 150,
-    margin: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.5,
-      },
-      android: {
-        elevation: 6,
-      },
-    }),
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderColor: '#8AE0E0',
-    borderWidth: 3,
-    borderRadius: 20
-  },
-  title: {
-    fontSize: 24,
-    color: '#FFFFFF',
-    fontFamily: 'Poppins_600SemiBold'
-  },
-  text: {
-    fontFamily: 'Poppins_400Regular',
-    color: '#FFFFFF',
-    textAlign: 'center'
-  },
 });
