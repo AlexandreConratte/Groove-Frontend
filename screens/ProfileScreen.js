@@ -237,7 +237,7 @@ export default function ProfileScreen({ navigation }) {
         <Text style={user.settings.nightMode ? nightModeStyle.title1 : styles.title1}>Profile</Text>
       </View>
 
-      <Modal visible={modalisVisible} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+      <Modal visible={modalisVisible} transparent={true}>
         <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
           <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
             <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
