@@ -26,7 +26,7 @@ export default function FriendsScreen({ navigation }) {
   };
 
   const GoBack = () => {
-    navigation.navigate('Home')
+    navigation.navigate('Menu')
     setModalisVisible(false)
   };
 
@@ -573,16 +573,6 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-  },
-
-  modalContainer: {
-    width: 274,
-    height: 292,
-    justifyContent: 'center',
-    backgroundColor: "white",
-    borderColor: '#FFE45D',
-    borderWidth: 3,
-    alignItems: 'center',
   },
   welcomeText: {
     fontSize: 20,

@@ -1076,6 +1076,21 @@ const nightModeStyle = StyleSheet.create({
     fontSize: 18,
     color: '#19525A'
   },
+  deletePictureButton: {
+    position: 'absolute',
+    left: (windowWidth/2)-82,
+    top: 260,
+    width: 164,
+    height: 30,
+    backgroundColor: '#15C2C2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8
+  },
+  deletePictureText: {
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#19525A'
+  },
   bannerContainer: {
     height: 172,
     borderBottomColor: '#FFFFFF',
