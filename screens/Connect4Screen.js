@@ -55,7 +55,6 @@ export default function Connect4Screen({ navigation }) {
       .then((response) => response.json())
       .then((data) => {
         setStylesData(data.styles)
-        // console.log(data.styles)
       })
       .catch((error) => console.error('Error:', error));
   }, []);
@@ -124,13 +123,9 @@ export default function Connect4Screen({ navigation }) {
   // bouton suivant, fetch la route signup avec toutes les datas récupérés sur les 4 screens
   const finalSignUpClick = async () => {
 
-    // console.log(user.connection.picture)
-
     const getUrl = await uploadImage(user.connection.picture)  // upload l'image avec le module uploadImage sur le cloudinary et récupère l'url
-    // console.log("succes", getUrl)
-
     const artistIds = selectedArtists.map(artist => artist._id);
-
+     
     const userData = {
       username: user.connection.username,
       password: user.connection.password,
