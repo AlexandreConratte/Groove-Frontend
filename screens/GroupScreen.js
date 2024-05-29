@@ -399,3 +399,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
 });
+
+const nightModeStyle = StyleSheet.create({
+
+});

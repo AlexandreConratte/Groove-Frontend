@@ -292,7 +292,7 @@ const nightModeStyle = StyleSheet.create({
         shadowOpacity: 0.5,
       },
       android: {
-        elevation: 6,
+        elevation: 15,
       },
     }),
     flexDirection: 'row',
