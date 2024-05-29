@@ -31,7 +31,6 @@ export const userSlice = createSlice({
     },
     resetdataFields: (state) => {
       state.value.connection = {
-        username: '',
         firstname: '',
         lastname: '',
         birthdate: '',
