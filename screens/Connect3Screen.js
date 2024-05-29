@@ -47,7 +47,6 @@ export default function Connect3Screen({ navigation }) {
   const [city, setCity] = useState('');
   const [focusedInput, setFocusedInput] = useState(null)
   const [date, setDate] = useState(new Date());
-  const [modalPhoto, setModalPhoto] = useState(false)
 
   const DateInput = ({ label }) => {
     const [show, setShow] = useState(false);
@@ -76,10 +75,6 @@ export default function Connect3Screen({ navigation }) {
     );
   };
 
-  const addPhoto = () => {
-    setModalPhoto(true)
-  }
-
   const nextStep = () => {
     dispatch(signupUser({ firstname, lastname, birthdate: date.getTime(), city }))
     // console.log(birthdate)
@@ -101,9 +96,7 @@ export default function Connect3Screen({ navigation }) {
         </View>
         <ScrollView contentContainerStyle={user.settings.nightMode ? nightModeStyle.containerConnect : styles.containerConnect}>
           <View style={user.settings.nightMode ? nightModeStyle.profilphoto : styles.profilphoto}>
-            <TouchableOpacity onPress={() => addPhoto()}>
-              <ProfilePhoto />
-            </TouchableOpacity>
+            <ProfilePhoto />
           </View>
           <View style={user.settings.nightMode ? nightModeStyle.allInputs : styles.allInputs}>
             <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>

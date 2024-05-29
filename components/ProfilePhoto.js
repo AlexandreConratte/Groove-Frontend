@@ -54,7 +54,7 @@ const ProfilePhoto = () => {
           <Image source={{ uri: image }} style={styles.image} />
         ) : (
           <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Ajouter une photo</Text>
+            <Text style={styles.placeholderText}>Ajouter une photo depuis la gallerie</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -85,21 +85,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   placeholderText: {
-    color: '#ffffff',
-    fontFamily: "Poppins_400Regular",
+    color: '#19525A',
+    fontFamily: "Poppins_500Medium",
   },
   button: {
     width: 150,
-    height: 40,
+    height: 45,
     marginTop: 20,
     padding: 10,
     backgroundColor: '#FFE45D',
     borderRadius: 5,
-    backgroundColor: 'rgba(255, 228, 93,0.7)'
   },
   buttonText: {
-    color: '#ffffff',
-    fontFamily: "Poppins_400Regular",
+    color: '#19525A',
+    fontFamily: "Poppins_500Medium",
 
   },
 });
