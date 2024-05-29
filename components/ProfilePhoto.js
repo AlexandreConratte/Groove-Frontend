@@ -14,7 +14,8 @@ const ProfilePhoto = () => {
   const user = useSelector((state) => state.user.value);
 
   const [image, setImage] = useState(null);
-  //const [libraryStatus, setLibraryStatus] = useState(null);
+  const [cameraStatus, setCameraStatus] = useState(null);
+  const [libraryStatus, setLibraryStatus] = useState(null);
   const dispatch = useDispatch();
 
 
@@ -22,27 +23,30 @@ const ProfilePhoto = () => {
     (async () => {
       const camera = await ImagePicker.requestCameraPermissionsAsync();
       const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      //  setCameraStatus(camera.status);
-      //setLibraryStatus(library.status);
-      console.log("camera", camera.status, "library", library.status)
-
+      setCameraStatus(camera.status);
+      setLibraryStatus(library.status);
+        console.log("camera" , camera.status, "library" ,library.status)
+        
     })();
   }, []);
 
   const selectPhoto = async () => {
     const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (library.status !== 'granted') {
+    if (libraryStatus !== 'granted') { 
       Alert.alert(
-        'Permission nécessaire',
-        'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Open Settings', onPress: () => Linking.openSettings() },
-        ],
-        { cancelable: false }
-      )
+      'Permission nécessaire',
+      'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
+      [
+        { text: 'Fermer', style: 'cancel' },
+        { text: 'Donner l\'accès', onPress: () => 
+          libraryStatus === 'granted' }   // tester ça avec le let result = await ImagePicker.launchimage etc etc demain !! 
+          // Linking.openSettings() },
+      ],
+      { cancelable: false } 
+    ) 
+    setLibraryStatus(library.status)
     }
-    else {
+    else { 
       let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.All,
         allowsEditing: true,
@@ -53,15 +57,15 @@ const ProfilePhoto = () => {
         setImage(result.assets[0].uri);
         dispatch(signupUser({ picture: result.assets[0].uri }))
       }
-    }
+    } 
   }
 
 
   const takePhoto = async () => {
     const camera = await ImagePicker.requestCameraPermissionsAsync();
-    if (camera.status !== 'granted') {
-     console.log(camera.status)
-
+    if (cameraStatus !== 'granted') {
+      setCameraStatus(camera.status);
+      setImage(null)
     }
     else {
       let result = await ImagePicker.launchCameraAsync({
