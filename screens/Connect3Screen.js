@@ -68,7 +68,7 @@ export default function Connect3Screen({ navigation }) {
       <View>
         <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{label}</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <TextInput style={styles.inputDate} placeholder="Sélectionnez une date" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } value={birthdate} editable={false} />
+          <TextInput style={user.settings.nightMode ? nightModeStyle.inputDate : styles.inputDate} placeholder="Sélectionnez une date" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } value={birthdate} editable={false} />
         </TouchableOpacity>
         {show && (<DateTimePicker testID="dateTimePicker" value={date} mode="date" display="default" onChange={onChange} />)}
       </View>
@@ -379,6 +379,18 @@ const nightModeStyle = StyleSheet.create({
     fontFamily: 'Poppins_500Medium',
     fontSize: 14,
     marginBottom: 30,
+},
+inputDate: {
+  width: 170,
+  padding: 10,
+  marginVertical: 10,
+  borderWidth: 1,
+  borderColor: '#7CB7BF',
+  borderRadius: 8,
+  height: 50,
+  fontSize: 13,
+  color: '#FFFFFF',
+  fontFamily: 'Poppins_500Medium',
 },
 
 });

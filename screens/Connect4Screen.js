@@ -103,6 +103,7 @@ export default function Connect4Screen({ navigation }) {
       setFilteredData(newData);
     } else {
       setFilteredData(artistsData);
+      
     }
   };
   const handleSelectArtists = (item) => {
@@ -115,6 +116,7 @@ export default function Connect4Screen({ navigation }) {
     }
     setSelectedArtists(newSelectedArtists);
     setSearchQuery('');
+    setFilteredData([])
   };
 
 
@@ -125,7 +127,7 @@ export default function Connect4Screen({ navigation }) {
     // console.log(user.connection.picture)
 
     const getUrl = await uploadImage(user.connection.picture)  // upload l'image avec le module uploadImage sur le cloudinary et récupère l'url
-    console.log("succes", getUrl)
+    // console.log("succes", getUrl)
 
     const artistIds = selectedArtists.map(artist => artist._id);
 
@@ -175,17 +177,18 @@ export default function Connect4Screen({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollPrincipal}>
+
         <View style={styles.select_textContainer}>
           <Text style={user.settings.nightMode ? nightModeStyle.select_text : styles.select_text}>
             Sélectionne tes styles de musique préférés (5max) :
           </Text>
-        </View>
+        
 
         <View style={styles.MusicStyleContainer}>
           {allstyles}
         </View>
 
-        <View style={styles.select_textContainer}>
+        
           <Text style={user.settings.nightMode ? nightModeStyle.select_text : styles.select_text}>
             Sélectionne tes artistes favoris (5max) :
           </Text>
@@ -209,9 +212,9 @@ export default function Connect4Screen({ navigation }) {
               </TouchableOpacity>
             ))}
           </ScrollView>
-          <View style={styles.selectedContainer}>
+          <View style={styles.selectedArtists}>
             {selectedArtists.map((item, i) => (
-              <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.selectedItemText : styles.selectedItemText} onPress={() => handleSelectArtists(item)}>
+              <TouchableOpacity key={i} style={user.settings.nightMode ? nightModeStyle.selectedArtistText : styles.selectedArtistsText} onPress={() => handleSelectArtists(item)}>
                 <Text>{item.name}</Text>
               </TouchableOpacity>
             ))}
@@ -285,19 +288,20 @@ const styles = StyleSheet.create({
   },
   select_textContainer: {
     width: Dimensions.get('window').width,
-    marginTop: 30,
-
+    marginVertical: 20,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+  
 
   },
   select_text: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 18,
+    fontSize: 19,
     color: '#19525a',
     margin: 20,
-    marginRight: 80,
+    paddingVertical: 5,
     fontWeight: "bold",
+    textAlign: "center"
   },
   buttonstyle: {
     backgroundColor: '#ffffff',
@@ -349,13 +353,13 @@ const styles = StyleSheet.create({
     maxHeight: 200,
     marginTop: -11
   },
-  selectedContainer: {
+  selectedArtists: {
     flexDirection: 'row',
     marginVertical: 10,
     flexWrap: 'wrap',
     width: 280
   },
-  selectedItemText: {
+  selectedArtistsText: {
     backgroundColor: '#FFE45D',
     color: '#19525A',
     borderRadius: 5,
@@ -467,11 +471,12 @@ const nightModeStyle = StyleSheet.create({
   },
   select_text: {
     fontFamily: 'Poppins_500Medium',
-    fontSize: 18,
+    fontSize: 19,
     color: '#FFFFFF',
     margin: 20,
-    marginRight: 80,
+    paddingVertical: 5,
     fontWeight: "bold",
+    textAlign : "center"
   },
   buttonstyle: {
     backgroundColor: '#383838',
@@ -494,7 +499,7 @@ const nightModeStyle = StyleSheet.create({
     maxWidth: '100%',
     width: "100%"
   },
-  selectedItemText: {
+  selectedArtistText: {
     backgroundColor: '#FFE45D',
     color: '#FFFFFF',
     borderRadius: 5,

@@ -205,7 +205,7 @@ export default function FriendsScreen({ navigation }) {
         <Modal visible={modalisVisible} transparent={true}>
           <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
             <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
-              <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
+              <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté(e) !</Text>
               <Text style={user.settings.nightMode ? nightModeStyle.descripText : styles.descripText}>Pour une expérience personnalisée </Text>
               <TouchableOpacity onPress={() => GotoConnect()} style={user.settings.nightMode ? nightModeStyle.GotoConnectButton : styles.GotoConnectButton}>
                 <Text style={user.settings.nightMode ? nightModeStyle.connect : styles.connect}>Connecte Toi</Text>
