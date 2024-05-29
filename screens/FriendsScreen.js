@@ -19,7 +19,7 @@ export default function FriendsScreen({ navigation }) {
   const [usersdata, setusersdata] = useState([]);
   const [filteredData, setFilteredData] = useState(usersdata);
 
-<<<<<<< HEAD
+  
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
@@ -40,9 +40,6 @@ export default function FriendsScreen({ navigation }) {
   }, []);
 
 
-=======
-  
->>>>>>> 8dbc873d81925463eaf9065da517b14813b9b588
   //Affichage des groupes où l'utilisateur connecté est présent
   const affichage1 = () => {
     fetch(`${BACKEND_URL}/groups/findAllByUsername`, {
@@ -119,25 +116,6 @@ export default function FriendsScreen({ navigation }) {
       affichage2()
       affichage3()
     })
-  }
-  
-  const GotoConnect = () => {
-    navigation.navigate('Connect1');
-    setModalisVisible(false)
-  };
-
-  const GoBack = () => {
-    navigation.navigate('Home')
-    setModalisVisible(false)
-  };  
-
-  if (user.token) {
-    setModalisVisible(false);
-    useEffect(() => {
-      affichage1()
-      affichage2()
-      affichage3()
-    }, []);
   }
   
   const friends = dataFriends.map((e, i) => {

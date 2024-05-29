@@ -36,7 +36,7 @@ export default function Group(props) {
     let s = ''
     props.members.length > 1 && (s = 's')
     content =
-      <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.container : styles.container} onPress={() => props.goToGroupPage(props)}>
+      <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.container : styles.container} onPress={() => props.goToGroupPage(props._id)}>
         <Text style={user.settings.nightMode ? nightModeStyle.title : styles.title}>{props.name}</Text>
         <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{props.festival.name}</Text>
         <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>{props.members.length} membre{s}</Text>
