@@ -9,7 +9,7 @@ const BACKEND_URL = "https://backend-groove.vercel.app"
 
 export default function FriendsScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
-  const [modalisVisible, setModalisVisible] = useState(true);
+  const [modalisVisible, setModalisVisible] = useState(false);
   const [dataGroups, setdataGroups] = useState([]);
   const [focusedInput, setFocusedInput] = useState(null)
   const [dataFriends, setdataFriends] = useState([]);
@@ -19,8 +19,6 @@ export default function FriendsScreen({ navigation }) {
   const [usersdata, setusersdata] = useState([]);
   const [filteredData, setFilteredData] = useState(usersdata);
 
-  
-
   const GotoConnect = () => {
     navigation.navigate('Connect1');
     setModalisVisible(false)
@@ -29,15 +27,17 @@ export default function FriendsScreen({ navigation }) {
   const GoBack = () => {
     navigation.navigate('Home')
     setModalisVisible(false)
-  };  
-  if (user.token) {
-    setModalisVisible(false);
-    useEffect(() => {
+  };
+
+  useEffect(() => {
+    if(user.token){
+      setModalisVisible(false)
       affichage1()
       affichage2()
       affichage3()
-    }, []);
-  }
+    }
+  }, []);
+
 
   //Affichage des groupes où l'utilisateur connecté est présent
   const affichage1 = () => {
@@ -201,7 +201,7 @@ export default function FriendsScreen({ navigation }) {
             </View>
         </ScrollView>
 
-        <Modal visible={modalisVisible} transparent={true} style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
+        <Modal visible={modalisVisible} transparent={true}>
           <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
             <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
               <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
