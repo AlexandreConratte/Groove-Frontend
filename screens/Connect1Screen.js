@@ -469,6 +469,15 @@ const nightModeStyle = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16,
   },
+  grooveText: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#FFE45E',
+    textShadowColor: '#19525a',
+    textShadowOffset: {width: -2, height: 2},
+    textShadowRadius: 30,
+    fontSize: 24,
+    top: 20
+  },
   inscription: {
     fontFamily: 'Poppins_700Bold',
     color: "#19525a",
@@ -514,7 +523,7 @@ const nightModeStyle = StyleSheet.create({
     height: (windowHeight / 2),
     width: (windowWidth / 1.3),
     alignItems: 'center',
-    backgroundColor: "#D2FFF4",
+    backgroundColor: "#7CB7BF",
     flexDirection: ' column',
     justifyContent: 'flex-end',
     borderRadius: 30,
@@ -540,7 +549,7 @@ const nightModeStyle = StyleSheet.create({
   },
   modalClose: {
     position: 'absolute',
-    left: 20,
+    right: 20,
     top: 20
   },
   input: {
