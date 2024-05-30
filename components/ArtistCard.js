@@ -11,6 +11,7 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default function ArtistCard(props) {
   let [fontsLoaded] = useFonts({
@@ -28,7 +29,9 @@ export default function ArtistCard(props) {
   return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-            <Image source={require('../assets/loupe-jaune.png')} style={styles.image}/>
+          <View style={styles.circleContainer}>
+            <FontAwesome name="headphones" size={60} color='#FFE45E' style={styles.image}/>
+          </View>
         </View>
         <View style={styles.textContainer}>
             <Text style={styles.name}>{props.name}</Text>
@@ -65,7 +68,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#D2FFF4',
     borderTopRightRadius: 5,
     borderTopLeftRadius: 5,
-    paddingTop: '3%'
+    paddingTop: '3%',
+  },
+  circleContainer: {
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '90%',
+    height: '90%',
+    borderRadius: 50,
   },
   textContainer: {
     height: '34%',
@@ -77,11 +88,4 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     color: '#19525A',
   },
-  image: {
-    width: '90%',
-    height: '90%',
-    borderRadius: 50,
-    backgroundColor: 'white'
-  },
-
 });
