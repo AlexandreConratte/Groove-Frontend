@@ -30,35 +30,6 @@ const ProfilePhoto = () => {
     })();
   }, []);
 
-  /* const selectPhoto = async () => {
-    const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (libraryStatus !== 'granted') { 
-      Alert.alert(
-      'Permission nécessaire',
-      'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
-      [
-        { text: 'Fermer', style: 'cancel' },
-        { text: 'Donner l\'accès', onPress: () => 
-          libraryStatus === 'granted' }   // tester ça avec le let result = await ImagePicker.launchimage etc etc demain !! 
-          // Linking.openSettings() },
-      ],
-      { cancelable: false } 
-    ) 
-    setLibraryStatus(library.status)
-    }
-    else { 
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.4,
-      });
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-        dispatch(signupUser({ picture: result.assets[0].uri }))
-      }
-    } 
-  } */
   const selectPhoto = async () => {
      const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
