@@ -21,6 +21,8 @@ export default function FestivalOnMap(props) {
   const navigation = useNavigation()
   const start = new Date(props.start).toLocaleDateString()
   const end = new Date(props.end).toLocaleDateString()
+  const {closeModal, ...infoFest} = props // suppression de la fonction dans l'objet pour le passage des props dans la navigation
+
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
     Poppins_200ExtraLight,
@@ -40,7 +42,6 @@ export default function FestivalOnMap(props) {
     const time = new Date(props.diff)
     timeLeft = <Text style={styles.timeLeft}>J-{time.getDate()}</Text>
   }
-
 
   return (
     <>
@@ -62,7 +63,7 @@ export default function FestivalOnMap(props) {
             <MaterialIcons name="location-pin" color={'#FF4848'} size={14} />
             <Text style={[styles.text, { paddingRight: 10 }]}>{props.adress.place}, {props.adress.city}</Text>
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => { props.closeModal(); navigation.navigate('Festival', { ...props }) }}>
+          <TouchableOpacity style={styles.button} onPress={() => { props.closeModal(); navigation.navigate('Festival', { ...infoFest }) }}>
             <Text style={styles.textbutton}>Ouvrir la page du festival</Text>
           </TouchableOpacity>
         </View>

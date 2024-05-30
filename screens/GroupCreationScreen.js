@@ -145,7 +145,7 @@ export default function GroupCreationScreen({ route, navigation }) {
     return (
         <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
             <View style={user.settings.nightMode ? nightModeStyle.header : styles.header}>
-                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.heaiconArrowder}>
+                <TouchableOpacity onPress={() => navigation.navigate('Friends')} style={user.settings.nightMode ? nightModeStyle.iconArrow : styles.iconArrow}>
                     <FontAwesome5 name='arrow-left' size={33} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
                 </TouchableOpacity>
                 <Text style={user.settings.nightMode ? nightModeStyle.groupName : styles.groupName}>Nouveau Groupe</Text>
@@ -325,8 +325,6 @@ const styles = StyleSheet.create({
     },
     globalScrollview: {
         width: Dimensions.get('window').width,
-        borderWidth: 1,
-        borderColor: 'black',
         paddingHorizontal: 10
     },
     button: {
@@ -435,8 +433,6 @@ const nightModeStyle = StyleSheet.create({
     },
     globalScrollview: {
         width: Dimensions.get('window').width,
-        borderWidth: 1,
-        borderColor: 'black',
         paddingHorizontal: 10
     },
     button: {
