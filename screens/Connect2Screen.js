@@ -54,7 +54,7 @@ export default function Connect2Screen({ navigation }) {
   const [focusedInput, setFocusedInput] = useState(null);
 
   const mailregex = /^((?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$/
-  const phoneRegex = /^0[1-9]( \d{2}){4}$/
+  const phoneRegex = /^0\d{9}$/
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
 
 
@@ -181,7 +181,7 @@ export default function Connect2Screen({ navigation }) {
                         onFocus={() => setFocusedInput('phone')}
                         onBlur={() => setFocusedInput(null)}
                     />
-                    {errorPhone && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}>Format attendu : 0X XX XX XX XX</Text>}
+                    {errorPhone && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}>Format attendu : 0XXXXXXXXX</Text>}
                 </View>
 
                 <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
