@@ -1,60 +1,137 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions, Platform, Alert } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import * as ImagePicker from 'expo-image-picker'
 import { signupUser } from '../reducers/user';
-import { useDispatch } from 'react-redux';
-import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
 
+
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
 const ProfilePhoto = () => {
 
+  const user = useSelector((state) => state.user.value);
+
   const [image, setImage] = useState(null);
+  const [cameraStatus, setCameraStatus] = useState(null);
+  const [libraryStatus, setLibraryStatus] = useState(null);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     (async () => {
-      const cameraStatus = await ImagePicker.requestCameraPermissionsAsync();
-      const libraryStatus = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (cameraStatus.status !== 'granted' || libraryStatus.status !== 'granted') {
-        alert(`Autorisez l'accès à votre appareil photo et à votre gallerie photo`);
-      }
+      const camera = await ImagePicker.requestCameraPermissionsAsync();
+      const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      setCameraStatus(camera.status);
+      setLibraryStatus(library.status);
+        console.log("camera" , camera.status, "library" ,library.status)
+        
     })();
   }, []);
 
+  /* const selectPhoto = async () => {
+    const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (libraryStatus !== 'granted') { 
+      Alert.alert(
+      'Permission nécessaire',
+      'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
+      [
+        { text: 'Fermer', style: 'cancel' },
+        { text: 'Donner l\'accès', onPress: () => 
+          libraryStatus === 'granted' }   // tester ça avec le let result = await ImagePicker.launchimage etc etc demain !! 
+          // Linking.openSettings() },
+      ],
+      { cancelable: false } 
+    ) 
+    setLibraryStatus(library.status)
+    }
+    else { 
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.4,
+      });
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        dispatch(signupUser({ picture: result.assets[0].uri }))
+      }
+    } 
+  } */
   const selectPhoto = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.4,
-    });
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      dispatch(signupUser({ picture: result.assets[0].uri }))
+     const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (libraryStatus !== 'granted') {
+      Alert.alert(
+        'Permission nécessaire',
+        'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
+        [
+          { text: 'Fermer', style: 'cancel' },
+          { text: 'Donner l\'accès', onPress: async () => {
+               library.status = 'granted';
+                let result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.All,
+                  allowsEditing: true,
+                  aspect: [4, 3],
+                  quality: 0.4,
+                });
+                
+                if (!result.canceled) {
+                  setImage(result.assets[0].uri);
+                  dispatch(signupUser({ picture: result.assets[0].uri }));
+                  setLibraryStatus(library.status)
+                }
+              
+            } 
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.4,
+      });
+      
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        dispatch(signupUser({ picture: result.assets[0].uri }));
+      }
     }
   };
 
+
   const takePhoto = async () => {
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.4,
-    });
-    if (!result.canceled) {
-      setImage(result.assets[0].uri)
-      dispatch(signupUser({ picture: result.assets[0].uri }))
+    const camera = await ImagePicker.requestCameraPermissionsAsync();
+    if (cameraStatus !== 'granted') {
+      setCameraStatus(camera.status);
+      setImage(null)
+    }
+    else {
+      let result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.4,
+      });
+      if (!result.canceled) {
+        setImage(result.assets[0].uri)
+        dispatch(signupUser({ picture: result.assets[0].uri }))
+      }
     }
   }
 
   return (
-    <View style={styles.container}>
+    <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+      <View></View>
       <TouchableOpacity onPress={selectPhoto}>
         {image ? (
           <Image source={{ uri: image }} style={styles.image} />
         ) : (
           <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Ajouter une photo depuis la gallerie</Text>
+            <Text style={styles.placeholderText}>Ajouter une photo</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -69,36 +146,60 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
+    marginTop: 30,
   },
-  image: {
+  image : {
     width: 165,
     height: 165,
     borderRadius: 150,
   },
   placeholder: {
+    borderColor: '#19525A',
+    borderWidth: 1,
     width: 165,
     height: 165,
     borderRadius: 150,
     backgroundColor: '#cccccc',
     alignItems: 'center',
     justifyContent: 'center',
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   placeholderText: {
     color: '#19525A',
     fontFamily: "Poppins_500Medium",
+    textAlign: "center"
   },
   button: {
-    width: 150,
-    height: 45,
+    width: 180,
+    height: 40,
     marginTop: 20,
     padding: 10,
     backgroundColor: '#FFE45D',
-    borderRadius: 5,
+    borderRadius: 30,
+    ...Platform.select({
+      ios: {
+        shadowColor: 'black',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+      },
+      android: {
+        elevation: 6,
+      },
+    }),
   },
   buttonText: {
     color: '#19525A',
     fontFamily: "Poppins_500Medium",
+    textAlign: "center"
 
   },
 });
