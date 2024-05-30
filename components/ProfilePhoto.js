@@ -31,7 +31,6 @@ const ProfilePhoto = () => {
     })();
   }, []);
 
-
   const selectPhoto = async () => {
      const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
     
