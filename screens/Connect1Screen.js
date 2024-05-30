@@ -132,6 +132,7 @@ export default function Connect1Screen({ navigation }) {
                 <TouchableOpacity onPress={popSignIn} style={user.settings.nightMode ? nightModeStyle.modalClose : styles.modalClose}>
                   <FontAwesome name='remove' size={40} color='#19525a' />
                 </TouchableOpacity>
+                <Text style={user.settings.nightMode ? nightModeStyle.grooveText : styles.grooveText}>  Let's Groove !  </Text>
                 <View style={user.settings.nightMode ? nightModeStyle.modalInputContainer : styles.modalInputContainer}>
                   <TextInput placeholder="Pseudo" placeholderTextColor='#19525a' onChangeText={(value) => setUsername(value)} value={username} style={[user.settings.nightMode ? nightModeStyle.modalInput : styles.modalInput ,  { borderColor: focusedInput === 'username' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'username' ? 2 : 1 }]}
                         onFocus={() => setFocusedInput('username')}
@@ -241,6 +242,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     fontSize: 16
   },
+  grooveText: {
+    fontFamily: 'Poppins_700Bold',
+    color: '#FFE45E',
+    textShadowColor: '#19525a',
+    textShadowOffset: {width: -2, height: 2},
+    textShadowRadius: 30,
+    fontSize: 24,
+    top: 20
+  },
   inscription: {
     fontFamily: 'Poppins_700Bold',
     color: "#FFFFFF",
@@ -287,7 +297,7 @@ const styles = StyleSheet.create({
     height: (windowHeight / 2),
     width: (windowWidth / 1.3),
     alignItems: 'center',
-    backgroundColor: "#D2FFF4",
+    backgroundColor: "#7CB7BF",
     flexDirection: ' column',
     justifyContent: 'flex-end',
     borderRadius: 30,
@@ -313,7 +323,7 @@ const styles = StyleSheet.create({
   },
   modalClose: {
     position: 'absolute',
-    left: 20,
+    right: 20,
     top: 20
   },
   input: {

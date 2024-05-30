@@ -297,7 +297,8 @@ const styles = StyleSheet.create({
   iconFontawesome: {
     textShadowColor: 'rgba(25, 82, 90, 1)',
     textShadowOffset: {width: 1.5, height: 1},
-    textShadowRadius: 0
+    textShadowRadius: 1,
+    margin: 2
   },
   nbLikesContainer: {
     backgroundColor: 'rgba(162, 162, 162, 0.7)',
