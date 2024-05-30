@@ -80,7 +80,6 @@ export default function SearchResultsScreen({ navigation }) {
     setTaille('')
     setSelectedItems([])
     setSelectedItems2([])
-    setPlace({})
   }
 
   useEffect(() => {
@@ -212,6 +211,12 @@ export default function SearchResultsScreen({ navigation }) {
     fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${userCoordinate.longitude}&lat=${userCoordinate.latitude}`)
     .then((response) => response.json())
         .then((data) => {
+          const newPlace = {
+            name: data.features[0].properties.city,
+            latitude: userCoordinate.latitude,
+            longitude: userCoordinate.longitude,
+          }
+          setPlace(newPlace)
           setVille(data.features[0].properties.city)
         })
   }
