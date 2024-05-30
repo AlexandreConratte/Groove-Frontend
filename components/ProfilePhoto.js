@@ -30,7 +30,7 @@ const ProfilePhoto = () => {
     })();
   }, []);
 
-  const selectPhoto = async () => {
+  /* const selectPhoto = async () => {
     const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (libraryStatus !== 'granted') { 
       Alert.alert(
@@ -58,7 +58,50 @@ const ProfilePhoto = () => {
         dispatch(signupUser({ picture: result.assets[0].uri }))
       }
     } 
-  }
+  } */
+  const selectPhoto = async () => {
+     const library = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (libraryStatus !== 'granted') {
+      Alert.alert(
+        'Permission nécessaire',
+        'Cette application a besoin d\'accèder à votre gallerie pour ajouter une photo.',
+        [
+          { text: 'Fermer', style: 'cancel' },
+          { text: 'Donner l\'accès', onPress: async () => {
+               library.status = 'granted';
+                let result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ImagePicker.MediaTypeOptions.All,
+                  allowsEditing: true,
+                  aspect: [4, 3],
+                  quality: 0.4,
+                });
+                
+                if (!result.canceled) {
+                  setImage(result.assets[0].uri);
+                  dispatch(signupUser({ picture: result.assets[0].uri }));
+                  setLibraryStatus(library.status)
+                }
+              
+            } 
+          },
+        ],
+        { cancelable: false }
+      );
+    } else {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.4,
+      });
+      
+      if (!result.canceled) {
+        setImage(result.assets[0].uri);
+        dispatch(signupUser({ picture: result.assets[0].uri }));
+      }
+    }
+  };
 
 
   const takePhoto = async () => {
