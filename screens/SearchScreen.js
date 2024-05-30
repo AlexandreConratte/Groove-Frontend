@@ -66,6 +66,22 @@ export default function SearchResultsScreen({ navigation }) {
     }
   }
 
+  const clearInput=()=>{
+    setVille('')
+    setstart('')
+    setend('')
+    setdateEnd('')
+    setdateStart('')
+    setDistance(50)
+    setSearchQuery('')
+    setSearchQuery2('')
+    setFilteredData([])
+    setFilteredData2([])
+    setTaille('')
+    setSelectedItems([])
+    setSelectedItems2([])
+  }
+
   useEffect(() => {
     fetch(`${BACKEND_URL}/styles/findAll`)
       .then((response) => response.json())
@@ -190,6 +206,7 @@ export default function SearchResultsScreen({ navigation }) {
     }
     setSelectedItems2(newSelectedItems2);
   };
+
   const myPosition=()=>{
     fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${userCoordinate.longitude}&lat=${userCoordinate.latitude}`)
     .then((response) => response.json())
@@ -262,7 +279,7 @@ export default function SearchResultsScreen({ navigation }) {
               onBlur={() => setFocusedInput(null)}
             />
             <TouchableOpacity onPress={() => myPosition()}>
-              <FontAwesome6 name='location-crosshairs' size={50} color={'#15C2C2'} />
+              <FontAwesome6 name='location-crosshairs' size={50} color={'#15C2C2'}/>
             </TouchableOpacity>
           </View>
           {cityNotFound}
@@ -358,12 +375,12 @@ export default function SearchResultsScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-
-        <View style={user.settings.nightMode ? nightModeStyle.buttonContainer : styles.buttonContainer}>
           <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.button : styles.button} onPress={() => search()}>
             <Text style={user.settings.nightMode ? nightModeStyle.buttonText : styles.buttonText}>Rechercher</Text>
           </TouchableOpacity>
-        </View>
+          <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.clear : styles.clear} onPress={() => clearInput()}>
+                <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Effacer les champs</Text>
+              </TouchableOpacity>
       </ScrollView>
     </KeyboardAvoidingView>
   )
@@ -414,9 +431,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginBottom: 100,
+    marginBottom: 10,
     width: '90%',
     height: 70,
+  },
+  clear:{
+    borderWidth:1,
+    borderColor:'#19525a',
+    borderRadius:5,
+    padding:5,
+    width:'auto',
+    justifyContent:'center',
+    alignItems:'center',
+    marginBottom: 100,
   },
   box: {
     width: '90%',
@@ -578,13 +605,23 @@ const nightModeStyle = StyleSheet.create({
     width: '10%',
     marginBottom: 5
   },
+  clear:{
+    borderWidth:1,
+    borderColor:'#15C2C2',
+    borderRadius:5,
+    padding:5,
+    width:'auto',
+    justifyContent:'center',
+    alignItems:'center',
+    marginBottom: 100,
+  },
   button: {
     padding: 10,
     backgroundColor: '#15C2C2',
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginBottom: 100,
+    marginBottom: 10,
     width: '90%',
     height: 70,
   },

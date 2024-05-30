@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     }),
   },
   image: {
-    width: 168,
+    width: '100%',
     height: 170,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -311,7 +311,7 @@ const nightModeStyle = StyleSheet.create({
     borderWidth: 2
   },
   image: {
-    width: 166,
+    width: '100%',
     height: 170,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -399,7 +399,7 @@ const nightModeStyle = StyleSheet.create({
     height: 292,
     justifyContent: 'center',
     backgroundColor: "white",
-    borderColor: '#FFE45D',
+    borderColor: '#15C2C2',
     borderWidth: 3,
     alignItems: 'center',
   },

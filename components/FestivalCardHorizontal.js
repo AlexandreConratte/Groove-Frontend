@@ -361,10 +361,11 @@ const nightModeStyle = StyleSheet.create({
     height: 292,
     justifyContent: 'center',
     backgroundColor: "white",
-    borderColor: '#FFE45D',
+    borderColor: '#15C2C2',
     borderWidth: 3,
     alignItems: 'center',
   },
+  
   welcomeText: {
     fontSize: 20,
     fontWeight: "600",

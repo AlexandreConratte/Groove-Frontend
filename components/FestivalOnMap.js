@@ -14,7 +14,6 @@ import {
   Poppins_800ExtraBold,
   Poppins_900Black,
 } from '@expo-google-fonts/poppins';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 
 
 export default function FestivalOnMap(props) {
@@ -49,7 +48,7 @@ export default function FestivalOnMap(props) {
         <View style={styles.header}>
           <Text style={styles.text}>{props.distance} km</Text>
           <TouchableOpacity style={styles.close} onPress={() => props.closeModal()}>
-            <FontAwesome5 name="window-close" size={25} color={"#19525A"} />
+            <FontAwesome name="remove" size={25} color={"#19525A"} />
           </TouchableOpacity>
         </View>
         <View style={styles.textContainer}>

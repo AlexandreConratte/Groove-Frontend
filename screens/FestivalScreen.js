@@ -191,7 +191,7 @@ export default function FestivalScreen({ navigation, route: { params: { ...props
         <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
 
           <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
-            <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté !</Text>
+            <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté(e) !</Text>
             <Text style={user.settings.nightMode ? nightModeStyle.descripText : styles.descripText}>Pour accéder à cette fonctionnalité</Text>
             <TouchableOpacity onPress={() => GotoConnect()} style={user.settings.nightMode ? nightModeStyle.GotoConnectButton : styles.GotoConnectButton}>
               <Text style={user.settings.nightMode ? nightModeStyle.connect : styles.connect}>Connecte Toi</Text>
@@ -667,7 +667,7 @@ const nightModeStyle = StyleSheet.create({
     height: 292,
     justifyContent: 'center',
     backgroundColor: "white",
-    borderColor: '#FFE45D',
+    borderColor: '#15C2C2',
     borderWidth: 3,
     alignItems: 'center',
   },

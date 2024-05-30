@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   modalClose: {
     position: 'absolute',
     top: 10,
-    left: 10
+    right: 10
   },
   detailsContainer: {
     marginTop: 65,
@@ -346,7 +346,7 @@ const nightModeStyle = StyleSheet.create({
   modalClose: {
     position: 'absolute',
     top: 10,
-    left: 10
+    right: 10
   },
   detailsContainer: {
     marginTop: 65,
