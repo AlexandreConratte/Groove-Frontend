@@ -1,5 +1,7 @@
 import { Dimensions, TextInput, Modal, StyleSheet, Text, TouchableOpacity, View, ScrollView, ImageBackground } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 import Group from '../components/Group';
 import Friend from '../components/Friend';
 import { useEffect, useState } from 'react';
@@ -117,6 +119,8 @@ export default function FriendsScreen({ navigation }) {
     })
       .then((response) => response.json())
       .then(() => {
+        setSearchQuery('')
+        setFilteredData([])
         affichage1()
         affichage2()
         affichage3()
@@ -138,10 +142,10 @@ export default function FriendsScreen({ navigation }) {
         <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
           <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
             <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.close : styles.close} onPress={() => setmodalAddFriend(false)}>
-              <FontAwesome5 name="window-close" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
+              <FontAwesome name="remove" size={30} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'} />
             </TouchableOpacity>
             <TextInput
-              style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]}
+              style={[user.settings.nightMode ? nightModeStyle.input : styles.input , { borderColor: focusedInput === 'style' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'style' ? 2 : 1 }]}
               placeholder="Rechercher un(e) ami(e)"
               placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : '#19525a'}
               value={searchQuery}
@@ -208,7 +212,7 @@ export default function FriendsScreen({ navigation }) {
 
         <Modal visible={modalisVisible} transparent={true}>
           <View style={user.settings.nightMode ? nightModeStyle.modalBackground : styles.modalBackground}>
-            <View style={user.settings.nightMode ? nightModeStyle.modalContainer : styles.modalContainer}>
+            <View style={user.settings.nightMode ? nightModeStyle.modalContainer2 : styles.modalContainer2}>
               <Text style={user.settings.nightMode ? nightModeStyle.welcomeText : styles.welcomeText}>Tu n'es toujours pas connecté(e) !</Text>
               <Text style={user.settings.nightMode ? nightModeStyle.descripText : styles.descripText}>Pour une expérience personnalisée </Text>
               <TouchableOpacity onPress={() => GotoConnect()} style={user.settings.nightMode ? nightModeStyle.GotoConnectButton : styles.GotoConnectButton}>
@@ -377,7 +381,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  modalContainer: {
+  modalContainer2: {
     width: 274,
     height: 292,
     justifyContent: 'center',
@@ -440,7 +444,6 @@ const nightModeStyle = StyleSheet.create({
     borderBottomWidth: 3,
     width: Dimensions.get('window').width,
     alignItems: 'center',
-
   },
   title1: {
     fontSize: 30,
@@ -509,6 +512,7 @@ const nightModeStyle = StyleSheet.create({
     fontFamily: 'Poppins_400Regular',
     color: '#FFFFFF',
     marginBottom: 10,
+    marginTop:30,
   },
   scrollView: {
     alignItems: 'center',
@@ -521,6 +525,15 @@ const nightModeStyle = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: "#19525a",
     borderColor: '#FFFFFF',
+    borderWidth: 3,
+    alignItems: 'center',
+  },
+  modalContainer2: {
+    width: 274,
+    height: 292,
+    justifyContent: 'center',
+    backgroundColor: "white",
+    borderColor: '#19525a',
     borderWidth: 3,
     alignItems: 'center',
   },

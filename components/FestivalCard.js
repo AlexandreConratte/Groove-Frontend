@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     }),
   },
   image: {
-    width: 170,
+    width: 168,
     height: 170,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
@@ -307,9 +307,11 @@ const nightModeStyle = StyleSheet.create({
         elevation: 10,
       },
     }),
+    borderColor: '#15C2C2',
+    borderWidth: 2
   },
   image: {
-    width: 170,
+    width: 166,
     height: 170,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,

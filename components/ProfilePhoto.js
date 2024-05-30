@@ -4,6 +4,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker'
 import * as ImagePicker from 'expo-image-picker'
 import { signupUser } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
+import { Poppins_600SemiBold, Poppins_600SemiBold_Italic } from '@expo-google-fonts/poppins';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -95,14 +96,14 @@ const ProfilePhoto = () => {
   }
 
   return (
-    <View style={user.settings.nightMode ? nightModeStyle.container : styles.container}>
+    <View style={styles.container}>
       <View></View>
       <TouchableOpacity onPress={selectPhoto}>
         {image ? (
           <Image source={{ uri: image }} style={styles.image} />
         ) : (
           <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>Ajouter une photo</Text>
+            <Text style={styles.placeholderText}>Importer depuis la gallerie</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
     width: 165,
     height: 165,
     borderRadius: 150,
-    backgroundColor: '#cccccc',
+    backgroundColor: '#7CB7BF',
     alignItems: 'center',
     justifyContent: 'center',
     ...Platform.select({
@@ -145,9 +146,11 @@ const styles = StyleSheet.create({
     }),
   },
   placeholderText: {
-    color: '#19525A',
-    fontFamily: "Poppins_500Medium",
-    textAlign: "center"
+    color: '#ffffff',
+    fontFamily: "Poppins_600SemiBold",
+    textAlign: "center",
+    paddingHorizontal: 30
+    
   },
   button: {
     width: 180,

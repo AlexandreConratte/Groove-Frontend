@@ -402,7 +402,7 @@ export default function ProfileScreen({ navigation }) {
                       <TouchableOpacity onPress={closeModal} style={user.settings.nightMode ? nightModeStyle.modalClose : styles.modalClose}>
                         <FontAwesome name='remove' size={40} color={user.settings.nightMode ? '#FFFFFF' : '#19525A'}/>
                       </TouchableOpacity>
-                      <View style={user.settings.nightMode ? nightModeStyle.picturePhotoContainer : styles.picturePhotoContainer}>
+                      <View>
                         <ProfilePhoto/>  
                       </View>
                       <TouchableOpacity style={user.settings.nightMode ? nightModeStyle.modalPictureSubmit : styles.modalPictureSubmit} onPress={handleSubmitPicture}>
@@ -554,7 +554,9 @@ const styles = StyleSheet.create({
     borderColor: '#19525a',
     borderWidth: 3,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+   
+    
   },
   modalContainer: {
     width: 274,
@@ -618,7 +620,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 30
+    margin: 30,
+    marginTop: 60
+  
   },
   modalPictureSubmitText: {
     fontFamily: 'Poppins_600SemiBold',
@@ -1069,7 +1073,8 @@ const nightModeStyle = StyleSheet.create({
     borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 30
+    margin: 30,
+    marginTop: 60
   },
   modalPictureSubmitText: {
     fontFamily: 'Poppins_600SemiBold',
