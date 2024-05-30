@@ -127,4 +127,29 @@ const nightModeStyle = StyleSheet.create({
     width: '10%',
     marginBottom: 5
   },
+  
+  // nouveau
+  contentContainer: {
+    alignItems: 'center',
+  },
+  text: {
+    marginVertical: 20,
+    fontSize: 30,
+    fontFamily: 'Poppins_600SemiBold',
+    color: '#FFFFFF',
+    textShadowColor: '#15C2C2',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
+    width: '100%',
+    textAlign: 'center'
+  },
+  title: {
+    fontFamily: 'Poppins_800ExtraBold',
+    color: '#FFFFFF',
+    fontSize: 70,
+    marginVertical: 20,
+    textShadowColor: '#15C2C2',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
+  },
 })
