@@ -22,7 +22,6 @@ export default function Connect2Screen({ navigation }) {
   const user = useSelector((state) => state.user.value);
 
    const BACKEND_URL = "https://backend-groove.vercel.app"
- // const BACKEND_URL = "http://10.1.0.205:3000"
 
   let [fontsLoaded] = useFonts({
     Poppins_100Thin,
@@ -43,20 +42,34 @@ export default function Connect2Screen({ navigation }) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassWord] = useState('')
-  const [errorMail, setErrorMail] = useState(false)
-  const [errorUser, setErrorUser] = useState(false)
-  const [errorPassword, setErrorPassword] = useState(false)
-  const [errorConfirmPw, setErrorConfirmPw] = useState(false)
-  const [errorExistUser, setErrorExistUser] = useState(false)
-  const [errorExistMail, setErrorExistMail] = useState(false)
-  const [focusedInput, setFocusedInput] = useState(null)
+  const [confirmPassword, setConfirmPassWord] = useState('');
+  const [errorPhone, setErrorPhone] = useState(false);
+  const [errorMail, setErrorMail] = useState(false);
+  const [errorUser, setErrorUser] = useState(false);
+  const [errorPassword, setErrorPassword] = useState(false);
+  const [errorRegexPassword, setErrorRegexPassword] = useState(false);
+  const [errorConfirmPw, setErrorConfirmPw] = useState(false);
+  const [errorExistUser, setErrorExistUser] = useState(false);
+  const [errorExistMail, setErrorExistMail] = useState(false);
+  const [focusedInput, setFocusedInput] = useState(null);
 
   const mailregex = /^((?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\]))$/
+  const phoneRegex = /^0[1-9]( \d{2}){4}$/
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+
 
   const validFields = async () => {
 
     let valid = true;
+
+    if (phone) {
+      if (!phoneRegex.test(phone)) {
+        setErrorPhone(true);
+        valid = false;
+      } else {
+        setErrorPhone(false);
+      }
+    }
 
     if (!username) {
       setErrorUser(true);
@@ -69,10 +82,16 @@ export default function Connect2Screen({ navigation }) {
     if (!password) {
       setErrorPassword(true);
       valid = false;
+    } else {
+      if (!passwordRegex.test(password)) {
+        setErrorRegexPassword(true);
+        valid = false;
+      } else {
+        setErrorPassword(false);
+        setErrorRegexPassword(false);
+      }
     }
-    else { 
-      setErrorPassword(false)
-    }
+
     if (confirmPassword !== password) {
       setErrorConfirmPw(true);
       valid = false;
@@ -96,7 +115,6 @@ export default function Connect2Screen({ navigation }) {
       const resultuser = await checkuser.json()
       if (resultuser.result) {
         setErrorExistUser(true)
-        //console.log('Nom utilisateur déjà existant')
         valid = false
       }else {
         setErrorExistUser(false)
@@ -110,7 +128,6 @@ export default function Connect2Screen({ navigation }) {
       const resultmail = await checkmail.json()
       if (resultmail.result) {
         setErrorExistMail(true)
-        //console.log('Email déjà existant')
         valid = false
       } else {
         setErrorExistMail(false)
@@ -119,12 +136,7 @@ export default function Connect2Screen({ navigation }) {
         dispatch(signupUser({ username, email, password, phone }))
         navigation.navigate('Connect3',);
       }
-    
-
-
-  }
-  //};
-  // }
+  };
 
   if (!fontsLoaded) {
     return <View></View>
@@ -169,16 +181,19 @@ export default function Connect2Screen({ navigation }) {
                         onFocus={() => setFocusedInput('phone')}
                         onBlur={() => setFocusedInput(null)}
                     />
+                    {errorPhone && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}>Format attendu : 0X XX XX XX XX</Text>}
                 </View>
 
                 <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
                     <Text style={user.settings.nightMode ? nightModeStyle.text : styles.text}>Mot de passe</Text>
+                    <Text style={user.settings.nightMode ? nightModeStyle.textSmall : styles.textSmall}>(Format attendu : au moins 8 caractères avec au moins une minuscule, une majuscule, un chiffre et un caractère spécial @$!%*?&)</Text>
                     <TextInput placeholder="Mot de passe" placeholderTextColor={user.settings.nightMode ? '#FFFFFF' : null } secureTextEntry={true} onChangeText={(value) => setPassword(value)} autoCapitalize="none"
                         value={password} style={[user.settings.nightMode ? nightModeStyle.input : styles.input, { borderColor: focusedInput === 'password' ? '#15C2C2' : '#7CB7BF' }, { borderWidth: focusedInput === 'password' ? 2 : 1 }]}
                         onFocus={() => setFocusedInput('password')}
                         onBlur={() => setFocusedInput(null)}
                     />
                     {errorPassword && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}> Champ Obligatoire</Text>}
+                    {errorRegexPassword && <Text style={user.settings.nightMode ? nightModeStyle.error : styles.error}>Mot de passe non conforme</Text>}
                 </View>
 
                 <View style={user.settings.nightMode ? nightModeStyle.textandinputcontain : styles.textandinputcontain}>
@@ -251,6 +266,12 @@ const styles = StyleSheet.create({
     color: '#19525A',
     fontFamily: 'Poppins_500Medium',
     fontSize: 16
+  },
+  textSmall: {
+    fontFamily: 'Poppins_300Light',
+    fontSize: 14,
+    color: '#19525A',
+    width: 280,
   },
   textandinputcontain: {
     margin: 10

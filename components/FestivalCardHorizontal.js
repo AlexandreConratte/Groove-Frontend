@@ -287,6 +287,8 @@ const nightModeStyle = StyleSheet.create({
       },
     }),
     flexDirection:'row',
+    borderColor: '#15C2C2',
+    borderWidth: 2
   },
 
   image: {
