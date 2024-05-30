@@ -80,6 +80,7 @@ export default function SearchResultsScreen({ navigation }) {
     setTaille('')
     setSelectedItems([])
     setSelectedItems2([])
+    setPlace({})
   }
 
   useEffect(() => {
