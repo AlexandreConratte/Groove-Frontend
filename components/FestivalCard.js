@@ -78,7 +78,7 @@ export default function FestivalCard(props) {
   }
 
   if (props.diff) {
-    timeLeft = <Text style={styles.timeLeft}>J-{Math.floor(props.diff/8.64e7)}</Text>
+    timeLeft = <Text style={styles.timeLeft}>J-{Math.round(props.diff/8.64e7)}</Text>
   }
   if (props.distance) {
     distance = <Text style={styles.distance}>{props.distance} km</Text>
